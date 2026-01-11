@@ -154,3 +154,4 @@ Update the following in all HTML files:
 
 Built with ❤️ for AL SHOLA ALMODEA Lighting Co.
 
+# alshola-almodea
