@@ -29,28 +29,28 @@ const projectsData = [
             'assets/Alshola Projcts/GYM & Showrooms/p9.jpeg',
             'assets/Alshola Projcts/GYM & Showrooms/p10.jpeg',
             'assets/Alshola Projcts/GYM & Showrooms/p11.jpeg',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9872.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9875.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9878.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9882.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9891.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9893.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9899.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9901.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9906.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9907.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9910.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9911.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9912.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9915.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9917.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9918.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9919.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9921.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9923.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9929.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9941.webp',
-            'assets/Alshola Projcts/GYM & Showrooms/_19A9942.webp'
+            'assets/Alshola Projcts/GYM & Showrooms/P12.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P13.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P14.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P15.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P16.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P17.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P18.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P19.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P20.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P21.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P22.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P23.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P24.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P25.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P26.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P27.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P28.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P29.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P30.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P31.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P32.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/P33.webp'
         ]
     },
     {
@@ -140,13 +140,13 @@ const projectsData = [
         id: 'mousqe',
         title: 'Mousqe',
         subtitle: 'Religious Architecture',
-        image: 'assets/Alshola Projcts/Mousqe/_19A0125.webp',
+        image: 'assets/Alshola Projcts/Mousqe/P1.webp',
         images: [
-            'assets/Alshola Projcts/Mousqe/_19A0125.webp',
-            'assets/Alshola Projcts/Mousqe/_19A0133.webp',
-            'assets/Alshola Projcts/Mousqe/_19A0122.webp',
-            'assets/Alshola Projcts/Mousqe/_19A0127.webp',
-            'assets/Alshola Projcts/Mousqe/_19A0128.webp'
+            'assets/Alshola Projcts/Mousqe/P1.webp',
+            'assets/Alshola Projcts/Mousqe/P2.webp',
+            'assets/Alshola Projcts/Mousqe/P3.webp',
+            'assets/Alshola Projcts/Mousqe/P4.webp',
+            'assets/Alshola Projcts/Mousqe/P5.webp'
         ]
     }
 ];
@@ -269,15 +269,16 @@ function createProjectCard(project, index) {
     card.style.visibility = 'visible';
     card.style.display = 'block';
     
-    // Use original path (works on localhost), error handler will retry with encoded path if needed
-    const imagePath = project.image;
+    // Use encodeURI for proper URL encoding (works on both localhost and server)
+    // This ensures all image formats (jpg, jpeg, png, webp, gif, svg, etc.) are supported
     const encodedImagePath = encodeURI(project.image);
+    const originalImagePath = project.image;
     
     card.innerHTML = `
         <div class="project-category-image">
-            <img src="${imagePath}" alt="${project.title}" loading="lazy" 
+            <img src="${encodedImagePath}" alt="${project.title}" loading="lazy" 
                  style="opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;"
-                 onerror="if(this.src === '${imagePath.replace(/'/g, "\\'")}') { this.src = '${encodedImagePath.replace(/'/g, "\\'")}'; return; } this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%232F2F2F\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23fff\' font-family=\'Arial\' font-size=\'20\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E${project.title}%3C/text%3E%3C/svg%3E';">
+                 onerror="if(this.src === '${encodedImagePath.replace(/'/g, "\\'")}') { this.src = '${originalImagePath.replace(/'/g, "\\'")}'; return; } this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%232F2F2F\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23fff\' font-family=\'Arial\' font-size=\'20\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E${project.title}%3C/text%3E%3C/svg%3E';">
         </div>
         <div class="project-category-content">
             <h3 class="project-category-title">${project.title}</h3>
@@ -793,16 +794,18 @@ function openLightbox(images, index, title) {
     currentLightboxImages = images;
     currentLightboxIndex = index;
     
-    // Update image - try original path first, encodeURI will be used in error handler if needed
+    // Use encodeURI for proper URL encoding (works on both localhost and server)
+    // This ensures all image formats (jpg, jpeg, png, webp, gif, svg, etc.) are supported
     const imagePath = images[index];
-    lightboxImage.src = imagePath;
+    const encodedImagePath = encodeURI(imagePath);
+    lightboxImage.src = encodedImagePath;
     lightboxImage.alt = `${title} ${index + 1}`;
     
-    // Add error handler to retry with encoded path if original fails
+    // Add error handler to retry with original path if encoded fails (localhost fallback)
     lightboxImage.onerror = function() {
-        if (this.src === imagePath) {
-            // Try with encoded path
-            this.src = encodeURI(imagePath);
+        if (this.src === encodedImagePath) {
+            // Try with original path as fallback
+            this.src = imagePath;
             return;
         }
         this.onerror = null; // Prevent infinite loop
@@ -872,14 +875,16 @@ function updateLightboxImage() {
     if (!lightboxImage || currentLightboxImages.length === 0) return;
     
     const imagePath = currentLightboxImages[currentLightboxIndex];
+    const encodedImagePath = encodeURI(imagePath); // Use encodeURI for proper URL encoding
     
     // Function to set image with retry mechanism
+    // This ensures all image formats (jpg, jpeg, png, webp, gif, svg, etc.) are supported
     function setImageSrc(path) {
         lightboxImage.src = path;
         lightboxImage.onerror = function() {
-            if (this.src === path) {
-                // Try with encoded path if original fails
-                this.src = encodeURI(path);
+            if (this.src === encodedImagePath) {
+                // Try with original path as fallback (localhost compatibility)
+                this.src = imagePath;
                 return;
             }
             this.onerror = null; // Prevent infinite loop
@@ -893,7 +898,7 @@ function updateLightboxImage() {
             duration: 0.2,
             ease: 'power2.in',
             onComplete: () => {
-                setImageSrc(imagePath);
+                setImageSrc(encodedImagePath);
                 if (lightboxCounter) {
                     lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
                 }
@@ -906,7 +911,7 @@ function updateLightboxImage() {
             }
         });
     } else {
-        setImageSrc(imagePath);
+        setImageSrc(encodedImagePath);
         if (lightboxCounter) {
             lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
         }
