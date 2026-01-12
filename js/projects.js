@@ -269,11 +269,15 @@ function createProjectCard(project, index) {
     card.style.visibility = 'visible';
     card.style.display = 'block';
     
+    // Use original path (works on localhost), error handler will retry with encoded path if needed
+    const imagePath = project.image;
+    const encodedImagePath = encodeURI(project.image);
+    
     card.innerHTML = `
         <div class="project-category-image">
-            <img src="${project.image}" alt="${project.title}" loading="lazy" 
+            <img src="${imagePath}" alt="${project.title}" loading="lazy" 
                  style="opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;"
-                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%232F2F2F\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23fff\' font-family=\'Arial\' font-size=\'20\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E${project.title}%3C/text%3E%3C/svg%3E';">
+                 onerror="if(this.src === '${imagePath.replace(/'/g, "\\'")}') { this.src = '${encodedImagePath.replace(/'/g, "\\'")}'; return; } this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%232F2F2F\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23fff\' font-family=\'Arial\' font-size=\'20\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E${project.title}%3C/text%3E%3C/svg%3E';">
         </div>
         <div class="project-category-content">
             <h3 class="project-category-title">${project.title}</h3>
@@ -402,10 +406,22 @@ function showProjectsGallery(projectId) {
             img.style.background = 'transparent';
             
             // Load image directly with cache busting to force reload
+            // Encode the image path to handle spaces and special characters (works on both local and server)
+            // encodeURI handles spaces and special chars but keeps / and : intact
+            const encodedImagePath = encodeURI(imagePath);
             const cacheBuster = '?t=' + Date.now() + '_' + index;
-            const imagePathWithCache = imagePath + (imagePath.includes('?') ? '&' : '') + cacheBuster;
+            const imagePathWithCache = encodedImagePath + (encodedImagePath.includes('?') ? '&' : '?') + cacheBuster;
             
-            // Set image src directly - use original path first, then cache bust if needed
+            // Try original path first (works on localhost)
+            // Then fallback to encoded path if needed (works on server)
+            let currentAttempt = 0;
+            const maxAttempts = 2;
+            
+            function tryLoadImage(attemptPath) {
+                img.src = attemptPath;
+            }
+            
+            // Set image src - try original first, then encoded
             img.src = imagePath;
             
             // Force image to be visible immediately
@@ -418,7 +434,7 @@ function showProjectsGallery(projectId) {
                 this.style.opacity = '1';
                 this.style.visibility = 'visible';
                 this.style.display = 'block';
-                console.log('Image loaded:', imagePath);
+                console.log('Image loaded:', this.src);
             };
             
             // Check if image is already loaded (cached)
@@ -426,13 +442,13 @@ function showProjectsGallery(projectId) {
                 img.style.opacity = '1';
                 img.style.visibility = 'visible';
                 img.style.display = 'block';
-                console.log('Image already cached:', imagePath);
+                console.log('Image already cached:', img.src);
             } else {
                 // If not loaded, try with cache buster
                 setTimeout(() => {
                     if (!img.complete || img.naturalWidth === 0) {
-                        console.log('Image not loaded, trying cache buster:', imagePath);
-                        img.src = imagePathWithCache;
+                        console.log('Image not loaded, trying cache buster:', img.src);
+                        img.src = imagePath.includes('?') ? imagePath + '&' + cacheBuster.split('?')[1] : imagePath + cacheBuster;
                     }
                     // Force show anyway
                     img.style.opacity = '1';
@@ -441,9 +457,26 @@ function showProjectsGallery(projectId) {
                 }, 50);
             }
             
-            // Add error handling
+            // Add error handling with retry mechanism
             img.onerror = function() {
-                console.error('Failed to load image:', imagePath, 'for project:', project.title);
+                currentAttempt++;
+                console.error('Failed to load image (attempt ' + currentAttempt + '):', this.src, 'for project:', project.title);
+                
+                // Try with encoded path if original failed
+                if (currentAttempt === 1 && this.src === imagePath) {
+                    console.log('Retrying with encoded path:', encodedImagePath);
+                    this.src = encodedImagePath;
+                    return;
+                }
+                
+                // Try with cache buster if encoded path failed
+                if (currentAttempt === 2 && this.src === encodedImagePath) {
+                    console.log('Retrying with encoded path + cache buster:', imagePathWithCache);
+                    this.src = imagePathWithCache;
+                    return;
+                }
+                
+                // If all attempts failed, show placeholder
                 this.onerror = null; // Prevent infinite loop
                 this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f0f0f0\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E';
                 this.style.opacity = '1';
@@ -776,9 +809,20 @@ function openLightbox(images, index, title) {
     currentLightboxImages = images;
     currentLightboxIndex = index;
     
-    // Update image
-    lightboxImage.src = images[index];
+    // Update image - try original path first, encodeURI will be used in error handler if needed
+    const imagePath = images[index];
+    lightboxImage.src = imagePath;
     lightboxImage.alt = `${title} ${index + 1}`;
+    
+    // Add error handler to retry with encoded path if original fails
+    lightboxImage.onerror = function() {
+        if (this.src === imagePath) {
+            // Try with encoded path
+            this.src = encodeURI(imagePath);
+            return;
+        }
+        this.onerror = null; // Prevent infinite loop
+    };
     
     // Update counter
     if (lightboxCounter) {
@@ -845,6 +889,19 @@ function updateLightboxImage() {
     
     const imagePath = currentLightboxImages[currentLightboxIndex];
     
+    // Function to set image with retry mechanism
+    function setImageSrc(path) {
+        lightboxImage.src = path;
+        lightboxImage.onerror = function() {
+            if (this.src === path) {
+                // Try with encoded path if original fails
+                this.src = encodeURI(path);
+                return;
+            }
+            this.onerror = null; // Prevent infinite loop
+        };
+    }
+    
     if (typeof gsap !== 'undefined') {
         gsap.to(lightboxImage, {
             opacity: 0,
@@ -852,7 +909,7 @@ function updateLightboxImage() {
             duration: 0.2,
             ease: 'power2.in',
             onComplete: () => {
-                lightboxImage.src = imagePath;
+                setImageSrc(imagePath);
                 if (lightboxCounter) {
                     lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
                 }
@@ -865,7 +922,7 @@ function updateLightboxImage() {
             }
         });
     } else {
-        lightboxImage.src = imagePath;
+        setImageSrc(imagePath);
         if (lightboxCounter) {
             lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
         }
