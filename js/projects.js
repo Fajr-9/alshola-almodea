@@ -405,24 +405,16 @@ function showProjectsGallery(projectId) {
             img.style.transition = 'opacity 0.3s ease';
             img.style.background = 'transparent';
             
-            // Load image directly with cache busting to force reload
-            // Encode the image path to handle spaces and special characters (works on both local and server)
-            // encodeURI handles spaces and special chars but keeps / and : intact
+            // Load image with proper URL encoding for server compatibility
+            // encodeURI encodes spaces (%20) and special chars (%26 for &) but keeps / and : intact
+            // This is necessary for paths with spaces like "Alshola Projcts" and "GYM & Showrooms"
             const encodedImagePath = encodeURI(imagePath);
             const cacheBuster = '?t=' + Date.now() + '_' + index;
             const imagePathWithCache = encodedImagePath + (encodedImagePath.includes('?') ? '&' : '?') + cacheBuster;
             
-            // Try original path first (works on localhost)
-            // Then fallback to encoded path if needed (works on server)
-            let currentAttempt = 0;
-            const maxAttempts = 2;
-            
-            function tryLoadImage(attemptPath) {
-                img.src = attemptPath;
-            }
-            
-            // Set image src - try original first, then encoded
-            img.src = imagePath;
+            // Try encoded path first (required for server with spaces in paths)
+            // encodeURI works on both localhost and server, so this should work everywhere
+            img.src = encodedImagePath;
             
             // Force image to be visible immediately
             img.style.opacity = '1';
@@ -434,7 +426,7 @@ function showProjectsGallery(projectId) {
                 this.style.opacity = '1';
                 this.style.visibility = 'visible';
                 this.style.display = 'block';
-                console.log('Image loaded:', this.src);
+                console.log('Image loaded successfully:', this.src);
             };
             
             // Check if image is already loaded (cached)
@@ -443,41 +435,33 @@ function showProjectsGallery(projectId) {
                 img.style.visibility = 'visible';
                 img.style.display = 'block';
                 console.log('Image already cached:', img.src);
-            } else {
-                // If not loaded, try with cache buster
-                setTimeout(() => {
-                    if (!img.complete || img.naturalWidth === 0) {
-                        console.log('Image not loaded, trying cache buster:', img.src);
-                        img.src = imagePath.includes('?') ? imagePath + '&' + cacheBuster.split('?')[1] : imagePath + cacheBuster;
-                    }
-                    // Force show anyway
-                    img.style.opacity = '1';
-                    img.style.visibility = 'visible';
-                    img.style.display = 'block';
-                }, 50);
             }
             
             // Add error handling with retry mechanism
+            let retryCount = 0;
+            const maxRetries = 2;
+            
             img.onerror = function() {
-                currentAttempt++;
-                console.error('Failed to load image (attempt ' + currentAttempt + '):', this.src, 'for project:', project.title);
+                retryCount++;
+                console.error('Failed to load image (attempt ' + retryCount + '):', this.src, 'for project:', project.title);
                 
-                // Try with encoded path if original failed
-                if (currentAttempt === 1 && this.src === imagePath) {
-                    console.log('Retrying with encoded path:', encodedImagePath);
-                    this.src = encodedImagePath;
+                // Try with cache buster if encoded path failed
+                if (retryCount === 1 && this.src === encodedImagePath) {
+                    console.log('Retrying with cache buster:', imagePathWithCache);
+                    this.src = imagePathWithCache;
                     return;
                 }
                 
-                // Try with cache buster if encoded path failed
-                if (currentAttempt === 2 && this.src === encodedImagePath) {
-                    console.log('Retrying with encoded path + cache buster:', imagePathWithCache);
-                    this.src = imagePathWithCache;
+                // Try with original path as fallback (for localhost compatibility)
+                if (retryCount === 2 && (this.src === encodedImagePath || this.src === imagePathWithCache)) {
+                    console.log('Retrying with original path (localhost fallback):', imagePath);
+                    this.src = imagePath;
                     return;
                 }
                 
                 // If all attempts failed, show placeholder
                 this.onerror = null; // Prevent infinite loop
+                console.error('All retry attempts failed for:', imagePath);
                 this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f0f0f0\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E';
                 this.style.opacity = '1';
                 this.style.visibility = 'visible';
