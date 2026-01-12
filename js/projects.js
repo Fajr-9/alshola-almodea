@@ -439,25 +439,59 @@ function showProjectsGallery(projectId) {
             }
             
             // Add error handling with retry mechanism
+            // Special handling for webp images which may need different encoding
             let retryCount = 0;
-            const maxRetries = 2;
+            const maxRetries = 3;
+            const isWebP = imagePath.toLowerCase().endsWith('.webp');
             
             img.onerror = function() {
                 retryCount++;
-                console.error('Failed to load image (attempt ' + retryCount + '):', this.src, 'for project:', project.title);
+                console.error('Failed to load image (attempt ' + retryCount + '):', this.src, 'for project:', project.title, 'isWebP:', isWebP);
                 
-                // Try with cache buster if encoded path failed
-                if (retryCount === 1 && this.src === encodedImagePath) {
-                    console.log('Retrying with cache buster:', imagePathWithCache);
-                    this.src = imagePathWithCache;
-                    return;
-                }
-                
-                // Try with original path as fallback (for localhost compatibility)
-                if (retryCount === 2 && (this.src === encodedImagePath || this.src === imagePathWithCache)) {
-                    console.log('Retrying with original path (localhost fallback):', imagePath);
-                    this.src = imagePath;
-                    return;
+                // For webp images, try different encoding strategies
+                if (isWebP) {
+                    // Try 1: Cache buster with encoded path
+                    if (retryCount === 1 && this.src === encodedImagePath) {
+                        console.log('WebP: Retrying with cache buster:', imagePathWithCache);
+                        this.src = imagePathWithCache;
+                        return;
+                    }
+                    
+                    // Try 2: Original path (may work on some servers)
+                    if (retryCount === 2 && (this.src === encodedImagePath || this.src === imagePathWithCache)) {
+                        console.log('WebP: Retrying with original path:', imagePath);
+                        this.src = imagePath;
+                        return;
+                    }
+                    
+                    // Try 3: Use encodeURIComponent for more aggressive encoding (handles special chars better)
+                    if (retryCount === 3 && (this.src === imagePath || this.src === encodedImagePath || this.src === imagePathWithCache)) {
+                        // Split path and encode each part separately, then join
+                        const pathParts = imagePath.split('/');
+                        const encodedParts = pathParts.map((part, idx) => {
+                            if (idx === 0 || idx === pathParts.length - 1) {
+                                return part; // Keep first and last parts as-is
+                            }
+                            return encodeURIComponent(part);
+                        });
+                        const aggressiveEncoded = encodedParts.join('/');
+                        console.log('WebP: Retrying with aggressive encoding:', aggressiveEncoded);
+                        this.src = aggressiveEncoded;
+                        return;
+                    }
+                } else {
+                    // For non-webp images, use standard retry mechanism
+                    if (retryCount === 1 && this.src === encodedImagePath) {
+                        console.log('Retrying with cache buster:', imagePathWithCache);
+                        this.src = imagePathWithCache;
+                        return;
+                    }
+                    
+                    if (retryCount === 2 && (this.src === encodedImagePath || this.src === imagePathWithCache)) {
+                        console.log('Retrying with original path (localhost fallback):', imagePath);
+                        this.src = imagePath;
+                        return;
+                    }
                 }
                 
                 // If all attempts failed, show placeholder
