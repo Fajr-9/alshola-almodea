@@ -2,7 +2,10 @@
 // Projects Page
 // ============================================
 
-gsap.registerPlugin(ScrollTrigger);
+// Register ScrollTrigger only if GSAP is loaded
+if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+}
 
 // ============================================
 // Projects Data
@@ -25,7 +28,29 @@ const projectsData = [
             'assets/Alshola Projcts/GYM & Showrooms/p8.jpeg',
             'assets/Alshola Projcts/GYM & Showrooms/p9.jpeg',
             'assets/Alshola Projcts/GYM & Showrooms/p10.jpeg',
-            'assets/Alshola Projcts/GYM & Showrooms/p11.jpeg'
+            'assets/Alshola Projcts/GYM & Showrooms/p11.jpeg',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9872.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9875.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9878.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9882.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9891.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9893.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9899.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9901.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9906.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9907.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9910.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9911.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9912.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9915.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9917.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9918.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9919.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9921.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9923.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9929.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9941.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/_19A9942.webp'
         ]
     },
     {
@@ -112,38 +137,16 @@ const projectsData = [
         ]
     },
     {
-        id: 'most-recent',
-        title: 'Most Recent',
-        subtitle: 'Latest Projects',
-        image: 'assets/Alshola Projcts/Most Recent/_19A9918.webp',
+        id: 'mousqe',
+        title: 'Mousqe',
+        subtitle: 'Religious Architecture',
+        image: 'assets/Alshola Projcts/Mousqe/_19A0125.webp',
         images: [
-            'assets/Alshola Projcts/Most Recent/_19A9918.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9917.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9915.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9912.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9911.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9891.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9893.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9882.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9878.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9875.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9872.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9899.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9901.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9906.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9907.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9910.webp',
-            'assets/Alshola Projcts/Most Recent/_19A0125.webp',
-            'assets/Alshola Projcts/Most Recent/_19A0133.webp',
-            'assets/Alshola Projcts/Most Recent/_19A0122.webp',
-            'assets/Alshola Projcts/Most Recent/_19A0127.webp',
-            'assets/Alshola Projcts/Most Recent/_19A0128.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9919.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9921.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9923.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9929.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9941.webp',
-            'assets/Alshola Projcts/Most Recent/_19A9942.webp'
+            'assets/Alshola Projcts/Mousqe/_19A0125.webp',
+            'assets/Alshola Projcts/Mousqe/_19A0133.webp',
+            'assets/Alshola Projcts/Mousqe/_19A0122.webp',
+            'assets/Alshola Projcts/Mousqe/_19A0127.webp',
+            'assets/Alshola Projcts/Mousqe/_19A0128.webp'
         ]
     }
 ];
@@ -164,56 +167,94 @@ const projectsCategoriesSection = document.querySelector('.projects-categories-s
 // ============================================
 
 function initializeProjectsGrid() {
-    if (!projectsGrid) return;
-    
-    projectsGrid.innerHTML = '';
-    
-    projectsData.forEach((project, index) => {
-        const card = createProjectCard(project, index);
-        projectsGrid.appendChild(card);
-    });
-    
-    // Animate cards in - Only once, no repeat on scroll
-    if (typeof gsap !== 'undefined') {
+    try {
+        if (!projectsGrid) {
+            console.error('projectsGrid element not found');
+            return;
+        }
+        
+        if (!projectsData || projectsData.length === 0) {
+            console.error('projectsData is empty or not defined');
+            return;
+        }
+        
+        console.log('Creating project cards, count:', projectsData.length);
+        
+        projectsGrid.innerHTML = '';
+        
+        projectsData.forEach((project, index) => {
+            try {
+                const card = createProjectCard(project, index);
+                if (card) {
+                    projectsGrid.appendChild(card);
+                }
+            } catch (error) {
+                console.error('Error creating card for project:', project.title, error);
+            }
+        });
+        
         const cards = projectsGrid.querySelectorAll('.project-category-card');
-        // Set initial state to visible
+        console.log('Created cards:', cards.length);
+        
+        // Ensure cards are visible immediately
         cards.forEach(card => {
             card.style.opacity = '1';
             card.style.visibility = 'visible';
             card.style.display = 'block';
         });
         
-        // Create ScrollTrigger that plays only once
-        const cardsAnimation = gsap.from(cards, {
-            opacity: 0,
-            y: 50,
-            scale: 0.9,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: 'power3.out',
-            delay: 0.2,
-            onComplete: () => {
-                cards.forEach(card => {
-                    card.style.opacity = '1';
-                    card.style.visibility = 'visible';
-                });
-            },
-            scrollTrigger: {
-                trigger: projectsGrid,
-                start: 'top 85%',
-                toggleActions: 'play none none none', // Play once, never reverse
-                once: true, // Only trigger once
-                markers: false
-            }
-        });
-    } else {
-        // Fallback: ensure cards are visible
-        const cards = projectsGrid.querySelectorAll('.project-category-card');
-        cards.forEach(card => {
-            card.style.opacity = '1';
-            card.style.visibility = 'visible';
-            card.style.display = 'block';
-        });
+        // Animate cards in - Only once, no repeat on scroll
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            // Wait a bit for layout to settle
+            setTimeout(() => {
+                try {
+                    gsap.from(cards, {
+                        opacity: 0,
+                        y: 50,
+                        scale: 0.9,
+                        duration: 0.8,
+                        stagger: 0.1,
+                        ease: 'power3.out',
+                        delay: 0.2,
+                        onComplete: () => {
+                            cards.forEach(card => {
+                                card.style.opacity = '1';
+                                card.style.visibility = 'visible';
+                            });
+                        },
+                        scrollTrigger: {
+                            trigger: projectsGrid,
+                            start: 'top 85%',
+                            toggleActions: 'play none none none',
+                            once: true,
+                            markers: false
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error animating cards:', error);
+                    // Fallback: ensure cards are visible
+                    cards.forEach(card => {
+                        card.style.opacity = '1';
+                        card.style.visibility = 'visible';
+                    });
+                }
+            }, 100);
+        } else {
+            // Fallback: ensure cards are visible without animation
+            cards.forEach(card => {
+                card.style.opacity = '1';
+                card.style.visibility = 'visible';
+                card.style.display = 'block';
+            });
+        }
+    } catch (error) {
+        console.error('Error in initializeProjectsGrid:', error);
+        // Ensure grid is visible even if there's an error
+        if (projectsGrid) {
+            projectsGrid.style.opacity = '1';
+            projectsGrid.style.visibility = 'visible';
+            projectsGrid.style.display = 'grid';
+        }
     }
 }
 
@@ -255,6 +296,58 @@ function createProjectCard(project, index) {
 }
 
 // ============================================
+// Clear Gallery Function
+// ============================================
+
+function clearGallery() {
+    if (!galleryGrid) return;
+    
+    // Remove all event listeners and clear images
+    const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+        const img = item.querySelector('img');
+        if (img) {
+            // Cancel any pending image loads
+            img.src = '';
+            img.onload = null;
+            img.onerror = null;
+        }
+        // Remove event listeners
+        const newItem = item.cloneNode(false);
+        item.parentNode?.replaceChild(newItem, item);
+    });
+    
+    // Remove all child elements
+    while (galleryGrid.firstChild) {
+        galleryGrid.removeChild(galleryGrid.firstChild);
+    }
+    
+    // Clear all styles and reset
+    galleryGrid.innerHTML = '';
+    galleryGrid.style.display = 'none';
+    galleryGrid.style.opacity = '0';
+    galleryGrid.style.visibility = 'hidden';
+    
+    // Force reflow
+    void galleryGrid.offsetHeight;
+    
+    // Clear any pending timeouts or intervals
+    if (window.galleryClearTimeout) {
+        clearTimeout(window.galleryClearTimeout);
+    }
+    
+    // Clear any preload images
+    if (window.preloadImages) {
+        window.preloadImages.forEach(img => {
+            img.onload = null;
+            img.onerror = null;
+            img.src = '';
+        });
+        window.preloadImages = [];
+    }
+}
+
+// ============================================
 // Show Projects Gallery
 // ============================================
 
@@ -268,83 +361,142 @@ function showProjectsGallery(projectId) {
     console.log('Loading gallery for project:', project.title);
     console.log('Project ID:', projectId);
     console.log('Number of images:', project.images.length);
-    console.log('Image paths:', project.images);
     
-    // Update title
-    galleryTitle.textContent = project.title;
+    // Clear gallery completely first
+    clearGallery();
     
-    // Clear previous images
-    galleryGrid.innerHTML = '';
+    // Initialize preload images array
+    if (!window.preloadImages) {
+        window.preloadImages = [];
+    }
     
-    // Create gallery items with proper image loading
-    project.images.forEach((imagePath, index) => {
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
-        galleryItem.setAttribute('data-image-index', index);
+    // Wait a bit to ensure cleanup is complete
+    setTimeout(() => {
+        // Update title
+        galleryTitle.textContent = project.title;
         
-        // Create image with proper loading
-        const img = document.createElement('img');
-        img.alt = `${project.title} ${index + 1}`;
-        img.loading = 'lazy';
-        img.style.width = '100%';
-        img.style.height = 'auto';
-        img.style.display = 'block';
-        img.style.opacity = '1';
-        img.style.visibility = 'visible';
-        
-        // Set src directly first
-        img.src = imagePath;
-        
-        // Ensure image is visible from start
-        img.style.opacity = '1';
-        img.style.visibility = 'visible';
-        
-        // Add error handling
-        img.onerror = function() {
-            console.error('Failed to load image:', imagePath, 'for project:', project.title);
-            // Try alternative path or show placeholder
-            this.onerror = null; // Prevent infinite loop
-            this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f0f0f0\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E';
-            this.style.opacity = '1';
-            this.style.visibility = 'visible';
-        };
-        
-        // Add load handler to ensure image is visible
-        img.onload = function() {
-            this.style.opacity = '1';
-            this.style.visibility = 'visible';
-            console.log('Image loaded successfully:', imagePath);
-        };
-        
-        galleryItem.appendChild(img);
-        
-        // Add click handler to open lightbox
-        galleryItem.addEventListener('click', () => {
-            openLightbox(project.images, index, project.title);
+        // Reset gallery grid
+        galleryGrid.style.display = '';
+        galleryGrid.style.opacity = '1';
+        galleryGrid.style.visibility = 'visible';
+    
+        // Create gallery items with proper image loading
+        project.images.forEach((imagePath, index) => {
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item';
+            galleryItem.setAttribute('data-image-index', index);
+            galleryItem.setAttribute('data-project-id', projectId);
+            
+            // Create image with proper loading
+            const img = document.createElement('img');
+            img.alt = `${project.title} ${index + 1}`;
+            img.loading = 'eager';
+            
+            // Set styles to ensure visibility
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            img.style.display = 'block';
+            img.style.opacity = '1';
+            img.style.visibility = 'visible';
+            img.style.transition = 'opacity 0.3s ease';
+            img.style.background = 'transparent';
+            
+            // Load image directly with cache busting to force reload
+            const cacheBuster = '?t=' + Date.now() + '_' + index;
+            const imagePathWithCache = imagePath + (imagePath.includes('?') ? '&' : '') + cacheBuster;
+            
+            // Set image src directly - use original path first, then cache bust if needed
+            img.src = imagePath;
+            
+            // Force image to be visible immediately
+            img.style.opacity = '1';
+            img.style.visibility = 'visible';
+            img.style.display = 'block';
+            
+            // Single onload handler
+            img.onload = function() {
+                this.style.opacity = '1';
+                this.style.visibility = 'visible';
+                this.style.display = 'block';
+                console.log('Image loaded:', imagePath);
+            };
+            
+            // Check if image is already loaded (cached)
+            if (img.complete && img.naturalWidth > 0) {
+                img.style.opacity = '1';
+                img.style.visibility = 'visible';
+                img.style.display = 'block';
+                console.log('Image already cached:', imagePath);
+            } else {
+                // If not loaded, try with cache buster
+                setTimeout(() => {
+                    if (!img.complete || img.naturalWidth === 0) {
+                        console.log('Image not loaded, trying cache buster:', imagePath);
+                        img.src = imagePathWithCache;
+                    }
+                    // Force show anyway
+                    img.style.opacity = '1';
+                    img.style.visibility = 'visible';
+                    img.style.display = 'block';
+                }, 50);
+            }
+            
+            // Add error handling
+            img.onerror = function() {
+                console.error('Failed to load image:', imagePath, 'for project:', project.title);
+                this.onerror = null; // Prevent infinite loop
+                this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f0f0f0\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E';
+                this.style.opacity = '1';
+                this.style.visibility = 'visible';
+                this.style.display = 'block';
+            };
+            
+            galleryItem.appendChild(img);
+            
+            // Ensure gallery item is visible
+            galleryItem.style.opacity = '1';
+            galleryItem.style.visibility = 'visible';
+            galleryItem.style.display = 'inline-block';
+            
+            // Add click handler to open lightbox
+            galleryItem.addEventListener('click', () => {
+                openLightbox(project.images, index, project.title);
+            });
+            
+            galleryGrid.appendChild(galleryItem);
         });
         
-        galleryGrid.appendChild(galleryItem);
-    });
-    
-    console.log(`Created ${project.images.length} gallery items for ${project.title}`);
-    console.log('Project images:', project.images);
-    
-    // Verify all images are added to DOM
-    const addedItems = galleryGrid.querySelectorAll('.gallery-item');
-    console.log(`Total gallery items in DOM: ${addedItems.length}`);
-    
-    // Check each image after a short delay
-    setTimeout(() => {
-        addedItems.forEach((item, idx) => {
+        // Show gallery grid after all items are added
+        galleryGrid.style.display = '';
+        galleryGrid.style.opacity = '1';
+        galleryGrid.style.visibility = 'visible';
+        
+        // Force all images to be visible immediately
+        const allItems = galleryGrid.querySelectorAll('.gallery-item');
+        allItems.forEach((item) => {
+            item.style.opacity = '1';
+            item.style.visibility = 'visible';
+            item.style.display = 'inline-block';
+            
             const img = item.querySelector('img');
             if (img) {
-                console.log(`Image ${idx + 1}: src="${img.src}", complete=${img.complete}, naturalWidth=${img.naturalWidth}`);
+                img.style.opacity = '1';
+                img.style.visibility = 'visible';
+                img.style.display = 'block';
             }
         });
-    }, 500);
-    
-    // Animate transition
-    if (typeof gsap !== 'undefined') {
+        
+        // Force reflow to ensure layout
+        void galleryGrid.offsetHeight;
+        
+        console.log(`Created ${project.images.length} gallery items for ${project.title}`);
+        
+        // Verify all images are added to DOM
+        const addedItems = galleryGrid.querySelectorAll('.gallery-item');
+        console.log(`Total gallery items in DOM: ${addedItems.length}`);
+        
+        // Animate transition
+        if (typeof gsap !== 'undefined') {
         gsap.to(projectsCategoriesSection, {
             opacity: 0,
             y: -30,
@@ -353,14 +505,8 @@ function showProjectsGallery(projectId) {
             onComplete: () => {
                 projectsCategoriesSection.style.display = 'none';
                 projectsGallery.style.display = 'block';
-                
-                // Animate gallery in
-                gsap.from(projectsGallery, {
-                    opacity: 0,
-                    y: 30,
-                    duration: 0.6,
-                    ease: 'power2.out'
-                });
+                projectsGallery.style.opacity = '1';
+                projectsGallery.style.visibility = 'visible';
                 
                 // Show gallery items immediately - no animation for better performance
                 const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
@@ -370,16 +516,69 @@ function showProjectsGallery(projectId) {
                         item.style.opacity = '1';
                         item.style.visibility = 'visible';
                         item.style.display = 'inline-block';
+                        
+                        const img = item.querySelector('img');
+                        if (img) {
+                            img.style.opacity = '1';
+                            img.style.visibility = 'visible';
+                            img.style.display = 'block';
+                        }
                     });
                 }
                 
+                // Animate gallery in (but keep it visible)
+                gsap.from(projectsGallery, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+                
                 // Force reflow to ensure masonry layout updates
-                setTimeout(() => {
+                window.galleryClearTimeout = setTimeout(() => {
                     if (galleryGrid) {
-                        galleryGrid.style.display = 'none';
-                        galleryGrid.offsetHeight; // Force reflow
-                        galleryGrid.style.display = '';
+                        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+                        
+                        // Ensure all images are loaded and visible
+                        galleryItems.forEach((item, idx) => {
+                            const img = item.querySelector('img');
+                            if (img) {
+                                // Force visibility immediately
+                                item.style.opacity = '1';
+                                item.style.visibility = 'visible';
+                                item.style.display = 'inline-block';
+                                img.style.opacity = '1';
+                                img.style.visibility = 'visible';
+                                img.style.display = 'block';
+                                
+                                // If image not loaded yet, ensure it shows anyway
+                                if (!img.complete || img.naturalWidth === 0) {
+                                    // Force show after a delay
+                                    setTimeout(() => {
+                                        img.style.opacity = '1';
+                                        img.style.visibility = 'visible';
+                                        img.style.display = 'block';
+                                    }, 200);
+                                }
                             }
+                        });
+                        
+                        // Force reflow
+                        void galleryGrid.offsetHeight;
+                        
+                        // Additional check after a delay
+                        setTimeout(() => {
+                            galleryItems.forEach((item) => {
+                                const img = item.querySelector('img');
+                                if (img) {
+                                    img.style.opacity = '1';
+                                    img.style.visibility = 'visible';
+                                    img.style.display = 'block';
+                                }
+                            });
+                            void galleryGrid.offsetHeight;
+                        }, 300);
+                    }
                 }, 100);
                 
                 // Scroll to top
@@ -389,33 +588,81 @@ function showProjectsGallery(projectId) {
                 });
             }
         });
-    } else {
-        // Fallback without GSAP
-        projectsCategoriesSection.style.display = 'none';
-        projectsGallery.style.display = 'block';
-        
-        // Ensure all gallery items are visible
-        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-        galleryItems.forEach(item => {
-            item.style.opacity = '1';
-            item.style.visibility = 'visible';
-            item.style.display = 'inline-block';
-        });
-        
+        } else {
+            // Fallback without GSAP
+            projectsCategoriesSection.style.display = 'none';
+            projectsGallery.style.display = 'block';
+            projectsGallery.style.opacity = '1';
+            projectsGallery.style.visibility = 'visible';
+            
+            // Ensure all gallery items are visible
+            const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+            galleryItems.forEach(item => {
+                item.style.opacity = '1';
+                item.style.visibility = 'visible';
+                item.style.display = 'inline-block';
+                
+                const img = item.querySelector('img');
+                if (img) {
+                    img.style.opacity = '1';
+                    img.style.visibility = 'visible';
+                    img.style.display = 'block';
+                }
+            });
+            
         // Force reflow to ensure masonry layout updates
-        setTimeout(() => {
+        window.galleryClearTimeout = setTimeout(() => {
             if (galleryGrid) {
-                galleryGrid.style.display = 'none';
-                galleryGrid.offsetHeight; // Force reflow
-                galleryGrid.style.display = '';
+                const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+                
+                // Ensure all images are loaded and visible
+                galleryItems.forEach((item, idx) => {
+                    const img = item.querySelector('img');
+                    if (img) {
+                        // Force visibility immediately
+                        item.style.opacity = '1';
+                        item.style.visibility = 'visible';
+                        item.style.display = 'inline-block';
+                        img.style.opacity = '1';
+                        img.style.visibility = 'visible';
+                        img.style.display = 'block';
+                        
+                        // If image not loaded yet, ensure it shows anyway
+                        if (!img.complete || img.naturalWidth === 0) {
+                            // Force show after a delay
+                            setTimeout(() => {
+                                img.style.opacity = '1';
+                                img.style.visibility = 'visible';
+                                img.style.display = 'block';
+                            }, 200);
+                        }
+                    }
+                });
+                
+                // Force reflow
+                void galleryGrid.offsetHeight;
+                
+                // Additional check after a delay
+                setTimeout(() => {
+                    galleryItems.forEach((item) => {
+                        const img = item.querySelector('img');
+                        if (img) {
+                            img.style.opacity = '1';
+                            img.style.visibility = 'visible';
+                            img.style.display = 'block';
+                        }
+                    });
+                    void galleryGrid.offsetHeight;
+                }, 300);
             }
         }, 100);
-        
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
+            
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    }, 50); // Small delay to ensure cleanup is complete
 }
 
 // ============================================
@@ -424,6 +671,9 @@ function showProjectsGallery(projectId) {
 
 if (backButton) {
     backButton.addEventListener('click', () => {
+        // Clear gallery completely when going back
+        clearGallery();
+        
         if (typeof gsap !== 'undefined') {
             gsap.to(projectsGallery, {
                 opacity: 0,
@@ -432,6 +682,8 @@ if (backButton) {
                 ease: 'power2.in',
                 onComplete: () => {
                     projectsGallery.style.display = 'none';
+                    projectsGallery.style.opacity = '0';
+                    projectsGallery.style.visibility = 'hidden';
                     projectsCategoriesSection.style.display = 'block';
                     projectsCategoriesSection.style.opacity = '1';
                     projectsCategoriesSection.style.visibility = 'visible';
@@ -476,6 +728,8 @@ if (backButton) {
         } else {
             // Fallback without GSAP
             projectsGallery.style.display = 'none';
+            projectsGallery.style.opacity = '0';
+            projectsGallery.style.visibility = 'hidden';
             projectsCategoriesSection.style.display = 'block';
             projectsCategoriesSection.style.opacity = '1';
             projectsCategoriesSection.style.visibility = 'visible';
@@ -659,28 +913,53 @@ document.addEventListener('keydown', (e) => {
 
 // Performance optimization: Use requestAnimationFrame
 function initProjects() {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            requestAnimationFrame(() => {
-                initializeProjectsGrid();
-            });
-        });
-    } else {
-        requestAnimationFrame(() => {
-            initializeProjectsGrid();
-        });
+    // Check if we're on the projects page
+    if (!projectsGrid || !document.getElementById('projectsGrid')) {
+        return; // Not on projects page
+    }
+    
+    console.log('Initializing projects grid...');
+    initializeProjectsGrid();
+    
+    // Refresh ScrollTrigger if available
+    if (typeof ScrollTrigger !== 'undefined') {
+        setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 200);
     }
 }
 
+// Initialize immediately if DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            initProjects();
+        }, 100);
+    });
+} else {
+    // DOM is already ready
+    setTimeout(() => {
+        initProjects();
+    }, 100);
+}
+
+// Also initialize on window load as backup
 window.addEventListener('load', () => {
-    // Initialize after a short delay for better performance
     setTimeout(() => {
         initProjects();
         
         if (typeof ScrollTrigger !== 'undefined') {
             ScrollTrigger.refresh();
         }
-    }, 100);
+    }, 200);
 });
+
+// Fallback: Try to initialize after a longer delay
+setTimeout(() => {
+    if (projectsGrid && projectsGrid.children.length === 0) {
+        console.log('Fallback: Initializing projects grid...');
+        initProjects();
+    }
+}, 500);
 
 

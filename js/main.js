@@ -673,35 +673,112 @@ if (categoryParam) {
 // Mobile Menu Toggle
 // ============================================
 
-const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-const navList = document.querySelector('.nav-list');
-
-if (mobileMenuToggle && navList) {
-    mobileMenuToggle.addEventListener('click', () => {
-        navList.classList.toggle('active');
-        mobileMenuToggle.classList.toggle('active');
+function initMobileMenu() {
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navList = document.querySelector('.nav-list');
+    
+    if (!mobileMenuToggle || !navList) {
+        // Retry if elements not found yet
+        setTimeout(initMobileMenu, 100);
+        return;
+    }
+    
+    // Check if already initialized to prevent duplicate listeners
+    if (mobileMenuToggle.dataset.initialized === 'true') {
+        return;
+    }
+    
+    // Mark as initialized
+    mobileMenuToggle.dataset.initialized = 'true';
+    
+    mobileMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
         
-        // Animate menu items
-        const navLinks = navList.querySelectorAll('.nav-link');
-        if (navList.classList.contains('active')) {
-            gsap.from(navLinks, {
-                x: -30,
-                opacity: 0,
-                duration: 0.4,
-                stagger: 0.1,
-                ease: 'power3.out'
-            });
+        const isActive = navList.classList.contains('active');
+        
+        if (isActive) {
+            // Close menu
+            navList.classList.remove('active');
+            mobileMenuToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        } else {
+            // Open menu
+            navList.classList.add('active');
+            mobileMenuToggle.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Animate menu items
+            const navLinks = navList.querySelectorAll('.nav-link');
+            if (typeof gsap !== 'undefined') {
+                gsap.from(navLinks, {
+                    x: -30,
+                    opacity: 0,
+                    duration: 0.4,
+                    stagger: 0.1,
+                    ease: 'power3.out'
+                });
+            } else {
+                navLinks.forEach((link, index) => {
+                    link.style.opacity = '0';
+                    link.style.transform = 'translateX(-30px)';
+                    setTimeout(() => {
+                        link.style.transition = 'all 0.4s ease';
+                        link.style.opacity = '1';
+                        link.style.transform = 'translateX(0)';
+                    }, index * 100);
+                });
+            }
         }
     });
     
     // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!navList.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
-            navList.classList.remove('active');
-            mobileMenuToggle.classList.remove('active');
+    document.addEventListener('click', function(e) {
+        if (navList.classList.contains('active')) {
+            if (!navList.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                navList.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            }
         }
     });
+    
+    // Close menu when clicking on a nav link
+    const navLinks = navList.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            navList.classList.remove('active');
+            mobileMenuToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    });
 }
+
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        initMobileMenu();
+        // Retry after a delay to ensure all scripts are loaded
+        setTimeout(initMobileMenu, 200);
+        setTimeout(initMobileMenu, 500);
+    });
+} else {
+    initMobileMenu();
+    // Retry after a delay to ensure all scripts are loaded
+    setTimeout(initMobileMenu, 200);
+    setTimeout(initMobileMenu, 500);
+}
+
+// Also initialize after page load
+window.addEventListener('load', function() {
+    setTimeout(initMobileMenu, 100);
+    setTimeout(initMobileMenu, 300);
+});
+
+// Additional retry for product pages
+setTimeout(function() {
+    initMobileMenu();
+}, 1000);
 
 // ============================================
 // Contact Form Submission
