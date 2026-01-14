@@ -269,12 +269,14 @@ if (aboutText && aboutImage) {
 // Home About slider using selected project images
 if (aboutProjectsSlider && aboutSliderImage) {
     const aboutSliderImages = [
-        'assets/Alshola Projcts/Private Villa Exterior/p1.webp',
-        'assets/Alshola Projcts/Private Villa Exterior/p2.jpg',
-        'assets/Alshola Projcts/Private Villa Exterior/p3.jpg',
-        'assets/Alshola Projcts/Private Villa Exterior/p4.jpg',
-        'assets/Alshola Projcts/GYM & Showrooms/p3.jpg',
-        'assets/Alshola Projcts/Lanscape/p4.jpg'
+        'assets/Alshola Projcts/Towers/p1.jpg',
+        'assets/Alshola Projcts/Towers/p2.jpg',
+        'assets/Alshola Projcts/Towers/p3.jpg',
+        'assets/Alshola Projcts/Towers/p4.jpg',
+        'assets/Alshola Projcts/Towers/p5.jpg',
+        'assets/Alshola Projcts/Towers/p6.jpg',
+        'assets/Alshola Projcts/Towers/p7.jpg',
+        'assets/Alshola Projcts/Towers/p8.jpg'
     ];
     let aboutSliderIndex = 0;
 
@@ -674,9 +676,9 @@ if (categoryParam) {
 // ============================================
 
 function initMobileMenu() {
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const navList = document.querySelector('.nav-list');
-    
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const navList = document.querySelector('.nav-list');
+
     if (!mobileMenuToggle || !navList) {
         // Retry if elements not found yet
         setTimeout(initMobileMenu, 100);
@@ -707,17 +709,17 @@ function initMobileMenu() {
             navList.classList.add('active');
             mobileMenuToggle.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
-            // Animate menu items
-            const navLinks = navList.querySelectorAll('.nav-link');
+        
+        // Animate menu items
+        const navLinks = navList.querySelectorAll('.nav-link');
             if (typeof gsap !== 'undefined') {
-                gsap.from(navLinks, {
-                    x: -30,
-                    opacity: 0,
-                    duration: 0.4,
-                    stagger: 0.1,
-                    ease: 'power3.out'
-                });
+            gsap.from(navLinks, {
+                x: -30,
+                opacity: 0,
+                duration: 0.4,
+                stagger: 0.1,
+                ease: 'power3.out'
+            });
             } else {
                 navLinks.forEach((link, index) => {
                     link.style.opacity = '0';
@@ -735,9 +737,9 @@ function initMobileMenu() {
     // Close menu when clicking outside
     document.addEventListener('click', function(e) {
         if (navList.classList.contains('active')) {
-            if (!navList.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
-                navList.classList.remove('active');
-                mobileMenuToggle.classList.remove('active');
+        if (!navList.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+            navList.classList.remove('active');
+            mobileMenuToggle.classList.remove('active');
                 document.body.style.overflow = '';
             }
         }
@@ -853,7 +855,7 @@ if (heroImages.length > 0) {
 window.addEventListener('load', () => {
     // Refresh ScrollTrigger on load
     if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.refresh();
+    ScrollTrigger.refresh();
     }
     
     // Animate page elements
@@ -932,63 +934,7 @@ const accordionCounter = document.getElementById('accordionCounter');
 if (projectsAccordion && accordionImagesGrid) {
     // All images from all categories
     const allProjectsImages = [
-        // GYM & Showrooms
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p1.jpg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p2.jpg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p3.jpg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p4.jpg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p5.jpg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p6.jpg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p7.jpg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p8.jpeg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p9.jpeg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p10.jpeg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        { src: 'assets/Alshola Projcts/GYM & Showrooms/p11.jpeg', title: 'GYM & Showrooms', subtitle: 'Commercial Lighting' },
-        
-        // Villa Interior
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p1.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p2.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p3.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p4.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p5.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p6.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p7.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p8.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p9.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Interior/p10.webp', title: 'Villa Interior', subtitle: 'Interior Lighting' },
-        
-        // Landscape
-        { src: 'assets/Alshola Projcts/Lanscape/p1.png', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p2.png', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p3.png', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p4.jpg', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p5.jpg', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p6.jpg', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p7.jpg', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p8.jpg', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Lanscape/p9.jpg', title: 'Landscape', subtitle: 'Outdoor Lighting' },
-        
-        // Villa Exterior
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p1.webp', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p2.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p3.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p4.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p5.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p6.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p7.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p8.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p9.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p10.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Private Villa Exterior/p11.jpg', title: 'Villa Exterior', subtitle: 'Architectural Lighting' },
-        
-        // Street Light
-        { src: 'assets/Alshola Projcts/Street Light/p1.png', title: 'Street Light', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Street Light/p2.png', title: 'Street Light', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Street Light/p3.png', title: 'Street Light', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Street Light/p4.png', title: 'Street Light', subtitle: 'Outdoor Lighting' },
-        { src: 'assets/Alshola Projcts/Street Light/p5.png', title: 'Street Light', subtitle: 'Outdoor Lighting' },
-        
-        // Towers
+        // Towers only
         { src: 'assets/Alshola Projcts/Towers/p1.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
         { src: 'assets/Alshola Projcts/Towers/p2.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
         { src: 'assets/Alshola Projcts/Towers/p3.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },

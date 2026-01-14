@@ -391,6 +391,16 @@ function setupProductModal() {
                 titleEl.textContent = productName;
                 descEl.textContent = productDesc;
                 imgEl.src = `assets/img/${productImg}`;
+                // Force mobile size on mobile devices
+                if (window.innerWidth <= 480) {
+                    imgEl.style.width = '120px';
+                    imgEl.style.height = '200px';
+                    imgEl.style.maxWidth = '120px';
+                    imgEl.style.maxHeight = '200px';
+                    imgEl.style.margin = '0 auto 15px';
+                    imgEl.style.display = 'block';
+                    imgEl.style.objectFit = 'contain';
+                }
                 pdfEl.href = `assets/pdfs/${productPdf}`;
                 
                 // Setup thumbnail gallery

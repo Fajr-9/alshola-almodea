@@ -4,7 +4,7 @@
 
 // Register ScrollTrigger only if GSAP is loaded
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 }
 
 // ============================================
@@ -179,20 +179,20 @@ function initializeProjectsGrid() {
         }
         
         console.log('Creating project cards, count:', projectsData.length);
-        
-        projectsGrid.innerHTML = '';
-        
-        projectsData.forEach((project, index) => {
+    
+    projectsGrid.innerHTML = '';
+    
+    projectsData.forEach((project, index) => {
             try {
-                const card = createProjectCard(project, index);
+        const card = createProjectCard(project, index);
                 if (card) {
-                    projectsGrid.appendChild(card);
+        projectsGrid.appendChild(card);
                 }
             } catch (error) {
                 console.error('Error creating card for project:', project.title, error);
             }
-        });
-        
+    });
+    
         const cards = projectsGrid.querySelectorAll('.project-category-card');
         console.log('Created cards:', cards.length);
         
@@ -209,27 +209,27 @@ function initializeProjectsGrid() {
             setTimeout(() => {
                 try {
                     gsap.from(cards, {
-                        opacity: 0,
-                        y: 50,
-                        scale: 0.9,
-                        duration: 0.8,
-                        stagger: 0.1,
-                        ease: 'power3.out',
-                        delay: 0.2,
-                        onComplete: () => {
-                            cards.forEach(card => {
-                                card.style.opacity = '1';
-                                card.style.visibility = 'visible';
-                            });
-                        },
-                        scrollTrigger: {
-                            trigger: projectsGrid,
-                            start: 'top 85%',
+            opacity: 0,
+            y: 50,
+            scale: 0.9,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: 'power3.out',
+            delay: 0.2,
+            onComplete: () => {
+                cards.forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.visibility = 'visible';
+                });
+            },
+            scrollTrigger: {
+                trigger: projectsGrid,
+                start: 'top 85%',
                             toggleActions: 'play none none none',
                             once: true,
-                            markers: false
-                        }
-                    });
+                markers: false
+            }
+        });
                 } catch (error) {
                     console.error('Error animating cards:', error);
                     // Fallback: ensure cards are visible
@@ -239,13 +239,13 @@ function initializeProjectsGrid() {
                     });
                 }
             }, 100);
-        } else {
+    } else {
             // Fallback: ensure cards are visible without animation
-            cards.forEach(card => {
-                card.style.opacity = '1';
-                card.style.visibility = 'visible';
-                card.style.display = 'block';
-            });
+        cards.forEach(card => {
+            card.style.opacity = '1';
+            card.style.visibility = 'visible';
+            card.style.display = 'block';
+        });
         }
     } catch (error) {
         console.error('Error in initializeProjectsGrid:', error);
@@ -377,32 +377,32 @@ function showProjectsGallery(projectId) {
     
     // Wait a bit to ensure cleanup is complete
     setTimeout(() => {
-        // Update title
-        galleryTitle.textContent = project.title;
-        
+    // Update title
+    galleryTitle.textContent = project.title;
+    
         // Reset gallery grid
         galleryGrid.style.display = '';
         galleryGrid.style.opacity = '1';
         galleryGrid.style.visibility = 'visible';
     
         // Create gallery items with proper image loading
-        project.images.forEach((imagePath, index) => {
-            const galleryItem = document.createElement('div');
-            galleryItem.className = 'gallery-item';
-            galleryItem.setAttribute('data-image-index', index);
+    project.images.forEach((imagePath, index) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        galleryItem.setAttribute('data-image-index', index);
             galleryItem.setAttribute('data-project-id', projectId);
-            
+        
             // Create image with proper loading
-            const img = document.createElement('img');
-            img.alt = `${project.title} ${index + 1}`;
+        const img = document.createElement('img');
+        img.alt = `${project.title} ${index + 1}`;
             img.loading = 'eager';
             
             // Set styles to ensure visibility
-            img.style.width = '100%';
-            img.style.height = 'auto';
-            img.style.display = 'block';
-            img.style.opacity = '1';
-            img.style.visibility = 'visible';
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        img.style.display = 'block';
+        img.style.opacity = '1';
+        img.style.visibility = 'visible';
             img.style.transition = 'opacity 0.3s ease';
             img.style.background = 'transparent';
             
@@ -501,22 +501,22 @@ function showProjectsGallery(projectId) {
                 this.style.opacity = '1';
                 this.style.visibility = 'visible';
                 this.style.display = 'block';
-            };
-            
-            galleryItem.appendChild(img);
+        };
+        
+        galleryItem.appendChild(img);
             
             // Ensure gallery item is visible
             galleryItem.style.opacity = '1';
             galleryItem.style.visibility = 'visible';
             galleryItem.style.display = 'inline-block';
-            
-            // Add click handler to open lightbox
-            galleryItem.addEventListener('click', () => {
-                openLightbox(project.images, index, project.title);
-            });
-            
-            galleryGrid.appendChild(galleryItem);
+        
+        // Add click handler to open lightbox
+        galleryItem.addEventListener('click', () => {
+            openLightbox(project.images, index, project.title);
         });
+        
+        galleryGrid.appendChild(galleryItem);
+    });
         
         // Show gallery grid after all items are added
         galleryGrid.style.display = '';
@@ -540,15 +540,15 @@ function showProjectsGallery(projectId) {
         
         // Force reflow to ensure layout
         void galleryGrid.offsetHeight;
-        
-        console.log(`Created ${project.images.length} gallery items for ${project.title}`);
+    
+    console.log(`Created ${project.images.length} gallery items for ${project.title}`);
         
         // Verify all images are added to DOM
         const addedItems = galleryGrid.querySelectorAll('.gallery-item');
         console.log(`Total gallery items in DOM: ${addedItems.length}`);
-        
-        // Animate transition
-        if (typeof gsap !== 'undefined') {
+    
+    // Animate transition
+    if (typeof gsap !== 'undefined') {
         gsap.to(projectsCategoriesSection, {
             opacity: 0,
             y: -30,
@@ -569,7 +569,7 @@ function showProjectsGallery(projectId) {
                         item.style.visibility = 'visible';
                         item.style.display = 'inline-block';
                         
-                        const img = item.querySelector('img');
+                            const img = item.querySelector('img');
                         if (img) {
                             img.style.opacity = '1';
                             img.style.visibility = 'visible';
@@ -640,18 +640,18 @@ function showProjectsGallery(projectId) {
                 });
             }
         });
-        } else {
-            // Fallback without GSAP
-            projectsCategoriesSection.style.display = 'none';
-            projectsGallery.style.display = 'block';
+    } else {
+        // Fallback without GSAP
+        projectsCategoriesSection.style.display = 'none';
+        projectsGallery.style.display = 'block';
             projectsGallery.style.opacity = '1';
             projectsGallery.style.visibility = 'visible';
-            
-            // Ensure all gallery items are visible
-            const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-            galleryItems.forEach(item => {
-                item.style.opacity = '1';
-                item.style.visibility = 'visible';
+        
+        // Ensure all gallery items are visible
+        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+        galleryItems.forEach(item => {
+            item.style.opacity = '1';
+            item.style.visibility = 'visible';
                 item.style.display = 'inline-block';
                 
                 const img = item.querySelector('img');
@@ -708,12 +708,12 @@ function showProjectsGallery(projectId) {
                 }, 300);
             }
         }, 100);
-            
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
+        
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
     }, 50); // Small delay to ensure cleanup is complete
 }
 
@@ -1010,18 +1010,18 @@ function initProjects() {
 }
 
 // Initialize immediately if DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             initProjects();
         }, 100);
-    });
-} else {
+        });
+    } else {
     // DOM is already ready
     setTimeout(() => {
         initProjects();
     }, 100);
-}
+    }
 
 // Also initialize on window load as backup
 window.addEventListener('load', () => {

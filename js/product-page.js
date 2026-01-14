@@ -269,7 +269,19 @@ function setupProductModal() {
 
                 if (titleElement) titleElement.textContent = productName;
                 if (descElement) descElement.textContent = productDesc || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
-                if (imgElement) imgElement.src = `assets/img/${productImg}`;
+                if (imgElement) {
+                    imgElement.src = `assets/img/${productImg}`;
+                    // Force mobile size on mobile devices
+                    if (window.innerWidth <= 480) {
+                        imgElement.style.width = '120px';
+                        imgElement.style.height = '200px';
+                        imgElement.style.maxWidth = '120px';
+                        imgElement.style.maxHeight = '200px';
+                        imgElement.style.margin = '0 auto 15px';
+                        imgElement.style.display = 'block';
+                        imgElement.style.objectFit = 'contain';
+                    }
+                }
                 if (pdfElement) pdfElement.href = `assets/pdfs/${productPdf}`;
 
                 // Setup thumbnail gallery

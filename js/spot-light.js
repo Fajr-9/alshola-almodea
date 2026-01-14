@@ -240,7 +240,20 @@ function setupSpotlightModal() {
                 // Update modal content
                 document.getElementById('spotlightModalTitle').textContent = productName;
                 document.getElementById('spotlightModalDesc').textContent = productDesc || 'Premium spotlight solution designed for modern lighting applications.';
-                document.getElementById('spotlightModalMainImage').src = `assets/img/${productImg}`;
+                const mainImg = document.getElementById('spotlightModalMainImage');
+                if (mainImg) {
+                    mainImg.src = `assets/img/${productImg}`;
+                    // Force mobile size on mobile devices
+                    if (window.innerWidth <= 480) {
+                        mainImg.style.width = '120px';
+                        mainImg.style.height = '200px';
+                        mainImg.style.maxWidth = '120px';
+                        mainImg.style.maxHeight = '200px';
+                        mainImg.style.margin = '0 auto 15px';
+                        mainImg.style.display = 'block';
+                        mainImg.style.objectFit = 'contain';
+                    }
+                }
                 document.getElementById('spotlightDownloadPdf').href = `assets/pdfs/${productPdf}`;
 
                 // Find and add additional images
