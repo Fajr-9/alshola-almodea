@@ -788,6 +788,21 @@ body {
     .spotlight-thumbnail-gallery {
         justify-content: center !important;
         align-items: center !important;
+        gap: 6px !important;
+        margin: 10px 0 !important;
+    }
+    
+    .spotlight-thumbnail-gallery img {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        max-width: 40px !important;
+        max-height: 40px !important;
+        object-fit: cover !important;
+        border-radius: 4px !important;
+        border: 1px solid rgba(178, 42, 31, 0.3) !important;
+        padding: 2px !important;
     }
 }
 
@@ -1324,14 +1339,26 @@ body {
     }
     
     .spotlight-thumbnail-gallery {
-        gap: 6px;
+        gap: 6px !important;
         justify-content: center !important;
         align-items: center !important;
+        margin: 10px 0 !important;
     }
     
-    .spotlight-thumbnail-gallery img {
-        width: 50px;
-        height: 50px;
+    .spotlight-thumbnail-gallery img,
+    .spotlight-modal .spotlight-thumbnail-gallery img,
+    .spotlight-modal-content .spotlight-thumbnail-gallery img,
+    .spotlight-modal-body .spotlight-thumbnail-gallery img {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        max-width: 40px !important;
+        max-height: 40px !important;
+        object-fit: cover !important;
+        border-radius: 4px !important;
+        border: 1px solid rgba(178, 42, 31, 0.3) !important;
+        padding: 2px !important;
     }
     
     .spotlight-modal-close {
@@ -1797,5 +1824,33 @@ body.dark-theme .spotlight-thumbnail-gallery img {
         flex-wrap: wrap !important;
         margin: 0 auto !important;
         width: 100% !important;
+    }
+}
+
+/* Additional mobile thumbnail rules at the very end */
+@media (max-width: 480px) {
+    .spotlight-modal .spotlight-thumbnail-gallery img,
+    .spotlight-modal-content .spotlight-thumbnail-gallery img,
+    .spotlight-modal-body .spotlight-thumbnail-gallery img,
+    .spotlight-thumbnail-gallery img {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        max-width: 40px !important;
+        max-height: 40px !important;
+        object-fit: cover !important;
+        border-radius: 4px !important;
+        border: 1px solid rgba(178, 42, 31, 0.3) !important;
+        padding: 2px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .spotlight-modal .spotlight-thumbnail-gallery,
+    .spotlight-modal-content .spotlight-thumbnail-gallery,
+    .spotlight-modal-body .spotlight-thumbnail-gallery {
+        gap: 6px !important;
+        margin: 10px auto !important;
     }
 }
