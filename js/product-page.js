@@ -82,15 +82,15 @@ function generateProducts() {
         }
         
         productCount++;
-        const imgPath = `assets/img/${product.img}`;
-        const pdfPath = `assets/pdfs/${product.pdf}`;
+        const imgPath = `assets/Products Img/${product.img}`;
+        const dataSheetPath = typeof getDataSheetPath === 'function' ? getDataSheetPath(product.name) : `assets/DATA-SHEETS/${product.name}.png`;
         const description = product.description || productDescriptions[product.name] || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
         const thumbnails = product.thumbnails || [];
         
         html += `
             <div class="spotlight-product-card" 
                  data-product-name="${product.name}" 
-                 data-product-pdf="${product.pdf}" 
+                 data-product-datasheet="${dataSheetPath}" 
                  data-product-img="${product.img}"
                  data-product-desc="${description.replace(/"/g, '&quot;')}"
                  ${thumbnails.length > 0 ? `data-thumbnails='${JSON.stringify(thumbnails)}'` : ''}>
@@ -247,7 +247,7 @@ function setupProductModal() {
                 e.stopPropagation();
                 
                 const productName = card.getAttribute('data-product-name');
-                const productPdf = card.getAttribute('data-product-pdf');
+                const productDataSheet = card.getAttribute('data-product-datasheet') || (typeof getDataSheetPath === 'function' ? getDataSheetPath(productName) : `assets/DATA-SHEETS/${productName}.png`);
                 const productImg = card.getAttribute('data-product-img');
                 const productDesc = card.getAttribute('data-product-desc');
                 const thumbnailsAttr = card.getAttribute('data-thumbnails');
@@ -270,7 +270,7 @@ function setupProductModal() {
                 if (titleElement) titleElement.textContent = productName;
                 if (descElement) descElement.textContent = productDesc || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
                 if (imgElement) {
-                    imgElement.src = `assets/img/${productImg}`;
+                    imgElement.src = `assets/Products Img/${productImg}`;
                     // Force mobile size on mobile devices
                     if (window.innerWidth <= 480) {
                         imgElement.style.width = '120px';
@@ -282,7 +282,11 @@ function setupProductModal() {
                         imgElement.style.objectFit = 'contain';
                     }
                 }
-                if (pdfElement) pdfElement.href = `assets/pdfs/${productPdf}`;
+                if (pdfElement) {
+                    pdfElement.href = productDataSheet;
+                    pdfElement.target = '_blank';
+                    pdfElement.download = '';
+                }
 
                 // Setup thumbnail gallery
                 const thumbnailGallery = document.getElementById('spotlightThumbnailGallery');
@@ -291,12 +295,12 @@ function setupProductModal() {
 
                     // Add base image as first thumbnail
                     const baseThumbnail = document.createElement('img');
-                    baseThumbnail.src = `assets/img/${productImg}`;
+                    baseThumbnail.src = `assets/Products Img/${productImg}`;
                     baseThumbnail.alt = `${productName} - Main Image`;
                     baseThumbnail.loading = 'lazy';
                     baseThumbnail.className = 'active';
                     baseThumbnail.addEventListener('click', () => {
-                        if (imgElement) imgElement.src = `assets/img/${productImg}`;
+                        if (imgElement) imgElement.src = `assets/Products Img/${productImg}`;
                         thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
                         baseThumbnail.classList.add('active');
                     });
@@ -311,11 +315,11 @@ function setupProductModal() {
                             if (thumb === productImg) return; // Skip if same as base
                             
                             const thumbnail = document.createElement('img');
-                            thumbnail.src = `assets/img/${thumb}`;
+                            thumbnail.src = `assets/Products Img/${thumb}`;
                             thumbnail.alt = `${productName} - Image ${index + 2}`;
                             thumbnail.loading = 'lazy';
                             thumbnail.addEventListener('click', () => {
-                                if (imgElement) imgElement.src = `assets/img/${thumb}`;
+                                if (imgElement) imgElement.src = `assets/Products Img/${thumb}`;
                                 thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
                                 thumbnail.classList.add('active');
                             });
@@ -326,33 +330,37 @@ function setupProductModal() {
                         });
                     } else {
                         // Fallback: Try to find additional images
-                        const imgBase = productImg.replace(/\.(png|jpg|jpeg)$/i, '');
+                        const imgBase = productImg.replace(/\.(png|jpg|jpeg|webp)$/i, '');
                         const baseName = productName.replace(/[^a-zA-Z0-9-]/g, '');
 
                         for (let i = 1; i <= 10; i++) {
                             const variations = [
                                 `${imgBase},${i}.png`,
                                 `${imgBase},${i}.jpg`,
+                                `${imgBase},${i}.webp`,
                                 `${imgBase} ${i}.png`,
                                 `${imgBase} ${i}.jpg`,
+                                `${imgBase} ${i}.webp`,
                                 `${baseName},${i}.png`,
                                 `${baseName},${i}.jpg`,
+                                `${baseName},${i}.webp`,
                                 `${baseName} ${i}.png`,
                                 `${baseName} ${i}.jpg`,
+                                `${baseName} ${i}.webp`,
                             ];
 
                             variations.forEach(variation => {
                                 const img = new Image();
                                 img.onload = function() {
-                                    const existing = thumbnailGallery.querySelector(`img[src="assets/img/${variation}"]`);
+                                    const existing = thumbnailGallery.querySelector(`img[src="assets/Products Img/${variation}"]`);
                                     if (existing) return;
-
+                                    
                                     const thumbnail = document.createElement('img');
-                                    thumbnail.src = `assets/img/${variation}`;
+                                    thumbnail.src = `assets/Products Img/${variation}`;
                                     thumbnail.alt = `${productName} - Image ${i}`;
                                     thumbnail.loading = 'lazy';
                                     thumbnail.addEventListener('click', () => {
-                                        if (imgElement) imgElement.src = `assets/img/${variation}`;
+                                        if (imgElement) imgElement.src = `assets/Products Img/${variation}`;
                                         thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
                                         thumbnail.classList.add('active');
                                     });
@@ -361,7 +369,7 @@ function setupProductModal() {
                                     });
                                     thumbnailGallery.appendChild(thumbnail);
                                 };
-                                img.src = `assets/img/${variation}`;
+                                img.src = `assets/Products Img/${variation}`;
                             });
                         }
                     }

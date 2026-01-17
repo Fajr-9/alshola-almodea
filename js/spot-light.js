@@ -71,14 +71,14 @@ function generateSpotlightProducts() {
         }
         
         productCount++;
-        const imgPath = `assets/img/${product.img}`;
-        const pdfPath = `assets/pdfs/${product.pdf}`;
+        const imgPath = `assets/Products Img/${product.img}`;
+        const dataSheetPath = typeof getDataSheetPath === 'function' ? getDataSheetPath(product.name) : `assets/DATA-SHEETS/${product.name}.png`;
         const description = productDescriptions[product.name] || 'Premium spotlight solution designed for modern lighting applications.';
         
         html += `
             <div class="spotlight-product-card" 
                  data-product-name="${product.name}" 
-                 data-product-pdf="${product.pdf}" 
+                 data-product-datasheet="${dataSheetPath}" 
                  data-product-img="${product.img}"
                  data-product-desc="${description.replace(/"/g, '&quot;')}">
                 <div class="product-image-wrapper">
@@ -233,7 +233,7 @@ function setupSpotlightModal() {
                 e.stopPropagation();
                 
                 const productName = card.getAttribute('data-product-name');
-                const productPdf = card.getAttribute('data-product-pdf');
+                const productDataSheet = card.getAttribute('data-product-datasheet') || (typeof getDataSheetPath === 'function' ? getDataSheetPath(productName) : `assets/DATA-SHEETS/${productName}.png`);
                 const productImg = card.getAttribute('data-product-img');
                 const productDesc = card.getAttribute('data-product-desc');
 
@@ -242,7 +242,7 @@ function setupSpotlightModal() {
                 document.getElementById('spotlightModalDesc').textContent = productDesc || 'Premium spotlight solution designed for modern lighting applications.';
                 const mainImg = document.getElementById('spotlightModalMainImage');
                 if (mainImg) {
-                    mainImg.src = `assets/img/${productImg}`;
+                    mainImg.src = `assets/Products Img/${productImg}`;
                     // Force mobile size on mobile devices
                     if (window.innerWidth <= 480) {
                         mainImg.style.width = '120px';
@@ -254,7 +254,12 @@ function setupSpotlightModal() {
                         mainImg.style.objectFit = 'contain';
                     }
                 }
-                document.getElementById('spotlightDownloadPdf').href = `assets/pdfs/${productPdf}`;
+                const pdfElement = document.getElementById('spotlightDownloadPdf');
+                if (pdfElement) {
+                    pdfElement.href = productDataSheet;
+                    pdfElement.target = '_blank';
+                    pdfElement.download = '';
+                }
 
                 // Find and add additional images
                 const thumbnailGallery = document.getElementById('spotlightThumbnailGallery');
@@ -262,12 +267,12 @@ function setupSpotlightModal() {
 
                 // Add base image as first thumbnail
                 const baseThumbnail = document.createElement('img');
-                baseThumbnail.src = `assets/img/${productImg}`;
+                baseThumbnail.src = `assets/Products Img/${productImg}`;
                 baseThumbnail.alt = `${productName} - Main Image`;
                 baseThumbnail.loading = 'lazy';
                 baseThumbnail.className = 'active';
                 baseThumbnail.addEventListener('click', () => {
-                    document.getElementById('spotlightModalMainImage').src = `assets/img/${productImg}`;
+                    document.getElementById('spotlightModalMainImage').src = `assets/Products Img/${productImg}`;
                     thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
                     baseThumbnail.classList.add('active');
                 });
@@ -277,7 +282,7 @@ function setupSpotlightModal() {
                 thumbnailGallery.appendChild(baseThumbnail);
 
                 // Find additional images
-                const imgBase = productImg.replace(/\.(png|jpg|jpeg)$/i, '');
+                const imgBase = productImg.replace(/\.(png|jpg|jpeg|webp)$/i, '');
                 const baseName = productName.replace(/[^a-zA-Z0-9-]/g, '');
 
                 // Check for additional images (up to 10 variations)
@@ -285,27 +290,31 @@ function setupSpotlightModal() {
                     const variations = [
                         `${imgBase},${i}.png`,
                         `${imgBase},${i}.jpg`,
+                        `${imgBase},${i}.webp`,
                         `${imgBase} ${i}.png`,
                         `${imgBase} ${i}.jpg`,
+                        `${imgBase} ${i}.webp`,
                         `${baseName},${i}.png`,
                         `${baseName},${i}.jpg`,
+                        `${baseName},${i}.webp`,
                         `${baseName} ${i}.png`,
                         `${baseName} ${i}.jpg`,
+                        `${baseName} ${i}.webp`,
                     ];
 
                     variations.forEach(variation => {
                         const img = new Image();
                         img.onload = function() {
                             // Image exists, add it to gallery
-                            const existing = thumbnailGallery.querySelector(`img[src="assets/img/${variation}"]`);
+                            const existing = thumbnailGallery.querySelector(`img[src="assets/Products Img/${variation}"]`);
                             if (existing) return;
 
                             const thumbnail = document.createElement('img');
-                            thumbnail.src = `assets/img/${variation}`;
+                            thumbnail.src = `assets/Products Img/${variation}`;
                             thumbnail.alt = `${productName} - Image ${i}`;
                             thumbnail.loading = 'lazy';
                             thumbnail.addEventListener('click', () => {
-                                document.getElementById('spotlightModalMainImage').src = `assets/img/${variation}`;
+                                document.getElementById('spotlightModalMainImage').src = `assets/Products Img/${variation}`;
                                 thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
                                 thumbnail.classList.add('active');
                             });
@@ -314,7 +323,7 @@ function setupSpotlightModal() {
                             });
                             thumbnailGallery.appendChild(thumbnail);
                         };
-                        img.src = `assets/img/${variation}`;
+                        img.src = `assets/Products Img/${variation}`;
                     });
                 }
 
