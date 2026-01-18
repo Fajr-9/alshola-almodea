@@ -16,12 +16,13 @@ const isMobile = () => {
 const getAnimationSettings = () => {
     if (isMobile()) {
         return {
-            duration: 0.3,
+            duration: 0.25,
             ease: 'power1.out',
-            stagger: 0.05,
-            y: 20,
+            stagger: 0.03,
+            y: 0,
             scale: 1,
-            rotation: 0
+            rotation: 0,
+            startPosition: 'top 95%'
         };
     }
     return {
@@ -30,7 +31,8 @@ const getAnimationSettings = () => {
         stagger: 0.1,
         y: 50,
         scale: 0.9,
-        rotation: -180
+        rotation: -180,
+        startPosition: 'top 80%'
     };
 };
 
@@ -237,12 +239,16 @@ const serviceCards = document.querySelectorAll('.service-card');
 if (serviceCards.length > 0) {
     const animSettings = getAnimationSettings();
     gsap.utils.toArray(serviceCards).forEach((card, index) => {
+        // Set cards visible immediately to prevent layout shift
+        card.style.opacity = '1';
+        card.style.visibility = 'visible';
+        
         if (isMobile()) {
-            // Simplified animation for mobile - just fade in
+            // Simplified animation for mobile - just fade in, no movement
             gsap.from(card, {
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 90%',
+                    start: animSettings.startPosition,
                     toggleActions: 'play none none none',
                     once: true
                 },
@@ -358,12 +364,16 @@ const productCards = document.querySelectorAll('.product-card');
 if (productCards.length > 0) {
     const animSettings = getAnimationSettings();
     gsap.utils.toArray(productCards).forEach((card, index) => {
+        // Set cards visible immediately to prevent layout shift
+        card.style.opacity = '1';
+        card.style.visibility = 'visible';
+        
         if (isMobile()) {
-            // Simplified animation for mobile - just fade in
+            // Simplified animation for mobile - just fade in, no movement or scale
             gsap.from(card, {
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 90%',
+                    start: animSettings.startPosition,
                     toggleActions: 'play none none none',
                     once: true
                 },
@@ -415,12 +425,16 @@ const projectCards = document.querySelectorAll('.project-card');
 if (projectCards.length > 0) {
     const animSettings = getAnimationSettings();
     gsap.utils.toArray(projectCards).forEach((card, index) => {
+        // Set cards visible immediately to prevent layout shift
+        card.style.opacity = '1';
+        card.style.visibility = 'visible';
+        
         if (isMobile()) {
-            // Simplified animation for mobile
+            // Simplified animation for mobile - just fade in, no movement or scale
             gsap.from(card, {
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 90%',
+                    start: animSettings.startPosition,
                     toggleActions: 'play none none none',
                     once: true
                 },
@@ -459,12 +473,16 @@ if (featureCards.length > 0) {
         const title = card.querySelector('.feature-title');
         const description = card.querySelector('.feature-description');
         
+        // Set card visible immediately to prevent layout shift
+        card.style.opacity = '1';
+        card.style.visibility = 'visible';
+        
         if (isMobile()) {
-            // Simplified animation for mobile - no rotation or scale
+            // Simplified animation for mobile - no rotation or scale, just fade
             gsap.from([icon, title, description], {
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 90%',
+                    start: animSettings.startPosition,
                     toggleActions: 'play none none none',
                     once: true
                 },
@@ -957,60 +975,117 @@ window.addEventListener('load', () => {
     // Animate section headers
     const sectionHeaders = document.querySelectorAll('.section-header');
     if (sectionHeaders.length > 0) {
-        const headerSettings = isMobile() ? { y: 15, duration: 0.4, delay: 0.05, ease: 'power1.out', once: true } : { y: 30, duration: 0.8, delay: 0.1, ease: 'power3.out', once: false };
+        const animSettings = getAnimationSettings();
         gsap.utils.toArray(sectionHeaders).forEach((header, index) => {
-            gsap.from(header, {
-                scrollTrigger: {
-                    trigger: header,
-                    start: isMobile() ? 'top 90%' : 'top 85%',
-                    toggleActions: headerSettings.once ? 'play none none none' : 'play reverse play reverse'
-                },
-                y: headerSettings.y,
-                opacity: 0,
-                duration: headerSettings.duration,
-                delay: index * headerSettings.delay,
-                ease: headerSettings.ease
-            });
+            // Set visible immediately
+            header.style.opacity = '1';
+            header.style.visibility = 'visible';
+            
+            if (isMobile()) {
+                gsap.from(header, {
+                    scrollTrigger: {
+                        trigger: header,
+                        start: animSettings.startPosition,
+                        toggleActions: 'play none none none',
+                        once: true
+                    },
+                    opacity: 0,
+                    duration: animSettings.duration,
+                    delay: index * animSettings.stagger,
+                    ease: animSettings.ease
+                });
+            } else {
+                gsap.from(header, {
+                    scrollTrigger: {
+                        trigger: header,
+                        start: 'top 85%',
+                        toggleActions: 'play reverse play reverse'
+                    },
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: index * 0.1,
+                    ease: 'power3.out'
+                });
+            }
         });
     }
     
     // Animate section titles
     const sectionTitles = document.querySelectorAll('.section-title');
     if (sectionTitles.length > 0) {
-        const titleSettings = isMobile() ? { scale: 1, duration: 0.4, delay: 0.03, ease: 'power1.out', once: true } : { scale: 0.9, duration: 0.6, delay: 0.05, ease: 'back.out(1.2)', once: false };
+        const animSettings = getAnimationSettings();
         gsap.utils.toArray(sectionTitles).forEach((title, index) => {
-            gsap.from(title, {
-                scrollTrigger: {
-                    trigger: title,
-                    start: isMobile() ? 'top 90%' : 'top 85%',
-                    toggleActions: titleSettings.once ? 'play none none none' : 'play reverse play reverse'
-                },
-                scale: titleSettings.scale,
-                opacity: 0,
-                duration: titleSettings.duration,
-                delay: index * titleSettings.delay,
-                ease: titleSettings.ease
-            });
+            // Set visible immediately
+            title.style.opacity = '1';
+            title.style.visibility = 'visible';
+            
+            if (isMobile()) {
+                gsap.from(title, {
+                    scrollTrigger: {
+                        trigger: title,
+                        start: animSettings.startPosition,
+                        toggleActions: 'play none none none',
+                        once: true
+                    },
+                    opacity: 0,
+                    duration: animSettings.duration,
+                    delay: index * animSettings.stagger,
+                    ease: animSettings.ease
+                });
+            } else {
+                gsap.from(title, {
+                    scrollTrigger: {
+                        trigger: title,
+                        start: 'top 85%',
+                        toggleActions: 'play reverse play reverse'
+                    },
+                    scale: 0.9,
+                    opacity: 0,
+                    duration: 0.6,
+                    delay: index * 0.05,
+                    ease: 'back.out(1.2)'
+                });
+            }
         });
     }
     
     // Animate section subtitles
     const sectionSubtitles = document.querySelectorAll('.section-subtitle');
     if (sectionSubtitles.length > 0) {
-        const subtitleSettings = isMobile() ? { y: 10, duration: 0.4, delay: 0.03, ease: 'power1.out', once: true } : { y: 20, duration: 0.6, delay: 0.05, ease: 'power3.out', once: false };
+        const animSettings = getAnimationSettings();
         gsap.utils.toArray(sectionSubtitles).forEach((subtitle, index) => {
-            gsap.from(subtitle, {
-                scrollTrigger: {
-                    trigger: subtitle,
-                    start: isMobile() ? 'top 90%' : 'top 85%',
-                    toggleActions: subtitleSettings.once ? 'play none none none' : 'play reverse play reverse'
-                },
-                y: subtitleSettings.y,
-                opacity: 0,
-                duration: subtitleSettings.duration,
-                delay: index * subtitleSettings.delay + (isMobile() ? 0.1 : 0.2),
-                ease: subtitleSettings.ease
-            });
+            // Set visible immediately
+            subtitle.style.opacity = '1';
+            subtitle.style.visibility = 'visible';
+            
+            if (isMobile()) {
+                gsap.from(subtitle, {
+                    scrollTrigger: {
+                        trigger: subtitle,
+                        start: animSettings.startPosition,
+                        toggleActions: 'play none none none',
+                        once: true
+                    },
+                    opacity: 0,
+                    duration: animSettings.duration,
+                    delay: index * animSettings.stagger + 0.1,
+                    ease: animSettings.ease
+                });
+            } else {
+                gsap.from(subtitle, {
+                    scrollTrigger: {
+                        trigger: subtitle,
+                        start: 'top 85%',
+                        toggleActions: 'play reverse play reverse'
+                    },
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.6,
+                    delay: index * 0.05 + 0.2,
+                    ease: 'power3.out'
+                });
+            }
         });
     }
 });

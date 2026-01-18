@@ -2165,11 +2165,23 @@ ul {
         opacity: 0 !important;
     }
     
+    /* Prevent layout shift - set cards visible immediately */
+    .service-card,
+    .product-card,
+    .feature-card,
+    .project-card,
+    .spotlight-product-card {
+        opacity: 1 !important;
+        visibility: visible !important;
+        will-change: auto !important;
+    }
+    
     /* Simplify hover effects on mobile */
     .service-card:hover,
     .product-card:hover,
     .feature-card:hover,
-    .project-card:hover {
+    .project-card:hover,
+    .spotlight-product-card:hover {
         transform: none !important;
     }
     
@@ -2177,15 +2189,16 @@ ul {
     .service-card,
     .product-card,
     .feature-card,
-    .project-card {
-        transition: opacity 0.3s ease !important;
+    .project-card,
+    .spotlight-product-card {
+        transition: opacity 0.25s ease !important;
     }
     
     /* Simplify image transforms */
     .product-image img,
     .about-image img,
     .project-image img {
-        transition: opacity 0.3s ease !important;
+        transition: opacity 0.25s ease !important;
     }
     
     .product-card:hover .product-image img,
@@ -2241,6 +2254,22 @@ ul {
     
     .project-category-card:hover .project-category-image img {
         transform: none !important;
+    }
+    
+    /* Prevent scroll jank on mobile */
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Optimize rendering */
+    .service-card,
+    .product-card,
+    .feature-card,
+    .project-card,
+    .spotlight-product-card {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
 }
 

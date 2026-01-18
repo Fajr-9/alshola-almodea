@@ -429,6 +429,11 @@ function waitForProductsData(callback, maxAttempts = 100) {
     }, 100);
 }
 
+// Check if device is mobile
+const isMobileDevice = () => {
+    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
 // Initialize animations
 function initializeAnimations() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
@@ -445,28 +450,50 @@ function initializeAnimations() {
         return;
     }
     
+    // Set cards visible immediately to prevent layout shift
     cards.forEach(card => {
         card.style.opacity = '1';
         card.style.visibility = 'visible';
         card.style.display = 'flex';
     });
     
-    gsap.from(cards, {
-        y: 30,
-        scale: 0.95,
-        duration: 0.6,
-        stagger: {
-            amount: 0.4,
-            from: 'start'
-        },
-        ease: 'power2.out',
-        scrollTrigger: {
-            trigger: `.${productPageConfig.gridId.replace('#', '')}`,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-            once: true
-        }
-    });
+    if (isMobileDevice()) {
+        // On mobile: simple fade in only, no movement or scale
+        gsap.from(cards, {
+            opacity: 0,
+            duration: 0.3,
+            stagger: {
+                amount: 0.2,
+                from: 'start'
+            },
+            ease: 'power1.out',
+            scrollTrigger: {
+                trigger: `.${productPageConfig.gridId.replace('#', '')}`,
+                start: 'top 95%',
+                toggleActions: 'play none none none',
+                once: true
+            }
+        });
+    } else {
+        // On desktop: full animation
+        gsap.from(cards, {
+            y: 30,
+            scale: 0.95,
+            opacity: 0,
+            duration: 0.6,
+            stagger: {
+                amount: 0.4,
+                from: 'start'
+            },
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: `.${productPageConfig.gridId.replace('#', '')}`,
+                start: 'top 85%',
+                toggleActions: 'play none none none',
+                once: true
+            }
+        });
+    }
 }
 
 // Setup header scroll behavior
