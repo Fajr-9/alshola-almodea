@@ -2153,6 +2153,162 @@ ul {
 }
 
 /* ============================================
+   Mobile Animation Optimizations
+   ============================================ */
+
+/* Disable complex animations on mobile for better performance */
+@media (max-width: 768px) {
+    /* Disable logo pulse animation on mobile */
+    .logo-img-wrapper::before,
+    .logo-img-wrapper::after {
+        animation: none !important;
+        opacity: 0 !important;
+    }
+    
+    /* Simplify hover effects on mobile */
+    .service-card:hover,
+    .product-card:hover,
+    .feature-card:hover,
+    .project-card:hover {
+        transform: none !important;
+    }
+    
+    /* Disable complex transforms on mobile */
+    .service-card,
+    .product-card,
+    .feature-card,
+    .project-card {
+        transition: opacity 0.3s ease !important;
+    }
+    
+    /* Simplify image transforms */
+    .product-image img,
+    .about-image img,
+    .project-image img {
+        transition: opacity 0.3s ease !important;
+    }
+    
+    .product-card:hover .product-image img,
+    .about-image:hover img,
+    .project-card:hover .project-image img {
+        transform: none !important;
+    }
+    
+    /* Disable parallax on mobile */
+    .hero-image {
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    /* Simplify button hover */
+    .btn:hover {
+        transform: none !important;
+    }
+    
+    /* Simplify social links */
+    .social-link:hover {
+        transform: none !important;
+    }
+    
+    /* Disable feature icon rotation on mobile */
+    .feature-card:hover .feature-icon {
+        transform: none !important;
+        rotation: 0 !important;
+    }
+    
+    /* Simplify accordion image hover */
+    .accordion-image-slot:hover {
+        transform: none !important;
+    }
+    
+    .accordion-image-slot:hover img {
+        transform: none !important;
+    }
+    
+    /* Reduce animation complexity for gallery items */
+    .gallery-item:hover {
+        transform: none !important;
+    }
+    
+    .gallery-item:hover img {
+        transform: none !important;
+    }
+    
+    /* Simplify project category cards */
+    .project-category-card:hover {
+        transform: none !important;
+    }
+    
+    .project-category-card:hover .project-category-image img {
+        transform: none !important;
+    }
+}
+
+/* Extra optimizations for small mobile devices */
+@media (max-width: 480px) {
+    /* Disable all hover effects */
+    *:hover {
+        transform: none !important;
+    }
+    
+    /* Simplify all transitions */
+    * {
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Disable will-change on mobile */
+    * {
+        will-change: auto !important;
+    }
+    
+    /* Prevent layout shifts during animations */
+    .service-card,
+    .product-card,
+    .feature-card,
+    .project-card {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    
+    /* Optimize image rendering */
+    img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Performance optimizations for all mobile devices */
+@media (max-width: 768px) {
+    /* Use GPU acceleration for smoother animations */
+    .service-card,
+    .product-card,
+    .feature-card,
+    .project-card,
+    .hero-content,
+    .section-header {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    
+    /* Reduce repaints */
+    .hero-image {
+        will-change: auto !important;
+    }
+    
+    /* Optimize scrolling */
+    html {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* ============================================
    Responsive Design
    ============================================ */
 

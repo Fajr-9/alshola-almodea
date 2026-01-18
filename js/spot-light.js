@@ -520,10 +520,16 @@ function openDataSheetModal(dataSheetPath, productName) {
     
     // Set up close handlers
     if (closeBtn) {
-        closeBtn.onclick = closeModal;
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            closeModal();
+        };
     }
     if (overlay) {
-        overlay.onclick = closeModal;
+        overlay.onclick = (e) => {
+            e.stopPropagation();
+            closeModal();
+        };
     }
     
     // Close on ESC key

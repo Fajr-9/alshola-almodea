@@ -7,6 +7,33 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
 
+// Check if device is mobile
+const isMobile = () => {
+    return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
+// Simplified animation settings for mobile
+const getAnimationSettings = () => {
+    if (isMobile()) {
+        return {
+            duration: 0.3,
+            ease: 'power1.out',
+            stagger: 0.05,
+            y: 20,
+            scale: 1,
+            rotation: 0
+        };
+    }
+    return {
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.1,
+        y: 50,
+        scale: 0.9,
+        rotation: -180
+    };
+};
+
 // ============================================
 // Header Animation
 // ============================================
@@ -15,11 +42,10 @@ const header = document.getElementById('header');
 let lastScroll = 0;
 
 // Header fade in on page load - keep transparent and light links
+const headerSettings = isMobile() ? { duration: 0.3, ease: 'power1.out', y: -30 } : { duration: 0.8, ease: 'power3.out', y: -100 };
 gsap.from(header, {
-    y: -100,
+    ...headerSettings,
     opacity: 0,
-    duration: 0.8,
-    ease: 'power3.out',
     onComplete: () => {
         if (header) {
             header.style.backgroundColor = 'transparent';
@@ -107,6 +133,7 @@ let currentSlide = 0;
 let slideInterval;
 
 // Initialize hero animations
+const heroAnimSettings = isMobile() ? { y: 20, duration: 0.4, stagger: 0.1, delay: 0.2, ease: 'power1.out' } : { y: 50, duration: 1, stagger: 0.2, delay: 0.5, ease: 'power3.out' };
 heroSlides.forEach((slide, index) => {
     const title = slide.querySelector('.hero-title');
     const subtitle = slide.querySelector('.hero-subtitle');
@@ -115,12 +142,8 @@ heroSlides.forEach((slide, index) => {
     if (index === 0) {
         // Animate first slide on load
         gsap.from([title, subtitle, button], {
-            y: 50,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.2,
-            delay: 0.5,
-            ease: 'power3.out'
+            ...heroAnimSettings,
+            opacity: 0
         });
     }
 });
@@ -141,12 +164,10 @@ function showSlide(index) {
     const subtitle = activeSlide.querySelector('.hero-subtitle');
     const button = activeSlide.querySelector('.btn');
     
+    const slideAnimSettings = isMobile() ? { y: 15, duration: 0.4, stagger: 0.1, ease: 'power1.out' } : { y: 30, duration: 0.8, stagger: 0.15, ease: 'power3.out' };
     gsap.from([title, subtitle, button], {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out'
+        ...slideAnimSettings,
+        opacity: 0
     });
 }
 
@@ -214,20 +235,37 @@ if (heroSlides.length > 0) {
 const serviceCards = document.querySelectorAll('.service-card');
 
 if (serviceCards.length > 0) {
+    const animSettings = getAnimationSettings();
     gsap.utils.toArray(serviceCards).forEach((card, index) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 80%',
-                end: 'bottom 20%',
-                toggleActions: 'play reverse play reverse'
-            },
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            delay: index * 0.1,
-            ease: 'power3.out'
-        });
+        if (isMobile()) {
+            // Simplified animation for mobile - just fade in
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                    once: true
+                },
+                opacity: 0,
+                duration: animSettings.duration,
+                delay: index * animSettings.stagger,
+                ease: animSettings.ease
+            });
+        } else {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    end: 'bottom 20%',
+                    toggleActions: 'play reverse play reverse'
+                },
+                y: animSettings.y,
+                opacity: 0,
+                duration: animSettings.duration,
+                delay: index * animSettings.stagger,
+                ease: animSettings.ease
+            });
+        }
     });
 }
 
@@ -241,28 +279,28 @@ const aboutProjectsSlider = document.getElementById('aboutProjectsSlider');
 const aboutSliderImage = document.getElementById('aboutSliderImage');
 
 if (aboutText && aboutImage) {
+    const aboutAnimSettings = isMobile() ? { x: 0, duration: 0.4, ease: 'power1.out' } : { x: -50, duration: 1, ease: 'power3.out' };
     gsap.from(aboutText, {
         scrollTrigger: {
             trigger: aboutText,
-            start: 'top 80%',
-            toggleActions: 'play reverse play reverse'
+            start: isMobile() ? 'top 90%' : 'top 80%',
+            toggleActions: isMobile() ? 'play none none none' : 'play reverse play reverse',
+            once: isMobile()
         },
-        x: -50,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
+        ...aboutAnimSettings,
+        opacity: 0
     });
     
+    const aboutImageSettings = isMobile() ? { x: 0, duration: 0.4, ease: 'power1.out' } : { x: 50, duration: 1, ease: 'power3.out' };
     gsap.from(aboutImage, {
         scrollTrigger: {
             trigger: aboutImage,
-            start: 'top 80%',
-            toggleActions: 'play reverse play reverse'
+            start: isMobile() ? 'top 90%' : 'top 80%',
+            toggleActions: isMobile() ? 'play none none none' : 'play reverse play reverse',
+            once: isMobile()
         },
-        x: 50,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
+        ...aboutImageSettings,
+        opacity: 0
     });
 }
 
@@ -318,36 +356,53 @@ if (aboutProjectsSlider && aboutSliderImage) {
 const productCards = document.querySelectorAll('.product-card');
 
 if (productCards.length > 0) {
+    const animSettings = getAnimationSettings();
     gsap.utils.toArray(productCards).forEach((card, index) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play reverse play reverse'
-            },
-            scale: 0.8,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: 'back.out(1.2)'
-        });
-        
-        // Hover animation
-        card.addEventListener('mouseenter', () => {
-            gsap.to(card, {
-                scale: 1.02,
-                duration: 0.3,
-                ease: 'power2.out'
+        if (isMobile()) {
+            // Simplified animation for mobile - just fade in
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                    once: true
+                },
+                opacity: 0,
+                duration: animSettings.duration,
+                delay: index * animSettings.stagger,
+                ease: animSettings.ease
             });
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            gsap.to(card, {
-                scale: 1,
-                duration: 0.3,
-                ease: 'power2.out'
+        } else {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play reverse play reverse'
+                },
+                scale: 0.8,
+                opacity: 0,
+                duration: 0.6,
+                delay: index * 0.1,
+                ease: 'back.out(1.2)'
             });
-        });
+            
+            // Hover animation - only on desktop
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, {
+                    scale: 1.02,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    scale: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+        }
     });
 }
 
@@ -358,19 +413,36 @@ if (productCards.length > 0) {
 const projectCards = document.querySelectorAll('.project-card');
 
 if (projectCards.length > 0) {
+    const animSettings = getAnimationSettings();
     gsap.utils.toArray(projectCards).forEach((card, index) => {
-        gsap.from(card, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                toggleActions: 'play reverse play reverse'
-            },
-            scale: 0.9,
-            opacity: 0,
-            duration: 0.8,
-            delay: index * 0.1,
-            ease: 'power3.out'
-        });
+        if (isMobile()) {
+            // Simplified animation for mobile
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                    once: true
+                },
+                opacity: 0,
+                duration: animSettings.duration,
+                delay: index * animSettings.stagger,
+                ease: animSettings.ease
+            });
+        } else {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play reverse play reverse'
+                },
+                scale: 0.9,
+                opacity: 0,
+                duration: 0.8,
+                delay: index * 0.1,
+                ease: 'power3.out'
+            });
+        }
     });
 }
 
@@ -381,37 +453,54 @@ if (projectCards.length > 0) {
 const featureCards = document.querySelectorAll('.feature-card');
 
 if (featureCards.length > 0) {
+    const animSettings = getAnimationSettings();
     gsap.utils.toArray(featureCards).forEach((card, index) => {
         const icon = card.querySelector('.feature-icon');
         const title = card.querySelector('.feature-title');
         const description = card.querySelector('.feature-description');
         
-        gsap.from(icon, {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 80%',
-                toggleActions: 'play reverse play reverse'
-            },
-            scale: 0,
-            rotation: -180,
-            duration: 0.8,
-            delay: index * 0.15,
-            ease: 'back.out(1.5)'
-        });
-        
-        gsap.from([title, description], {
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 80%',
-                toggleActions: 'play reverse play reverse'
-            },
-            y: 20,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.15 + 0.3,
-            stagger: 0.1,
-            ease: 'power3.out'
-        });
+        if (isMobile()) {
+            // Simplified animation for mobile - no rotation or scale
+            gsap.from([icon, title, description], {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                    once: true
+                },
+                opacity: 0,
+                duration: animSettings.duration,
+                delay: index * animSettings.stagger,
+                ease: animSettings.ease
+            });
+        } else {
+            gsap.from(icon, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play reverse play reverse'
+                },
+                scale: 0,
+                rotation: -180,
+                duration: 0.8,
+                delay: index * 0.15,
+                ease: 'back.out(1.5)'
+            });
+            
+            gsap.from([title, description], {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 80%',
+                    toggleActions: 'play reverse play reverse'
+                },
+                y: 20,
+                opacity: 0,
+                duration: 0.6,
+                delay: index * 0.15 + 0.3,
+                stagger: 0.1,
+                ease: 'power3.out'
+            });
+        }
     });
 }
 
@@ -422,16 +511,16 @@ if (featureCards.length > 0) {
 const ctaContent = document.querySelector('.cta-content');
 
 if (ctaContent) {
+    const ctaSettings = isMobile() ? { y: 20, duration: 0.4, ease: 'power1.out' } : { y: 50, duration: 1, ease: 'power3.out' };
     gsap.from(ctaContent, {
         scrollTrigger: {
             trigger: ctaContent,
-            start: 'top 80%',
-            toggleActions: 'play reverse play reverse'
+            start: isMobile() ? 'top 90%' : 'top 80%',
+            toggleActions: isMobile() ? 'play none none none' : 'play reverse play reverse',
+            once: isMobile()
         },
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
+        ...ctaSettings,
+        opacity: 0
     });
 }
 
@@ -442,16 +531,16 @@ if (ctaContent) {
 const footer = document.querySelector('.footer');
 
 if (footer) {
+    const footerSettings = isMobile() ? { y: 20, duration: 0.4, ease: 'power1.out' } : { y: 50, duration: 1, ease: 'power3.out' };
     gsap.from(footer, {
         scrollTrigger: {
             trigger: footer,
-            start: 'top 90%',
-            toggleActions: 'play reverse play reverse'
+            start: isMobile() ? 'top 95%' : 'top 90%',
+            toggleActions: isMobile() ? 'play none none none' : 'play reverse play reverse',
+            once: isMobile()
         },
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: 'power3.out'
+        ...footerSettings,
+        opacity: 0
     });
 }
 
@@ -828,12 +917,12 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ============================================
-// Parallax Effect for Hero
+// Parallax Effect for Hero - Disabled on mobile
 // ============================================
 
 const heroImages = document.querySelectorAll('.hero-image');
 
-if (heroImages.length > 0) {
+if (heroImages.length > 0 && !isMobile()) {
     heroImages.forEach(image => {
         gsap.to(image, {
             scrollTrigger: {
@@ -868,18 +957,19 @@ window.addEventListener('load', () => {
     // Animate section headers
     const sectionHeaders = document.querySelectorAll('.section-header');
     if (sectionHeaders.length > 0) {
+        const headerSettings = isMobile() ? { y: 15, duration: 0.4, delay: 0.05, ease: 'power1.out', once: true } : { y: 30, duration: 0.8, delay: 0.1, ease: 'power3.out', once: false };
         gsap.utils.toArray(sectionHeaders).forEach((header, index) => {
             gsap.from(header, {
                 scrollTrigger: {
                     trigger: header,
-                    start: 'top 85%',
-                    toggleActions: 'play reverse play reverse'
+                    start: isMobile() ? 'top 90%' : 'top 85%',
+                    toggleActions: headerSettings.once ? 'play none none none' : 'play reverse play reverse'
                 },
-                y: 30,
+                y: headerSettings.y,
                 opacity: 0,
-                duration: 0.8,
-                delay: index * 0.1,
-                ease: 'power3.out'
+                duration: headerSettings.duration,
+                delay: index * headerSettings.delay,
+                ease: headerSettings.ease
             });
         });
     }
@@ -887,18 +977,19 @@ window.addEventListener('load', () => {
     // Animate section titles
     const sectionTitles = document.querySelectorAll('.section-title');
     if (sectionTitles.length > 0) {
+        const titleSettings = isMobile() ? { scale: 1, duration: 0.4, delay: 0.03, ease: 'power1.out', once: true } : { scale: 0.9, duration: 0.6, delay: 0.05, ease: 'back.out(1.2)', once: false };
         gsap.utils.toArray(sectionTitles).forEach((title, index) => {
             gsap.from(title, {
                 scrollTrigger: {
                     trigger: title,
-                    start: 'top 85%',
-                    toggleActions: 'play reverse play reverse'
+                    start: isMobile() ? 'top 90%' : 'top 85%',
+                    toggleActions: titleSettings.once ? 'play none none none' : 'play reverse play reverse'
                 },
-                scale: 0.9,
+                scale: titleSettings.scale,
                 opacity: 0,
-                duration: 0.6,
-                delay: index * 0.05,
-                ease: 'back.out(1.2)'
+                duration: titleSettings.duration,
+                delay: index * titleSettings.delay,
+                ease: titleSettings.ease
             });
         });
     }
@@ -906,18 +997,19 @@ window.addEventListener('load', () => {
     // Animate section subtitles
     const sectionSubtitles = document.querySelectorAll('.section-subtitle');
     if (sectionSubtitles.length > 0) {
+        const subtitleSettings = isMobile() ? { y: 10, duration: 0.4, delay: 0.03, ease: 'power1.out', once: true } : { y: 20, duration: 0.6, delay: 0.05, ease: 'power3.out', once: false };
         gsap.utils.toArray(sectionSubtitles).forEach((subtitle, index) => {
             gsap.from(subtitle, {
                 scrollTrigger: {
                     trigger: subtitle,
-                    start: 'top 85%',
-                    toggleActions: 'play reverse play reverse'
+                    start: isMobile() ? 'top 90%' : 'top 85%',
+                    toggleActions: subtitleSettings.once ? 'play none none none' : 'play reverse play reverse'
                 },
-                y: 20,
+                y: subtitleSettings.y,
                 opacity: 0,
-                duration: 0.6,
-                delay: index * 0.05 + 0.2,
-                ease: 'power3.out'
+                duration: subtitleSettings.duration,
+                delay: index * subtitleSettings.delay + (isMobile() ? 0.1 : 0.2),
+                ease: subtitleSettings.ease
             });
         });
     }
@@ -962,16 +1054,17 @@ if (projectsAccordion && accordionImagesGrid) {
             if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
                 const accordionImageSlot = accordionImagesGrid.querySelector('.accordion-image-slot');
                 if (accordionImageSlot) {
+                    const accordionSettings = isMobile() ? { scale: 1, duration: 0.4, ease: 'power1.out', once: true } : { scale: 0.9, duration: 1, ease: 'power3.out', once: false };
                     gsap.from(accordionImageSlot, {
                         scrollTrigger: {
                             trigger: projectsAccordion,
-                            start: 'top 80%',
-                            toggleActions: 'play reverse play reverse'
+                            start: isMobile() ? 'top 90%' : 'top 80%',
+                            toggleActions: accordionSettings.once ? 'play none none none' : 'play reverse play reverse'
                         },
-                        scale: 0.9,
+                        scale: accordionSettings.scale,
                         opacity: 0,
-                        duration: 1,
-                        ease: 'power3.out'
+                        duration: accordionSettings.duration,
+                        ease: accordionSettings.ease
                     });
                 }
             }
