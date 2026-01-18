@@ -493,10 +493,14 @@ function setupProductModal() {
                     imgEl.style.display = 'block';
                     imgEl.style.objectFit = 'contain';
                 }
-                // Update data sheet link - open in new tab to view PNG
-                pdfEl.href = productDataSheet;
-                pdfEl.target = '_blank';
-                pdfEl.download = '';
+                // Update data sheet button to open modal
+                if (pdfEl) {
+                    pdfEl.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openDataSheetModal(productDataSheet, productName);
+                    };
+                }
                 
                 // Setup thumbnail gallery
                 if (thumbnailGallery) {
@@ -629,4 +633,65 @@ function setupProductModal() {
             closeModal();
         }
     });
+}
+
+// Open Data Sheet Modal
+function openDataSheetModal(dataSheetPath, productName) {
+    const modal = document.getElementById('dataSheetModal');
+    const modalImage = document.getElementById('datasheetModalImage');
+    const closeBtn = modal?.querySelector('.datasheet-modal-close');
+    const overlay = modal?.querySelector('.datasheet-modal-overlay');
+    
+    if (!modal || !modalImage) {
+        console.error('Data Sheet Modal not found');
+        return;
+    }
+    
+    // Clear previous image and handlers
+    modalImage.src = '';
+    modalImage.onload = null;
+    modalImage.onerror = null;
+    
+    // Close function
+    function closeModal() {
+        modal.classList.remove('active');
+        // Clear image after closing
+        setTimeout(() => {
+            modalImage.src = '';
+            modalImage.onload = null;
+            modalImage.onerror = null;
+        }, 300);
+    }
+    
+    // Set up close handlers
+    if (closeBtn) {
+        closeBtn.onclick = closeModal;
+    }
+    if (overlay) {
+        overlay.onclick = closeModal;
+    }
+    
+    // Close on ESC key
+    const escHandler = (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+    
+    // Load image
+    modalImage.onload = () => {
+        modal.classList.add('active');
+    };
+    
+    modalImage.onerror = () => {
+        console.error('Failed to load data sheet:', dataSheetPath);
+        modalImage.alt = 'Data Sheet not found';
+        modal.classList.add('active');
+    };
+    
+    // Set image source
+    modalImage.src = dataSheetPath;
+    modalImage.alt = `Data Sheet - ${productName}`;
 }

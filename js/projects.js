@@ -137,16 +137,16 @@ const projectsData = [
         ]
     },
     {
-        id: 'mousqe',
-        title: 'Mousqe',
+        id: 'mosque',
+        title: 'Mosque',
         subtitle: 'Religious Architecture',
-        image: 'assets/Alshola Projcts/Mousqe/P1.webp',
+        image: 'assets/Alshola Projcts/Mosque/P1.webp',
         images: [
-            'assets/Alshola Projcts/Mousqe/P1.webp',
-            'assets/Alshola Projcts/Mousqe/P2.webp',
-            'assets/Alshola Projcts/Mousqe/P3.webp',
-            'assets/Alshola Projcts/Mousqe/P4.webp',
-            'assets/Alshola Projcts/Mousqe/P5.webp'
+            'assets/Alshola Projcts/Mosque/P1.webp',
+            'assets/Alshola Projcts/Mosque/P2.webp',
+            'assets/Alshola Projcts/Mosque/P3.webp',
+            'assets/Alshola Projcts/Mosque/P4.webp',
+            'assets/Alshola Projcts/Mosque/P5.webp'
         ]
     }
 ];
@@ -176,6 +176,29 @@ function initializeProjectsGrid() {
         if (!projectsData || projectsData.length === 0) {
             console.error('projectsData is empty or not defined');
             return;
+        }
+        
+        // Hide gallery section and its elements when showing categories
+        if (projectsGallery) {
+            projectsGallery.style.display = 'none';
+            projectsGallery.style.opacity = '0';
+            projectsGallery.style.visibility = 'hidden';
+        }
+        
+        if (backButton) {
+            backButton.style.display = 'none';
+        }
+        
+        if (galleryTitle) {
+            galleryTitle.textContent = '';
+            galleryTitle.style.display = 'none';
+        }
+        
+        // Ensure categories section is visible
+        if (projectsCategoriesSection) {
+            projectsCategoriesSection.style.display = 'block';
+            projectsCategoriesSection.style.opacity = '1';
+            projectsCategoriesSection.style.visibility = 'visible';
         }
         
         console.log('Creating project cards, count:', projectsData.length);
@@ -232,7 +255,7 @@ function initializeProjectsGrid() {
         });
                 } catch (error) {
                     console.error('Error animating cards:', error);
-                    // Fallback: ensure cards are visible
+        // Fallback: ensure cards are visible
                     cards.forEach(card => {
                         card.style.opacity = '1';
                         card.style.visibility = 'visible';
@@ -377,8 +400,14 @@ function showProjectsGallery(projectId) {
     
     // Wait a bit to ensure cleanup is complete
     setTimeout(() => {
-    // Update title
+    // Update title and show it
     galleryTitle.textContent = project.title;
+    galleryTitle.style.display = 'block';
+    
+    // Show back button
+    if (backButton) {
+        backButton.style.display = 'inline-flex';
+    }
     
         // Reset gallery grid
         galleryGrid.style.display = '';
@@ -736,6 +765,16 @@ if (backButton) {
                     projectsGallery.style.display = 'none';
                     projectsGallery.style.opacity = '0';
                     projectsGallery.style.visibility = 'hidden';
+                    
+                    // Hide back button and gallery title
+                    if (backButton) {
+                        backButton.style.display = 'none';
+                    }
+                    if (galleryTitle) {
+                        galleryTitle.textContent = '';
+                        galleryTitle.style.display = 'none';
+                    }
+                    
                     projectsCategoriesSection.style.display = 'block';
                     projectsCategoriesSection.style.opacity = '1';
                     projectsCategoriesSection.style.visibility = 'visible';
@@ -782,6 +821,16 @@ if (backButton) {
             projectsGallery.style.display = 'none';
             projectsGallery.style.opacity = '0';
             projectsGallery.style.visibility = 'hidden';
+            
+            // Hide back button and gallery title
+            if (backButton) {
+                backButton.style.display = 'none';
+            }
+            if (galleryTitle) {
+                galleryTitle.textContent = '';
+                galleryTitle.style.display = 'none';
+            }
+            
             projectsCategoriesSection.style.display = 'block';
             projectsCategoriesSection.style.opacity = '1';
             projectsCategoriesSection.style.visibility = 'visible';
@@ -825,6 +874,25 @@ let currentLightboxIndex = 0;
 function openLightbox(images, index, title) {
     if (!lightboxModal || !lightboxImage) return;
     
+    // Kill any existing GSAP animations on the image
+    if (typeof gsap !== 'undefined') {
+        gsap.killTweensOf(lightboxImage);
+        gsap.killTweensOf(lightboxModal);
+    }
+    
+    // Clear previous image and handlers first - CRITICAL for second open
+    lightboxImage.src = '';
+    lightboxImage.onload = null;
+    lightboxImage.onerror = null;
+    
+    // Reset image styles
+    lightboxImage.style.opacity = '0';
+    lightboxImage.style.visibility = 'hidden';
+    lightboxImage.style.transform = 'scale(0.8)';
+    
+    // Reset modal styles
+    lightboxModal.style.opacity = '0';
+    
     currentLightboxImages = images;
     currentLightboxIndex = index;
     
@@ -832,48 +900,82 @@ function openLightbox(images, index, title) {
     // This ensures all image formats (jpg, jpeg, png, webp, gif, svg, etc.) are supported
     const imagePath = images[index];
     const encodedImagePath = encodeURI(imagePath);
-    lightboxImage.src = encodedImagePath;
-    lightboxImage.alt = `${title} ${index + 1}`;
-    
-    // Add error handler to retry with original path if encoded fails (localhost fallback)
-    lightboxImage.onerror = function() {
-        if (this.src === encodedImagePath) {
-            // Try with original path as fallback
-            this.src = imagePath;
-            return;
-        }
-        this.onerror = null; // Prevent infinite loop
-    };
     
     // Update counter
     if (lightboxCounter) {
         lightboxCounter.textContent = `${index + 1} / ${images.length}`;
     }
     
-    // Show lightbox
+    // Show lightbox first
     lightboxModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     
+    // Function to load image with retry mechanism
+    function loadImage() {
+        // Clear handlers again before setting new ones
+        lightboxImage.onload = null;
+        lightboxImage.onerror = null;
+        
+        lightboxImage.alt = `${title} ${index + 1}`;
+        
+        // Add onload handler FIRST before setting src
+        lightboxImage.onload = function() {
+            this.style.opacity = '1';
+            this.style.visibility = 'visible';
+            this.style.display = 'block';
+        };
+        
+        // Add error handler to retry with original path if encoded fails (localhost fallback)
+        lightboxImage.onerror = function() {
+            if (this.src === encodedImagePath) {
+                // Try with original path as fallback
+                this.src = imagePath;
+                return;
+            }
+            this.onerror = null; // Prevent infinite loop
+        };
+        
+        // Set src AFTER handlers are set
+        lightboxImage.src = encodedImagePath;
+    }
+    
+    // Small delay to ensure modal is visible before loading image
+    setTimeout(() => {
+        loadImage();
+    
     // Animate in
     if (typeof gsap !== 'undefined') {
-        gsap.from(lightboxModal, {
-            opacity: 0,
+            gsap.to(lightboxModal, {
+                opacity: 1,
             duration: 0.3,
             ease: 'power2.out'
         });
         
-        gsap.from(lightboxImage, {
-            scale: 0.8,
-            opacity: 0,
+            gsap.to(lightboxImage, {
+                scale: 1,
+                opacity: 1,
             duration: 0.4,
             ease: 'power3.out',
             delay: 0.1
         });
-    }
+        } else {
+            // Fallback without GSAP
+            lightboxModal.style.opacity = '1';
+            lightboxImage.style.opacity = '1';
+            lightboxImage.style.visibility = 'visible';
+            lightboxImage.style.transform = 'scale(1)';
+        }
+    }, 50);
 }
 
 function closeLightbox() {
-    if (!lightboxModal) return;
+    if (!lightboxModal || !lightboxImage) return;
+    
+    // Kill any existing GSAP animations
+    if (typeof gsap !== 'undefined') {
+        gsap.killTweensOf(lightboxImage);
+        gsap.killTweensOf(lightboxModal);
+    }
     
     if (typeof gsap !== 'undefined') {
         gsap.to(lightboxModal, {
@@ -883,11 +985,27 @@ function closeLightbox() {
             onComplete: () => {
                 lightboxModal.style.display = 'none';
                 document.body.style.overflow = '';
+                // Clear image and handlers after closing - CRITICAL for next open
+                lightboxImage.src = '';
+                lightboxImage.onload = null;
+                lightboxImage.onerror = null;
+                lightboxImage.style.opacity = '0';
+                lightboxImage.style.visibility = 'hidden';
+                lightboxImage.style.transform = 'scale(0.8)';
+                lightboxModal.style.opacity = '0';
             }
         });
     } else {
         lightboxModal.style.display = 'none';
         document.body.style.overflow = '';
+        // Clear image and handlers after closing - CRITICAL for next open
+        lightboxImage.src = '';
+        lightboxImage.onload = null;
+        lightboxImage.onerror = null;
+        lightboxImage.style.opacity = '0';
+        lightboxImage.style.visibility = 'hidden';
+        lightboxImage.style.transform = 'scale(0.8)';
+        lightboxModal.style.opacity = '0';
     }
 }
 
@@ -908,13 +1026,34 @@ function showPrevImage() {
 function updateLightboxImage() {
     if (!lightboxImage || currentLightboxImages.length === 0) return;
     
+    // Kill any existing GSAP animations on the image
+    if (typeof gsap !== 'undefined') {
+        gsap.killTweensOf(lightboxImage);
+    }
+    
     const imagePath = currentLightboxImages[currentLightboxIndex];
     const encodedImagePath = encodeURI(imagePath); // Use encodeURI for proper URL encoding
     
-    // Function to set image with retry mechanism
+    // Update counter
+    if (lightboxCounter) {
+        lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
+    }
+    
+    // Function to load image with retry mechanism
     // This ensures all image formats (jpg, jpeg, png, webp, gif, svg, etc.) are supported
-    function setImageSrc(path) {
-        lightboxImage.src = path;
+    function loadNewImage() {
+        // Clear previous handlers
+        lightboxImage.onload = null;
+        lightboxImage.onerror = null;
+        
+        // Add onload handler FIRST before setting src
+        lightboxImage.onload = function() {
+            this.style.opacity = '1';
+            this.style.visibility = 'visible';
+            this.style.display = 'block';
+        };
+        
+        // Add error handler to retry with original path if encoded fails (localhost fallback)
         lightboxImage.onerror = function() {
             if (this.src === encodedImagePath) {
                 // Try with original path as fallback (localhost compatibility)
@@ -923,6 +1062,9 @@ function updateLightboxImage() {
             }
             this.onerror = null; // Prevent infinite loop
         };
+        
+        // Set new image source AFTER handlers are set
+        lightboxImage.src = encodedImagePath;
     }
     
     if (typeof gsap !== 'undefined') {
@@ -932,10 +1074,11 @@ function updateLightboxImage() {
             duration: 0.2,
             ease: 'power2.in',
             onComplete: () => {
-                setImageSrc(encodedImagePath);
-                if (lightboxCounter) {
-                    lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
-                }
+                // Clear previous image before loading new one
+                lightboxImage.src = '';
+                // Load new image
+                loadNewImage();
+                // Animate in
                 gsap.to(lightboxImage, {
                     opacity: 1,
                     scale: 1,
@@ -945,10 +1088,13 @@ function updateLightboxImage() {
             }
         });
     } else {
-        setImageSrc(encodedImagePath);
-        if (lightboxCounter) {
-            lightboxCounter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
-        }
+        // Clear previous image before loading new one
+        lightboxImage.src = '';
+        // Load new image
+        loadNewImage();
+        lightboxImage.style.opacity = '1';
+        lightboxImage.style.visibility = 'visible';
+        lightboxImage.style.transform = 'scale(1)';
     }
 }
 
