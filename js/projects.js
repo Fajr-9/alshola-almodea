@@ -646,6 +646,15 @@ function showProjectsGallery(projectId) {
                     top: 0,
                     behavior: 'smooth'
                 });
+                
+                // Make header white when gallery is shown (no hero section)
+                const header = document.getElementById('header');
+                if (header) {
+                    header.classList.add('scrolled');
+                    header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+                    header.style.backdropFilter = 'blur(10px)';
+                    header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+                }
             }
         });
     } else {
@@ -654,6 +663,15 @@ function showProjectsGallery(projectId) {
         projectsGallery.style.display = 'block';
             projectsGallery.style.opacity = '1';
             projectsGallery.style.visibility = 'visible';
+        
+        // Make header white when gallery is shown (no hero section)
+        const header = document.getElementById('header');
+        if (header) {
+            header.classList.add('scrolled');
+            header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+            header.style.backdropFilter = 'blur(10px)';
+            header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        }
         
         // Ensure all gallery items are visible
         const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
@@ -758,6 +776,19 @@ if (backButton) {
                     projectsCategoriesSection.style.opacity = '1';
                     projectsCategoriesSection.style.visibility = 'visible';
                     
+                    // Reset header to transparent when back to categories (has hero section)
+                    const header = document.getElementById('header');
+                    if (header) {
+                        const currentScroll = window.pageYOffset || window.scrollY;
+                        const heroSection = document.querySelector('.hero');
+                        if (heroSection && currentScroll < heroSection.offsetHeight - 50) {
+                            header.classList.remove('scrolled');
+                            header.style.backgroundColor = 'transparent';
+                            header.style.backdropFilter = 'none';
+                            header.style.boxShadow = 'none';
+                        }
+                    }
+                    
                     // Ensure all cards are visible
                     if (projectsGrid) {
                         projectsGrid.style.opacity = '1';
@@ -813,6 +844,19 @@ if (backButton) {
             projectsCategoriesSection.style.display = 'block';
             projectsCategoriesSection.style.opacity = '1';
             projectsCategoriesSection.style.visibility = 'visible';
+            
+            // Reset header to transparent when back to categories (has hero section)
+            const header = document.getElementById('header');
+            if (header) {
+                const currentScroll = window.pageYOffset || window.scrollY;
+                const heroSection = document.querySelector('.hero');
+                if (heroSection && currentScroll < heroSection.offsetHeight - 50) {
+                    header.classList.remove('scrolled');
+                    header.style.backgroundColor = 'transparent';
+                    header.style.backdropFilter = 'none';
+                    header.style.boxShadow = 'none';
+                }
+            }
             
             // Ensure all cards are visible
             if (projectsGrid) {

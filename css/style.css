@@ -2032,8 +2032,8 @@ ul {
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
     margin-bottom: 24px;
 }
 
@@ -2772,12 +2772,9 @@ ul {
     
     /* Ensure footer logo has same mix-blend-mode as header on mobile */
     .footer-logo .logo-img {
-        mix-blend-mode: darken;
-    }
-    
-    .footer-logo .logo-img {
         width: 75px;
         height: 75px;
+        mix-blend-mode: darken;
     }
     
     .footer-logo .logo-text {
