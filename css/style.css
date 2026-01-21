@@ -3272,14 +3272,14 @@ ul {
     display: block !important;
     object-fit: cover;
     object-position: center center;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
     filter: brightness(1) contrast(1.05);
     opacity: 1 !important;
     visibility: visible !important;
     image-rendering: -webkit-optimize-contrast;
     border-radius: 12px;
     min-height: 100px;
-    background: transparent;
+    background: #f5f5f5;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     -webkit-transform: translateZ(0);
@@ -3287,6 +3287,39 @@ ul {
     will-change: transform;
     position: relative;
     z-index: 1;
+}
+
+/* Lazy loading placeholder */
+.gallery-item img[data-src] {
+    opacity: 0.3;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.gallery-item img[data-src]:not([src=""]) {
+    opacity: 1;
+    background: transparent;
+    animation: none;
+}
+
+/* Ensure lazy loaded images fade in smoothly */
+.gallery-item img[data-src] {
+    transition: opacity 0.4s ease, background 0.4s ease;
+}
+
+.gallery-item img:not([data-src]) {
+    opacity: 1 !important;
+    background: transparent !important;
 }
 
 .gallery-item:hover img {

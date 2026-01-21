@@ -194,8 +194,6 @@ function initializeProjectsGrid() {
             projectsCategoriesSection.style.visibility = 'visible';
         }
         
-        console.log('Creating project cards, count:', projectsData.length);
-    
     projectsGrid.innerHTML = '';
     
     projectsData.forEach((project, index) => {
@@ -210,7 +208,6 @@ function initializeProjectsGrid() {
     });
     
         const cards = projectsGrid.querySelectorAll('.project-category-card');
-        console.log('Created cards:', cards.length);
         
         // Ensure cards are visible immediately
         cards.forEach(card => {
@@ -311,9 +308,23 @@ function createProjectCard(project, index) {
         </div>
     `;
     
-    // Add click handler
-    card.addEventListener('click', () => {
-        showProjectsGallery(project.id);
+    // Add click handler with error handling
+    card.addEventListener('click', (e) => {
+        try {
+            e.preventDefault();
+            e.stopPropagation();
+            showProjectsGallery(project.id);
+        } catch (error) {
+            console.error('Error opening gallery:', error);
+            // Fallback: try again after a short delay
+            setTimeout(() => {
+                try {
+                    showProjectsGallery(project.id);
+                } catch (retryError) {
+                    console.error('Retry failed:', retryError);
+                }
+            }, 100);
+        }
     });
     
     return card;
@@ -326,48 +337,66 @@ function createProjectCard(project, index) {
 function clearGallery() {
     if (!galleryGrid) return;
     
-    // Remove all event listeners and clear images
-    const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-    galleryItems.forEach(item => {
-        const img = item.querySelector('img');
-        if (img) {
-            // Cancel any pending image loads
-            img.src = '';
-            img.onload = null;
-            img.onerror = null;
+    try {
+        // Disconnect any existing IntersectionObserver
+        if (window.galleryImageObserver) {
+            window.galleryImageObserver.disconnect();
+            window.galleryImageObserver = null;
         }
-        // Remove event listeners
-        const newItem = item.cloneNode(false);
-        item.parentNode?.replaceChild(newItem, item);
-    });
-    
-    // Remove all child elements
-    while (galleryGrid.firstChild) {
-        galleryGrid.removeChild(galleryGrid.firstChild);
-    }
-    
-    // Clear all styles and reset
-    galleryGrid.innerHTML = '';
-    galleryGrid.style.display = 'none';
-    galleryGrid.style.opacity = '0';
-    galleryGrid.style.visibility = 'hidden';
-    
-    // Force reflow
-    void galleryGrid.offsetHeight;
-    
-    // Clear any pending timeouts or intervals
-    if (window.galleryClearTimeout) {
-        clearTimeout(window.galleryClearTimeout);
-    }
-    
-    // Clear any preload images
-    if (window.preloadImages) {
-        window.preloadImages.forEach(img => {
-            img.onload = null;
-            img.onerror = null;
-            img.src = '';
+        
+        // Remove all event listeners and clear images
+        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+        galleryItems.forEach(item => {
+            const img = item.querySelector('img');
+            if (img) {
+                // Cancel any pending image loads
+                img.src = '';
+                img.onload = null;
+                img.onerror = null;
+                // Clear dataset attributes
+                img.removeAttribute('data-src');
+                img.removeAttribute('data-simple-encoded');
+                img.removeAttribute('data-original-path');
+            }
         });
-        window.preloadImages = [];
+        
+        // Remove all child elements
+        while (galleryGrid.firstChild) {
+            galleryGrid.removeChild(galleryGrid.firstChild);
+        }
+        
+        // Clear all styles and reset
+        galleryGrid.innerHTML = '';
+        galleryGrid.style.display = 'none';
+        galleryGrid.style.opacity = '0';
+        galleryGrid.style.visibility = 'hidden';
+        
+        // Force reflow
+        void galleryGrid.offsetHeight;
+        
+        // Clear any pending timeouts or intervals
+        if (window.galleryClearTimeout) {
+            clearTimeout(window.galleryClearTimeout);
+            window.galleryClearTimeout = null;
+        }
+        
+        // Clear any preload images
+        if (window.preloadImages) {
+            window.preloadImages.forEach(img => {
+                if (img) {
+                    img.onload = null;
+                    img.onerror = null;
+                    img.src = '';
+                }
+            });
+            window.preloadImages = [];
+        }
+    } catch (error) {
+        console.error('Error clearing gallery:', error);
+        // Fallback: just clear innerHTML
+        if (galleryGrid) {
+            galleryGrid.innerHTML = '';
+        }
     }
 }
 
@@ -382,9 +411,14 @@ function showProjectsGallery(projectId) {
         return;
     }
     
-    console.log('Loading gallery for project:', project.title);
-    console.log('Project ID:', projectId);
-    console.log('Number of images:', project.images.length);
+    // Log only in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('Loading gallery for project:', project.title);
+        console.log('Number of images:', project.images.length);
+    }
+    
+    // Check if mobile for optimized loading
+    const isMobile = window.innerWidth <= 768;
     
     // Clear gallery completely first
     clearGallery();
@@ -396,22 +430,28 @@ function showProjectsGallery(projectId) {
     
     // Wait a bit to ensure cleanup is complete
     setTimeout(() => {
-    // Update title and show it
-    galleryTitle.textContent = project.title;
-    galleryTitle.style.display = 'block';
-    
-    // Show back button
-    if (backButton) {
-        backButton.style.display = 'inline-flex';
-    }
-    
-        // Reset gallery grid
-        galleryGrid.style.display = '';
-        galleryGrid.style.opacity = '1';
-        galleryGrid.style.visibility = 'visible';
-    
-        // Create gallery items with proper image loading
-    project.images.forEach((imagePath, index) => {
+        try {
+            // Update title and show it
+            galleryTitle.textContent = project.title;
+            galleryTitle.style.display = 'block';
+            
+            // Show back button
+            if (backButton) {
+                backButton.style.display = 'inline-flex';
+            }
+            
+            // Reset gallery grid
+            galleryGrid.style.display = '';
+            galleryGrid.style.opacity = '1';
+            galleryGrid.style.visibility = 'visible';
+            
+            // Create gallery items with proper image loading
+            // On mobile, load first 8 images eagerly, rest lazily
+            // On desktop, load all images but use lazy loading for better performance
+            const batchSize = isMobile ? 8 : 12; // Load more on desktop
+            const imagesToLoad = project.images; // Load all images, just optimize loading strategy
+        
+    imagesToLoad.forEach((imagePath, index) => {
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
         galleryItem.setAttribute('data-image-index', index);
@@ -420,7 +460,9 @@ function showProjectsGallery(projectId) {
             // Create image with proper loading
         const img = document.createElement('img');
         img.alt = `${project.title} ${index + 1}`;
-            img.loading = 'eager';
+            // Use lazy loading on mobile to prevent memory issues
+            // Load first batch eagerly, rest lazily
+            img.loading = (isMobile && index >= batchSize) ? 'lazy' : 'eager';
             
             // Set styles to ensure visibility
         img.style.width = '100%';
@@ -445,20 +487,36 @@ function showProjectsGallery(projectId) {
             // Also try original encodeURI for fallback
             const simpleEncoded = encodeURI(imagePath);
             
-            // Try encoded path first (required for server with spaces in paths)
-            img.src = encodedImagePath;
+            // Use lazy loading for images beyond first batch
+            if (index >= batchSize) {
+                // Use IntersectionObserver for lazy loading
+                img.dataset.src = encodedImagePath;
+                img.dataset.simpleEncoded = simpleEncoded;
+                img.dataset.originalPath = imagePath;
+                // Set placeholder to maintain layout
+                img.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f5f5f5\' width=\'400\' height=\'300\'/%3E%3C/svg%3E';
+            } else {
+                // Try encoded path first (required for server with spaces in paths)
+                img.src = encodedImagePath;
+            }
             
-            // Force image to be visible immediately
-            img.style.opacity = '1';
-            img.style.visibility = 'visible';
+            // Set initial styles
             img.style.display = 'block';
+            img.style.visibility = 'visible';
+            
+            // For lazy loaded images, keep opacity low until loaded
+            if (index >= batchSize) {
+                img.style.opacity = '0.3';
+            } else {
+                img.style.opacity = '1';
+            }
             
             // Single onload handler
             img.onload = function() {
                 this.style.opacity = '1';
                 this.style.visibility = 'visible';
                 this.style.display = 'block';
-                console.log('Image loaded successfully:', this.src);
+                this.style.background = 'transparent';
             };
             
             // Check if image is already loaded (cached)
@@ -466,7 +524,6 @@ function showProjectsGallery(projectId) {
                 img.style.opacity = '1';
                 img.style.visibility = 'visible';
                 img.style.display = 'block';
-                console.log('Image already cached:', img.src);
             }
             
             // Add error handling with retry mechanism
@@ -477,19 +534,16 @@ function showProjectsGallery(projectId) {
             
             img.onerror = function() {
                 retryCount++;
-                console.error('Failed to load image (attempt ' + retryCount + '):', this.src, 'for project:', project.title, 'isWebP:', isWebP);
                 
                 // Retry strategies
                 if (retryCount === 1) {
                     // Try 1: Simple encodeURI (less aggressive encoding)
-                    console.log('Retrying with simple encodeURI:', simpleEncoded);
                     this.src = simpleEncoded;
                     return;
                 }
                 
                 if (retryCount === 2) {
                     // Try 2: Original path (may work on localhost)
-                    console.log('Retrying with original path:', imagePath);
                     this.src = imagePath;
                     return;
                 }
@@ -497,14 +551,12 @@ function showProjectsGallery(projectId) {
                 if (retryCount === 3) {
                     // Try 3: Replace spaces with %20 manually for problematic paths
                     const manualEncoded = imagePath.replace(/ /g, '%20').replace(/&/g, '%26');
-                    console.log('Retrying with manual encoding:', manualEncoded);
                     this.src = manualEncoded;
                     return;
                 }
                 
                 // If all attempts failed, show placeholder
                 this.onerror = null; // Prevent infinite loop
-                console.error('All retry attempts failed for:', imagePath);
                 this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f0f0f0\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E';
                 this.style.opacity = '1';
                 this.style.visibility = 'visible';
@@ -520,11 +572,95 @@ function showProjectsGallery(projectId) {
         
         // Add click handler to open lightbox
         galleryItem.addEventListener('click', () => {
+            // Use all images for lightbox, not just loaded ones
             openLightbox(project.images, index, project.title);
         });
         
         galleryGrid.appendChild(galleryItem);
     });
+    
+    // Setup IntersectionObserver for lazy loading (works on all devices)
+    if (typeof IntersectionObserver !== 'undefined') {
+        // Disconnect any existing observer
+        if (window.galleryImageObserver) {
+            window.galleryImageObserver.disconnect();
+        }
+        
+        window.galleryImageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        // Load image with retry mechanism
+                        const encodedPath = img.dataset.src;
+                        const simpleEncoded = img.dataset.simpleEncoded;
+                        const originalPath = img.dataset.originalPath;
+                        
+                        // Set src and handle loading
+                        img.src = encodedPath;
+                        
+                        // Add onload handler to remove placeholder and fade in
+                        img.onload = function() {
+                            // Fade in smoothly
+                            this.style.transition = 'opacity 0.4s ease, background 0.4s ease';
+                            this.style.opacity = '1';
+                            this.style.background = 'transparent';
+                            // Remove placeholder attributes
+                            this.removeAttribute('data-src');
+                            this.removeAttribute('data-simple-encoded');
+                            this.removeAttribute('data-original-path');
+                            observer.unobserve(this);
+                        };
+                        
+                        // Add error handling with retry
+                        let retryCount = 0;
+                        img.onerror = function() {
+                            retryCount++;
+                            if (retryCount === 1 && this.src === encodedPath && simpleEncoded) {
+                                this.src = simpleEncoded;
+                                return;
+                            }
+                            if (retryCount === 2 && this.src === simpleEncoded && originalPath) {
+                                this.src = originalPath;
+                                return;
+                            }
+                            this.onerror = null; // Prevent infinite loop
+                            this.style.opacity = '1';
+                            this.style.background = '#f0f0f0';
+                            // Clean up even on error
+                            this.removeAttribute('data-src');
+                            this.removeAttribute('data-simple-encoded');
+                            this.removeAttribute('data-original-path');
+                            observer.unobserve(this);
+                        };
+                    }
+                }
+            });
+        }, {
+            rootMargin: isMobile ? '150px' : '200px', // Start loading before image is visible
+            threshold: 0.01
+        });
+        
+        // Observe all lazy-loaded images after a short delay
+        setTimeout(() => {
+            try {
+                const lazyImages = galleryGrid.querySelectorAll('img[data-src]');
+                lazyImages.forEach(img => {
+                    try {
+                        window.galleryImageObserver.observe(img);
+                    } catch (err) {
+                        // If observation fails, load image immediately
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Error setting up image observer:', err);
+            }
+        }, 100);
+    }
         
         // Show gallery grid after all items are added
         galleryGrid.style.display = '';
@@ -540,20 +676,25 @@ function showProjectsGallery(projectId) {
             
             const img = item.querySelector('img');
             if (img) {
-                img.style.opacity = '1';
-                img.style.visibility = 'visible';
+                // Only set opacity for images that are loaded (not lazy ones)
+                if (!img.dataset.src) {
+                    img.style.opacity = '1';
+                    img.style.visibility = 'visible';
+                }
                 img.style.display = 'block';
             }
         });
         
         // Force reflow to ensure layout
         void galleryGrid.offsetHeight;
-    
-    console.log(`Created ${project.images.length} gallery items for ${project.title}`);
         
-        // Verify all images are added to DOM
-        const addedItems = galleryGrid.querySelectorAll('.gallery-item');
-        console.log(`Total gallery items in DOM: ${addedItems.length}`);
+        } catch (error) {
+            console.error('Error creating gallery:', error);
+            // Show error message to user
+            if (galleryGrid) {
+                galleryGrid.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;"><p>Error loading gallery. Please try again.</p></div>';
+            }
+        }
     
     // Animate transition
     if (typeof gsap !== 'undefined') {
@@ -1189,14 +1330,25 @@ function initProjects() {
         return; // Not on projects page
     }
     
-    console.log('Initializing projects grid...');
-    initializeProjectsGrid();
-    
-    // Refresh ScrollTrigger if available
-    if (typeof ScrollTrigger !== 'undefined') {
+    try {
+        initializeProjectsGrid();
+        
+        // Refresh ScrollTrigger if available
+        if (typeof ScrollTrigger !== 'undefined') {
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 200);
+        }
+    } catch (error) {
+        console.error('Error initializing projects:', error);
+        // Fallback: try again after a delay
         setTimeout(() => {
-            ScrollTrigger.refresh();
-        }, 200);
+            try {
+                initializeProjectsGrid();
+            } catch (retryError) {
+                console.error('Retry failed:', retryError);
+            }
+        }, 500);
     }
 }
 
@@ -1228,7 +1380,6 @@ window.addEventListener('load', () => {
 // Fallback: Try to initialize after a longer delay
 setTimeout(() => {
     if (projectsGrid && projectsGrid.children.length === 0) {
-        console.log('Fallback: Initializing projects grid...');
         initProjects();
     }
 }, 500);
