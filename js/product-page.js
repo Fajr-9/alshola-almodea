@@ -496,27 +496,51 @@ function initializeAnimations() {
     }
 }
 
-// Setup header scroll behavior
+// Setup header scroll behavior - Optimized for mobile performance
 function setupHeaderScroll() {
     const header = document.getElementById('header');
     if (!header) return;
 
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
+    let scrollTimeout;
+    let isScrolling = false;
+
+    function updateHeader() {
+        if (!header) return;
+        
+        const currentScroll = window.pageYOffset || window.scrollY;
         const heroSection = document.querySelector('.spot-hero');
         
         if (heroSection) {
             const heroHeight = heroSection.offsetHeight;
             
             if (currentScroll > heroHeight - 50) {
-                header.classList.add('scrolled');
+                if (!header.classList.contains('scrolled')) {
+                    header.classList.add('scrolled');
+                    header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+                    header.style.backdropFilter = 'blur(10px)';
+                    header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+                }
             } else {
-                header.classList.remove('scrolled');
-                header.style.backgroundColor = 'transparent';
-                header.style.backdropFilter = 'none';
-                header.style.boxShadow = 'none';
+                if (header.classList.contains('scrolled')) {
+                    header.classList.remove('scrolled');
+                    header.style.backgroundColor = 'transparent';
+                    header.style.backdropFilter = 'none';
+                    header.style.boxShadow = 'none';
+                }
             }
         }
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!isScrolling) {
+            window.requestAnimationFrame(updateHeader);
+            isScrolling = true;
+        }
+        
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+        }, 150);
     }, { passive: true });
 }
 

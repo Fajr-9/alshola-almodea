@@ -285,16 +285,19 @@ function createProjectCard(project, index) {
     card.style.visibility = 'visible';
     card.style.display = 'block';
     
-    // Use encodeURI for proper URL encoding (works on both localhost and server)
-    // This ensures all image formats (jpg, jpeg, png, webp, gif, svg, etc.) are supported
-    const encodedImagePath = encodeURI(project.image);
+    // Use proper URL encoding for paths with spaces and special characters
+    // Split path and encode each segment properly
+    const pathParts = project.image.split('/');
+    const encodedParts = pathParts.map(part => encodeURIComponent(part));
+    const encodedImagePath = encodedParts.join('/');
+    const simpleEncoded = encodeURI(project.image);
     const originalImagePath = project.image;
     
     card.innerHTML = `
         <div class="project-category-image">
             <img src="${encodedImagePath}" alt="${project.title}" loading="lazy" 
                  style="opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;"
-                 onerror="if(this.src === '${encodedImagePath.replace(/'/g, "\\'")}') { this.src = '${originalImagePath.replace(/'/g, "\\'")}'; return; } this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%232F2F2F\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23fff\' font-family=\'Arial\' font-size=\'20\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E${project.title}%3C/text%3E%3C/svg%3E';">
+                 onerror="if(this.src === '${encodedImagePath.replace(/'/g, "\\'")}') { this.src = '${simpleEncoded.replace(/'/g, "\\'")}'; return; } if(this.src === '${simpleEncoded.replace(/'/g, "\\'")}') { this.src = '${originalImagePath.replace(/'/g, "\\'")}'; return; } this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%232F2F2F\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23fff\' font-family=\'Arial\' font-size=\'20\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E${project.title}%3C/text%3E%3C/svg%3E';">
         </div>
         <div class="project-category-content">
             <h3 class="project-category-title">${project.title}</h3>
@@ -431,12 +434,18 @@ function showProjectsGallery(projectId) {
             // Load image with proper URL encoding for server compatibility
             // encodeURI encodes spaces (%20) and special chars (%26 for &) but keeps / and : intact
             // This is necessary for paths with spaces like "Alshola Projcts" and "GYM & Showrooms"
-            const encodedImagePath = encodeURI(imagePath);
-            const cacheBuster = '?t=' + Date.now() + '_' + index;
-            const imagePathWithCache = encodedImagePath + (encodedImagePath.includes('?') ? '&' : '?') + cacheBuster;
+            // Split path and encode each segment properly to handle spaces and special characters
+            const pathParts = imagePath.split('/');
+            const encodedParts = pathParts.map(part => {
+                // Encode each part separately, but keep slashes
+                return encodeURIComponent(part);
+            });
+            const encodedImagePath = encodedParts.join('/');
+            
+            // Also try original encodeURI for fallback
+            const simpleEncoded = encodeURI(imagePath);
             
             // Try encoded path first (required for server with spaces in paths)
-            // encodeURI works on both localhost and server, so this should work everywhere
             img.src = encodedImagePath;
             
             // Force image to be visible immediately
@@ -470,50 +479,27 @@ function showProjectsGallery(projectId) {
                 retryCount++;
                 console.error('Failed to load image (attempt ' + retryCount + '):', this.src, 'for project:', project.title, 'isWebP:', isWebP);
                 
-                // For webp images, try different encoding strategies
-                if (isWebP) {
-                    // Try 1: Cache buster with encoded path
-                    if (retryCount === 1 && this.src === encodedImagePath) {
-                        console.log('WebP: Retrying with cache buster:', imagePathWithCache);
-                        this.src = imagePathWithCache;
-                        return;
-                    }
-                    
-                    // Try 2: Original path (may work on some servers)
-                    if (retryCount === 2 && (this.src === encodedImagePath || this.src === imagePathWithCache)) {
-                        console.log('WebP: Retrying with original path:', imagePath);
-                        this.src = imagePath;
-                        return;
-                    }
-                    
-                    // Try 3: Use encodeURIComponent for more aggressive encoding (handles special chars better)
-                    if (retryCount === 3 && (this.src === imagePath || this.src === encodedImagePath || this.src === imagePathWithCache)) {
-                        // Split path and encode each part separately, then join
-                        const pathParts = imagePath.split('/');
-                        const encodedParts = pathParts.map((part, idx) => {
-                            if (idx === 0 || idx === pathParts.length - 1) {
-                                return part; // Keep first and last parts as-is
-                            }
-                            return encodeURIComponent(part);
-                        });
-                        const aggressiveEncoded = encodedParts.join('/');
-                        console.log('WebP: Retrying with aggressive encoding:', aggressiveEncoded);
-                        this.src = aggressiveEncoded;
-                        return;
-                    }
-                } else {
-                    // For non-webp images, use standard retry mechanism
-                    if (retryCount === 1 && this.src === encodedImagePath) {
-                        console.log('Retrying with cache buster:', imagePathWithCache);
-                        this.src = imagePathWithCache;
-                        return;
-                    }
-                    
-                    if (retryCount === 2 && (this.src === encodedImagePath || this.src === imagePathWithCache)) {
-                        console.log('Retrying with original path (localhost fallback):', imagePath);
-                        this.src = imagePath;
-                        return;
-                    }
+                // Retry strategies
+                if (retryCount === 1) {
+                    // Try 1: Simple encodeURI (less aggressive encoding)
+                    console.log('Retrying with simple encodeURI:', simpleEncoded);
+                    this.src = simpleEncoded;
+                    return;
+                }
+                
+                if (retryCount === 2) {
+                    // Try 2: Original path (may work on localhost)
+                    console.log('Retrying with original path:', imagePath);
+                    this.src = imagePath;
+                    return;
+                }
+                
+                if (retryCount === 3) {
+                    // Try 3: Replace spaces with %20 manually for problematic paths
+                    const manualEncoded = imagePath.replace(/ /g, '%20').replace(/&/g, '%26');
+                    console.log('Retrying with manual encoding:', manualEncoded);
+                    this.src = manualEncoded;
+                    return;
                 }
                 
                 // If all attempts failed, show placeholder
@@ -889,10 +875,14 @@ function openLightbox(images, index, title) {
     currentLightboxImages = images;
     currentLightboxIndex = index;
     
-    // Use encodeURI for proper URL encoding (works on both localhost and server)
+    // Use proper URL encoding for paths with spaces and special characters
     // This ensures all image formats (jpg, jpeg, png, webp, gif, svg, etc.) are supported
     const imagePath = images[index];
-    const encodedImagePath = encodeURI(imagePath);
+    // Split path and encode each segment properly
+    const pathParts = imagePath.split('/');
+    const encodedParts = pathParts.map(part => encodeURIComponent(part));
+    const encodedImagePath = encodedParts.join('/');
+    const simpleEncoded = encodeURI(imagePath);
     
     // Update counter
     if (lightboxCounter) {
@@ -918,9 +908,16 @@ function openLightbox(images, index, title) {
             this.style.display = 'block';
         };
         
-        // Add error handler to retry with original path if encoded fails (localhost fallback)
+        // Add error handler to retry with different encoding strategies
+        let retryCount = 0;
         lightboxImage.onerror = function() {
-            if (this.src === encodedImagePath) {
+            retryCount++;
+            if (retryCount === 1 && this.src === encodedImagePath) {
+                // Try with simple encodeURI
+                this.src = simpleEncoded;
+                return;
+            }
+            if (retryCount === 2 && (this.src === encodedImagePath || this.src === simpleEncoded)) {
                 // Try with original path as fallback
                 this.src = imagePath;
                 return;
@@ -1025,7 +1022,11 @@ function updateLightboxImage() {
     }
     
     const imagePath = currentLightboxImages[currentLightboxIndex];
-    const encodedImagePath = encodeURI(imagePath); // Use encodeURI for proper URL encoding
+    // Split path and encode each segment properly
+    const pathParts = imagePath.split('/');
+    const encodedParts = pathParts.map(part => encodeURIComponent(part));
+    const encodedImagePath = encodedParts.join('/');
+    const simpleEncoded = encodeURI(imagePath);
     
     // Update counter
     if (lightboxCounter) {
@@ -1046,9 +1047,16 @@ function updateLightboxImage() {
             this.style.display = 'block';
         };
         
-        // Add error handler to retry with original path if encoded fails (localhost fallback)
+        // Add error handler to retry with different encoding strategies
+        let retryCount = 0;
         lightboxImage.onerror = function() {
-            if (this.src === encodedImagePath) {
+            retryCount++;
+            if (retryCount === 1 && this.src === encodedImagePath) {
+                // Try with simple encodeURI
+                this.src = simpleEncoded;
+                return;
+            }
+            if (retryCount === 2 && (this.src === encodedImagePath || this.src === simpleEncoded)) {
                 // Try with original path as fallback (localhost compatibility)
                 this.src = imagePath;
                 return;

@@ -83,44 +83,73 @@ window.addEventListener('load', () => {
 });
 
 // Header scroll effect - 100% transparent over hero, white when scrolled past hero
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    const heroSection = document.querySelector('.hero');
+// Optimized with requestAnimationFrame for better performance on mobile
+let scrollTimeout;
+let isScrolling = false;
+
+function updateHeader() {
+    if (!header) return;
+    
+    const currentScroll = window.pageYOffset || window.scrollY;
+    const heroSection = document.querySelector('.hero') || document.querySelector('.spot-hero');
     
     if (heroSection) {
         const heroHeight = heroSection.offsetHeight;
-        const heroBottom = heroSection.offsetTop + heroHeight;
         
         // If scrolled past hero section completely, make header white and separated
         if (currentScroll >= heroHeight - 50) {
-            header.classList.add('scrolled');
-            // Force white background when scrolled
-            header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-            header.style.backdropFilter = 'blur(10px)';
-            header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            if (!header.classList.contains('scrolled')) {
+                header.classList.add('scrolled');
+                // Force white background when scrolled
+                header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+                header.style.backdropFilter = 'blur(10px)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            }
         } else {
-            // Keep 100% transparent when over hero
-            header.classList.remove('scrolled');
-            header.style.backgroundColor = 'transparent';
-            header.style.backdropFilter = 'none';
-            header.style.boxShadow = 'none';
+            if (header.classList.contains('scrolled')) {
+                // Keep 100% transparent when over hero
+                header.classList.remove('scrolled');
+                header.style.backgroundColor = 'transparent';
+                header.style.backdropFilter = 'none';
+                header.style.boxShadow = 'none';
+            }
         }
     } else {
         // Fallback: use scroll position
         if (currentScroll > 100) {
-            header.classList.add('scrolled');
-            header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-            header.style.backdropFilter = 'blur(10px)';
-            header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            if (!header.classList.contains('scrolled')) {
+                header.classList.add('scrolled');
+                header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+                header.style.backdropFilter = 'blur(10px)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            }
         } else {
-            header.classList.remove('scrolled');
-            header.style.backgroundColor = 'transparent';
-            header.style.backdropFilter = 'none';
-            header.style.boxShadow = 'none';
+            if (header.classList.contains('scrolled')) {
+                header.classList.remove('scrolled');
+                header.style.backgroundColor = 'transparent';
+                header.style.backdropFilter = 'none';
+                header.style.boxShadow = 'none';
+            }
         }
     }
     
     lastScroll = currentScroll;
+    isScrolling = false;
+}
+
+window.addEventListener('scroll', () => {
+    if (!isScrolling) {
+        window.requestAnimationFrame(updateHeader);
+        isScrolling = true;
+    }
+    
+    // Clear timeout
+    clearTimeout(scrollTimeout);
+    
+    // Set timeout to handle scroll end
+    scrollTimeout = setTimeout(() => {
+        isScrolling = false;
+    }, 150);
 }, { passive: true });
 
 // ============================================

@@ -2056,6 +2056,38 @@ ul {
     z-index: 2;
 }
 
+.footer-logo .logo-img-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(178, 42, 31, 0.3) 0%, rgba(178, 42, 31, 0.1) 50%, transparent 70%);
+    opacity: 0.6;
+    z-index: -1;
+    pointer-events: none;
+    animation: logoPulse 3s ease-in-out infinite;
+}
+
+.footer-logo .logo-img-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 70%);
+    opacity: 0.4;
+    z-index: -1;
+    pointer-events: none;
+    animation: logoPulse 3s ease-in-out infinite 0.5s;
+}
+
 .footer-logo .logo-img {
     width: 90px;
     height: 90px;
@@ -2064,6 +2096,7 @@ ul {
     image-rendering: crisp-edges;
     opacity: 1;
     background: transparent;
+    mix-blend-mode: darken;
     filter: brightness(1.3) contrast(1.4) saturate(1.2);
     position: relative;
     z-index: 1;
@@ -2335,6 +2368,26 @@ ul {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
+    
+    /* Optimize header for mobile - prevent lag during scroll */
+    .header {
+        will-change: background-color, backdrop-filter, box-shadow;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    
+    .header.scrolled {
+        /* Use simpler backdrop-filter on mobile for better performance */
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+    }
+    
+    /* Reduce transition duration on mobile for snappier feel */
+    .header,
+    .header * {
+        transition-duration: 0.2s !important;
+    }
 }
 
 /* ============================================
@@ -2598,10 +2651,10 @@ ul {
         gap: 30px;
     }
     
-    /* Ensure footer logo is unified across all screen sizes */
+    /* Footer logo matches header logo exactly on tablet */
     .footer-logo {
-        width: 140px;
-        height: 140px;
+        width: 120px;
+        height: 120px;
         margin: 0 auto 24px;
     }
     
@@ -2623,6 +2676,7 @@ ul {
     .footer-logo .logo-img {
         width: 90px;
         height: 90px;
+        mix-blend-mode: darken;
     }
     
     .footer-logo .logo-text {
@@ -2694,10 +2748,10 @@ ul {
         height: 75px;
     }
     
-    /* Smaller footer logo on mobile */
+    /* Footer logo matches header logo exactly on mobile */
     .footer-logo {
-        width: 110px;
-        height: 110px;
+        width: 100px;
+        height: 100px;
         margin: 0 auto 20px;
     }
     
@@ -2714,6 +2768,11 @@ ul {
     .footer-logo .logo-img-wrapper::after {
         width: 75px;
         height: 75px;
+    }
+    
+    /* Ensure footer logo has same mix-blend-mode as header on mobile */
+    .footer-logo .logo-img {
+        mix-blend-mode: darken;
     }
     
     .footer-logo .logo-img {
