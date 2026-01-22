@@ -87,9 +87,13 @@ function generateProducts() {
         const description = product.description || productDescriptions[product.name] || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
         const thumbnails = product.thumbnails || [];
         
+        // Get product title from mapping (for modal only)
+        const productTitle = (typeof getProductTitle === 'function') ? getProductTitle(product.name) : null;
+        
         html += `
             <div class="spotlight-product-card" 
                  data-product-name="${product.name}" 
+                 data-product-title="${productTitle ? productTitle.replace(/"/g, '&quot;') : ''}"
                  data-product-datasheet="${dataSheetPath}" 
                  data-product-img="${product.img}"
                  data-product-desc="${description.replace(/"/g, '&quot;')}"
@@ -266,9 +270,20 @@ function setupProductModal() {
                 const descElement = document.getElementById('spotlightModalDesc');
                 const imgElement = document.getElementById('spotlightModalMainImage');
                 const pdfElement = document.getElementById('spotlightDownloadPdf');
+                
+                // Get product title from mapping or data attribute
+                const productTitle = card.getAttribute('data-product-title') || 
+                                   (typeof getProductTitle === 'function' ? getProductTitle(productName) : null) ||
+                                   productName;
+                const displayTitle = productTitle || productName;
 
-                if (titleElement) titleElement.textContent = productName;
-                if (descElement) descElement.textContent = productDesc || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
+                if (titleElement) titleElement.innerHTML = displayTitle;
+                if (descElement) {
+                    let descText = productDesc || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
+                    // Add attribution to Luna-Luce.eu
+                    descText += '<br><br><small style="color: #666; font-style: italic;">Product from <a href="https://luna-luce.eu" target="_blank" rel="noopener" style="color: #B22A1F; text-decoration: underline;">Luna-Luce.eu</a></small>';
+                    descElement.innerHTML = descText;
+                }
                 if (imgElement) {
                     imgElement.src = `assets/Products Img/${productImg}`;
                     // Force mobile size on mobile devices

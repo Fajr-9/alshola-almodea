@@ -250,8 +250,12 @@ function generateProductCards() {
             const imgPath = `assets/Products Img/${product.img}`;
             const dataSheetPath = getDataSheetPath(product.name);
             const description = product.description || `Premium ${getCategoryName(type).toLowerCase()} solution designed for modern lighting applications.`;
+            
+            // Get product title from mapping (for modal only)
+            const productTitle = (typeof getProductTitle === 'function') ? getProductTitle(product.name) : null;
+            
             html += `
-                <div class="spotlight-product-card product-card" data-category="indoor" data-type="${type}" data-product-name="${product.name}" data-product-datasheet="${dataSheetPath}" data-product-img="${product.img}" data-product-desc="${description.replace(/"/g, '&quot;')}">
+                <div class="spotlight-product-card product-card" data-category="indoor" data-type="${type}" data-product-name="${product.name}" data-product-title="${productTitle ? productTitle.replace(/"/g, '&quot;') : ''}" data-product-datasheet="${dataSheetPath}" data-product-img="${product.img}" data-product-desc="${description.replace(/"/g, '&quot;')}">
                     <div class="product-image-wrapper">
                         <img src="${imgPath}" alt="${product.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x200?text=${product.name}'">
                     </div>
@@ -271,8 +275,12 @@ function generateProductCards() {
             const imgPath = `assets/Products Img/${product.img}`;
             const dataSheetPath = getDataSheetPath(product.name);
             const description = product.description || `Premium ${getCategoryName(type).toLowerCase()} solution designed for modern lighting applications.`;
+            
+            // Get product title from mapping (for modal only)
+            const productTitle = (typeof getProductTitle === 'function') ? getProductTitle(product.name) : null;
+            
             html += `
-                <div class="spotlight-product-card product-card" data-category="outdoor" data-type="${type}" data-product-name="${product.name}" data-product-datasheet="${dataSheetPath}" data-product-img="${product.img}" data-product-desc="${description.replace(/"/g, '&quot;')}">
+                <div class="spotlight-product-card product-card" data-category="outdoor" data-type="${type}" data-product-name="${product.name}" data-product-title="${productTitle ? productTitle.replace(/"/g, '&quot;') : ''}" data-product-datasheet="${dataSheetPath}" data-product-img="${product.img}" data-product-desc="${description.replace(/"/g, '&quot;')}">
                     <div class="product-image-wrapper">
                         <img src="${imgPath}" alt="${product.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x200?text=${product.name}'">
                     </div>
@@ -480,8 +488,16 @@ function setupProductModal() {
             
             if (titleEl && descEl && imgEl && pdfEl) {
                 // New modal structure
-                titleEl.textContent = productName;
-                descEl.textContent = productDesc;
+                // Get product title from mapping or data attribute
+                const productTitle = card.getAttribute('data-product-title') || 
+                                   (typeof getProductTitle === 'function' ? getProductTitle(productName) : null) ||
+                                   productName;
+                titleEl.innerHTML = productTitle;
+                
+                // Add attribution to Luna-Luce.eu
+                let descText = productDesc;
+                descText += '<br><br><small style="color: #666; font-style: italic;">Product from <a href="https://luna-luce.eu" target="_blank" rel="noopener" style="color: #B22A1F; text-decoration: underline;">Luna-Luce.eu</a></small>';
+                descEl.innerHTML = descText;
                 imgEl.src = `assets/Products Img/${productImg}`;
                 // Force mobile size on mobile devices
                 if (window.innerWidth <= 480) {
@@ -584,7 +600,11 @@ function setupProductModal() {
                 const viewPdfEl = document.getElementById('modalViewPDF');
                 const downloadPdfEl = document.getElementById('modalDownloadPDF');
                 
-                if (nameEl) nameEl.textContent = productName;
+                // Get product title from mapping or data attribute
+                const productTitle = card.getAttribute('data-product-title') || 
+                                   (typeof getProductTitle === 'function' ? getProductTitle(productName) : null) ||
+                                   productName;
+                if (nameEl) nameEl.innerHTML = productTitle;
                 if (categoryEl) categoryEl.textContent = card.querySelector('.product-category')?.textContent || '';
                 if (mainImgEl) mainImgEl.src = `assets/Products Img/${productImg}`;
                 const dataSheetPath = card.getAttribute('data-product-datasheet') || getDataSheetPath(productName);
@@ -612,7 +632,9 @@ function setupProductModal() {
             const mainImgEl = document.getElementById('modalMainImage') || document.getElementById('spotlightModalMainImage');
             const pdfEl = document.getElementById('modalDownloadPDF') || document.getElementById('spotlightDownloadPdf');
             
-            if (nameEl) nameEl.textContent = productName;
+            // Get product title from mapping
+            const productTitle = (typeof getProductTitle === 'function') ? getProductTitle(productName) : null;
+            if (nameEl) nameEl.innerHTML = productTitle || productName;
             if (mainImgEl) mainImgEl.src = `assets/Products Img/${productImg}`;
             if (pdfEl) {
                 pdfEl.href = productDataSheet;

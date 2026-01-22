@@ -75,9 +75,13 @@ function generateSpotlightProducts() {
         const dataSheetPath = typeof getDataSheetPath === 'function' ? getDataSheetPath(product.name) : `assets/DATA-SHEETS/${product.name}.png`;
         const description = productDescriptions[product.name] || 'Premium spotlight solution designed for modern lighting applications.';
         
+        // Get product title from mapping (for modal only)
+        const productTitle = (typeof getProductTitle === 'function') ? getProductTitle(product.name) : null;
+        
         html += `
             <div class="spotlight-product-card" 
                  data-product-name="${product.name}" 
+                 data-product-title="${productTitle ? productTitle.replace(/"/g, '&quot;') : ''}"
                  data-product-datasheet="${dataSheetPath}" 
                  data-product-img="${product.img}"
                  data-product-desc="${description.replace(/"/g, '&quot;')}">
@@ -238,8 +242,16 @@ function setupSpotlightModal() {
                 const productDesc = card.getAttribute('data-product-desc');
 
                 // Update modal content
-                document.getElementById('spotlightModalTitle').textContent = productName;
-                document.getElementById('spotlightModalDesc').textContent = productDesc || 'Premium spotlight solution designed for modern lighting applications.';
+                // Get product title from mapping or data attribute
+                const productTitle = card.getAttribute('data-product-title') || 
+                                   (typeof getProductTitle === 'function' ? getProductTitle(productName) : null) ||
+                                   productName;
+                document.getElementById('spotlightModalTitle').innerHTML = productTitle;
+                
+                // Add attribution to Luna-Luce.eu
+                let descText = productDesc || 'Premium spotlight solution designed for modern lighting applications.';
+                descText += '<br><br><small style="color: #666; font-style: italic;">Product from <a href="https://luna-luce.eu" target="_blank" rel="noopener" style="color: #B22A1F; text-decoration: underline;">Luna-Luce.eu</a></small>';
+                document.getElementById('spotlightModalDesc').innerHTML = descText;
                 const mainImg = document.getElementById('spotlightModalMainImage');
                 if (mainImg) {
                     mainImg.src = `assets/Products Img/${productImg}`;
