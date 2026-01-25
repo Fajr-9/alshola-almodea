@@ -16,17 +16,17 @@ const projectsData = [
         id: 'gym',
         title: 'GYM & Showrooms',
         subtitle: 'Commercial Lighting',
-        image: 'assets/Alshola Projcts/GYM & Showrooms/p2.jpg',
+        image: 'assets/Alshola Projcts/GYM & Showrooms/p2.webp',
         images: [
-            'assets/Alshola Projcts/GYM & Showrooms/p2.jpg',
-            'assets/Alshola Projcts/GYM & Showrooms/p4.jpg',
-            'assets/Alshola Projcts/GYM & Showrooms/p5.jpg',
-            'assets/Alshola Projcts/GYM & Showrooms/p6.jpg',
-            'assets/Alshola Projcts/GYM & Showrooms/p7.jpg',
-            'assets/Alshola Projcts/GYM & Showrooms/p8.jpeg',
-            'assets/Alshola Projcts/GYM & Showrooms/p9.jpeg',
-            'assets/Alshola Projcts/GYM & Showrooms/p10.jpeg',
-            'assets/Alshola Projcts/GYM & Showrooms/p11.jpeg',
+            'assets/Alshola Projcts/GYM & Showrooms/p2.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p4.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p5.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p6.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p7.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p8.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p9.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p10.webp',
+            'assets/Alshola Projcts/GYM & Showrooms/p11.webp',
             'assets/Alshola Projcts/GYM & Showrooms/P12.webp',
             'assets/Alshola Projcts/GYM & Showrooms/P13.webp',
             'assets/Alshola Projcts/GYM & Showrooms/P14.webp',
@@ -50,17 +50,28 @@ const projectsData = [
         id: 'landscape',
         title: 'Landscape',
         subtitle: 'Outdoor Lighting',
-        image: 'assets/Alshola Projcts/Lanscape/p1.png',
+        image: 'assets/Alshola Projcts/Lanscape/p10.webp',
         images: [
-            'assets/Alshola Projcts/Lanscape/p1.png',
-            'assets/Alshola Projcts/Lanscape/p2.png',
-            'assets/Alshola Projcts/Lanscape/p3.png',
-            'assets/Alshola Projcts/Lanscape/p4.jpg',
-            'assets/Alshola Projcts/Lanscape/p5.jpg',
-            'assets/Alshola Projcts/Lanscape/p6.jpg',
-            'assets/Alshola Projcts/Lanscape/p7.jpg',
-            'assets/Alshola Projcts/Lanscape/p8.jpg',
-            'assets/Alshola Projcts/Lanscape/p9.jpg'
+            // p10 to p20 first
+            'assets/Alshola Projcts/Lanscape/p10.webp',
+            'assets/Alshola Projcts/Lanscape/p11.webp',
+            'assets/Alshola Projcts/Lanscape/p12.webp',
+            'assets/Alshola Projcts/Lanscape/p13.webp',
+            'assets/Alshola Projcts/Lanscape/p14.webp',
+            'assets/Alshola Projcts/Lanscape/p15.webp',
+            'assets/Alshola Projcts/Lanscape/p16.webp',
+            'assets/Alshola Projcts/Lanscape/p17.webp',
+            'assets/Alshola Projcts/Lanscape/p18.webp',
+            'assets/Alshola Projcts/Lanscape/p19.webp',
+            'assets/Alshola Projcts/Lanscape/p20.webp',
+            // Rest of the images
+            'assets/Alshola Projcts/Lanscape/p1.webp',
+            'assets/Alshola Projcts/Lanscape/p2.webp',
+            'assets/Alshola Projcts/Lanscape/p3.webp',
+            'assets/Alshola Projcts/Lanscape/p4.webp',
+            'assets/Alshola Projcts/Lanscape/p6.webp',
+            'assets/Alshola Projcts/Lanscape/p7.webp',
+            'assets/Alshola Projcts/Lanscape/p9.webp'
         ]
     },
     {
@@ -70,16 +81,16 @@ const projectsData = [
         image: 'assets/Alshola Projcts/Private Villa Exterior/p1.webp',
         images: [
             'assets/Alshola Projcts/Private Villa Exterior/p1.webp',
-            'assets/Alshola Projcts/Private Villa Exterior/p2.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p3.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p4.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p5.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p6.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p7.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p8.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p9.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p10.jpg',
-            'assets/Alshola Projcts/Private Villa Exterior/p11.jpg'
+            'assets/Alshola Projcts/Private Villa Exterior/p2.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p3.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p4.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p5.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p6.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p7.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p8.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p9.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p10.webp',
+            'assets/Alshola Projcts/Private Villa Exterior/p11.webp'
         ]
     },
     {
@@ -104,29 +115,29 @@ const projectsData = [
         id: 'street',
         title: 'Street Light',
         subtitle: 'Outdoor Lighting',
-        image: 'assets/Alshola Projcts/Street Light/p1.png',
+        image: 'assets/Alshola Projcts/Street Light/p1.webp',
         images: [
-            'assets/Alshola Projcts/Street Light/p1.png',
-            'assets/Alshola Projcts/Street Light/p2.png',
-            'assets/Alshola Projcts/Street Light/p3.png',
-            'assets/Alshola Projcts/Street Light/p4.png',
-            'assets/Alshola Projcts/Street Light/p5.png'
+            'assets/Alshola Projcts/Street Light/p1.webp',
+            'assets/Alshola Projcts/Street Light/p2.webp',
+            'assets/Alshola Projcts/Street Light/p3.webp',
+            'assets/Alshola Projcts/Street Light/p4.webp',
+            'assets/Alshola Projcts/Street Light/p5.webp'
         ]
     },
     {
         id: 'towers',
         title: 'Towers',
         subtitle: 'Architectural Lighting',
-        image: 'assets/Alshola Projcts/Towers/p1.jpg',
+        image: 'assets/Alshola Projcts/Towers/p1.webp',
         images: [
-            'assets/Alshola Projcts/Towers/p1.jpg',
-            'assets/Alshola Projcts/Towers/p2.jpg',
-            'assets/Alshola Projcts/Towers/p3.jpg',
-            'assets/Alshola Projcts/Towers/p4.jpg',
-            'assets/Alshola Projcts/Towers/p5.jpg',
-            'assets/Alshola Projcts/Towers/p6.jpg',
-            'assets/Alshola Projcts/Towers/p7.jpg',
-            'assets/Alshola Projcts/Towers/p8.jpg'
+            'assets/Alshola Projcts/Towers/p1.webp',
+            'assets/Alshola Projcts/Towers/p2.webp',
+            'assets/Alshola Projcts/Towers/p3.webp',
+            'assets/Alshola Projcts/Towers/p4.webp',
+            'assets/Alshola Projcts/Towers/p5.webp',
+            'assets/Alshola Projcts/Towers/p6.webp',
+            'assets/Alshola Projcts/Towers/p7.webp',
+            'assets/Alshola Projcts/Towers/p8.webp'
         ]
     },
     {
@@ -141,6 +152,20 @@ const projectsData = [
             'assets/Alshola Projcts/Mosque/P4.webp',
             'assets/Alshola Projcts/Mosque/P5.webp'
         ]
+    },
+    {
+        id: 'excerpts',
+        title: 'Excerpts',
+        subtitle: 'Project Highlights',
+        image: 'assets/Alshola Projcts/Excerpts/v1.mp4',
+        images: [
+            'assets/Alshola Projcts/Excerpts/v1.mp4',
+            'assets/Alshola Projcts/Excerpts/v2.mp4',
+            'assets/Alshola Projcts/Excerpts/v3.mp4',
+            'assets/Alshola Projcts/Excerpts/v4.mp4',
+            'assets/Alshola Projcts/Excerpts/v5.mp4'
+        ],
+        isVideo: true
     }
 ];
 
@@ -290,11 +315,31 @@ function createProjectCard(project, index) {
     const simpleEncoded = encodeURI(project.image);
     const originalImagePath = project.image;
     
-    card.innerHTML = `
-        <div class="project-category-image">
+    // Check if this is a video project
+    const isVideo = project.isVideo || project.image.toLowerCase().endsWith('.mp4') || 
+                   project.image.toLowerCase().endsWith('.webm') || 
+                   project.image.toLowerCase().endsWith('.mov');
+    
+    let mediaElement = '';
+    if (isVideo) {
+        mediaElement = `
+            <video src="${encodedImagePath}" 
+                   style="opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;"
+                   muted loop playsinline preload="metadata" loading="lazy"
+                   onerror="if(this.src === '${encodedImagePath.replace(/'/g, "\\'")}') { this.src = '${simpleEncoded.replace(/'/g, "\\'")}'; return; } if(this.src === '${simpleEncoded.replace(/'/g, "\\'")}') { this.src = '${originalImagePath.replace(/'/g, "\\'")}'; return; } this.onerror=null;">
+            </video>
+        `;
+    } else {
+        mediaElement = `
             <img src="${encodedImagePath}" alt="${project.title}" loading="lazy" 
                  style="opacity: 1; visibility: visible; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;"
                  onerror="if(this.src === '${encodedImagePath.replace(/'/g, "\\'")}') { this.src = '${simpleEncoded.replace(/'/g, "\\'")}'; return; } if(this.src === '${simpleEncoded.replace(/'/g, "\\'")}') { this.src = '${originalImagePath.replace(/'/g, "\\'")}'; return; } this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%232F2F2F\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23fff\' font-family=\'Arial\' font-size=\'20\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3E${project.title}%3C/text%3E%3C/svg%3E';">
+        `;
+    }
+    
+    card.innerHTML = `
+        <div class="project-category-image">
+            ${mediaElement}
         </div>
         <div class="project-category-content">
             <h3 class="project-category-title">${project.title}</h3>
@@ -457,19 +502,60 @@ function showProjectsGallery(projectId) {
         galleryItem.setAttribute('data-image-index', index);
             galleryItem.setAttribute('data-project-id', projectId);
         
+        // Check if this is a video file
+        const isVideo = project.isVideo || imagePath.toLowerCase().endsWith('.mp4') || 
+                       imagePath.toLowerCase().endsWith('.webm') || 
+                       imagePath.toLowerCase().endsWith('.mov');
+        
+        if (isVideo) {
+            // Create video element with lazy loading
+            const video = document.createElement('video');
+            video.controls = true;
+            video.preload = (isMobile && index >= batchSize) ? 'none' : 'metadata';
+            video.loading = (isMobile && index >= batchSize) ? 'lazy' : 'eager';
+            video.style.width = '100%';
+            video.style.height = 'auto';
+            video.style.display = 'block';
+            video.style.opacity = '1';
+            video.style.visibility = 'visible';
+            
+            // Encode video path
+            const pathParts = imagePath.split('/');
+            const encodedParts = pathParts.map(part => encodeURIComponent(part));
+            const encodedVideoPath = encodedParts.join('/');
+            const simpleEncoded = encodeURI(imagePath);
+            
+            // Use lazy loading for videos beyond first batch
+            if (index >= batchSize) {
+                video.dataset.src = encodedVideoPath;
+                video.dataset.simpleEncoded = simpleEncoded;
+                video.dataset.originalPath = imagePath;
+                // Set poster placeholder
+                video.poster = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f5f5f5\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EVideo%3C/text%3E%3C/svg%3E';
+            } else {
+                video.src = encodedVideoPath;
+            }
+            
+            // Add source element for better browser compatibility
+            const source = document.createElement('source');
+            source.src = encodedVideoPath;
+            source.type = 'video/mp4';
+            video.appendChild(source);
+            
+            galleryItem.appendChild(video);
+        } else {
             // Create image with proper loading
-        const img = document.createElement('img');
-        img.alt = `${project.title} ${index + 1}`;
-            // Use lazy loading on mobile to prevent memory issues
-            // Load first batch eagerly, rest lazily
-            img.loading = (isMobile && index >= batchSize) ? 'lazy' : 'eager';
+            const img = document.createElement('img');
+            img.alt = `${project.title} ${index + 1}`;
+            // Use lazy loading for all images - improved performance
+            img.loading = (index >= batchSize) ? 'lazy' : 'eager';
             
             // Set styles to ensure visibility
-        img.style.width = '100%';
-        img.style.height = 'auto';
-        img.style.display = 'block';
-        img.style.opacity = '1';
-        img.style.visibility = 'visible';
+            img.style.width = '100%';
+            img.style.height = 'auto';
+            img.style.display = 'block';
+            img.style.opacity = '1';
+            img.style.visibility = 'visible';
             img.style.transition = 'opacity 0.3s ease';
             img.style.background = 'transparent';
             
@@ -561,14 +647,15 @@ function showProjectsGallery(projectId) {
                 this.style.opacity = '1';
                 this.style.visibility = 'visible';
                 this.style.display = 'block';
-        };
-        
-        galleryItem.appendChild(img);
+            };
             
-            // Ensure gallery item is visible
-            galleryItem.style.opacity = '1';
-            galleryItem.style.visibility = 'visible';
-            galleryItem.style.display = 'inline-block';
+            galleryItem.appendChild(img);
+        }
+        
+        // Ensure gallery item is visible
+        galleryItem.style.opacity = '1';
+        galleryItem.style.visibility = 'visible';
+        galleryItem.style.display = 'inline-block';
         
         // Add click handler to open lightbox
         galleryItem.addEventListener('click', () => {
@@ -589,7 +676,45 @@ function showProjectsGallery(projectId) {
         window.galleryImageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const img = entry.target;
+                    const element = entry.target;
+                    
+                    // Handle video elements
+                    if (element.tagName === 'VIDEO' && element.dataset.src) {
+                        const encodedPath = element.dataset.src;
+                        const simpleEncoded = element.dataset.simpleEncoded;
+                        const originalPath = element.dataset.originalPath;
+                        
+                        element.src = encodedPath;
+                        element.load();
+                        
+                        element.addEventListener('loadeddata', function() {
+                            this.style.opacity = '1';
+                            this.removeAttribute('data-src');
+                            this.removeAttribute('data-simpleEncoded');
+                            this.removeAttribute('data-originalPath');
+                            observer.unobserve(this);
+                        });
+                        
+                        element.addEventListener('error', function() {
+                            if (this.src === encodedPath && simpleEncoded) {
+                                this.src = simpleEncoded;
+                                return;
+                            }
+                            if (this.src === simpleEncoded && originalPath) {
+                                this.src = originalPath;
+                                return;
+                            }
+                            this.style.opacity = '1';
+                            this.removeAttribute('data-src');
+                            this.removeAttribute('data-simpleEncoded');
+                            this.removeAttribute('data-originalPath');
+                            observer.unobserve(this);
+                        });
+                        return;
+                    }
+                    
+                    // Handle image elements
+                    const img = element;
                     if (img.dataset.src) {
                         // Load image with retry mechanism
                         const encodedPath = img.dataset.src;
@@ -641,18 +766,18 @@ function showProjectsGallery(projectId) {
             threshold: 0.01
         });
         
-        // Observe all lazy-loaded images after a short delay
+        // Observe all lazy-loaded images and videos after a short delay
         setTimeout(() => {
             try {
-                const lazyImages = galleryGrid.querySelectorAll('img[data-src]');
-                lazyImages.forEach(img => {
+                const lazyImages = galleryGrid.querySelectorAll('img[data-src], video[data-src]');
+                lazyImages.forEach(element => {
                     try {
-                        window.galleryImageObserver.observe(img);
+                        window.galleryImageObserver.observe(element);
                     } catch (err) {
                         // If observation fails, load image immediately
-                        if (img.dataset.src) {
-                            img.src = img.dataset.src;
-                            img.removeAttribute('data-src');
+                        if (element.dataset.src) {
+                            element.src = element.dataset.src;
+                            element.removeAttribute('data-src');
                         }
                     }
                 });

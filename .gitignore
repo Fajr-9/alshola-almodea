@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.txt
+!README.txt
+products-*.txt
+*-results*.txt
+*-without-titles*.txt
+
+# Logs
+*.log
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+# Videos - too large for GitHub
+assets/Alshola Projcts/Excerpts/
