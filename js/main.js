@@ -342,14 +342,14 @@ if (aboutText && aboutImage) {
 // Home About slider using selected project images
 if (aboutProjectsSlider && aboutSliderImage) {
     const aboutSliderImages = [
-        'assets/Alshola Projcts/Towers/p1.jpg',
-        'assets/Alshola Projcts/Towers/p2.jpg',
-        'assets/Alshola Projcts/Towers/p3.jpg',
-        'assets/Alshola Projcts/Towers/p4.jpg',
-        'assets/Alshola Projcts/Towers/p5.jpg',
-        'assets/Alshola Projcts/Towers/p6.jpg',
-        'assets/Alshola Projcts/Towers/p7.jpg',
-        'assets/Alshola Projcts/Towers/p8.jpg'
+        'assets/Alshola Projcts/Towers/p1.webp',
+        'assets/Alshola Projcts/Towers/p2.webp',
+        'assets/Alshola Projcts/Towers/p3.webp',
+        'assets/Alshola Projcts/Towers/p4.webp',
+        'assets/Alshola Projcts/Towers/p5.webp',
+        'assets/Alshola Projcts/Towers/p6.webp',
+        'assets/Alshola Projcts/Towers/p7.webp',
+        'assets/Alshola Projcts/Towers/p8.webp'
     ];
     let aboutSliderIndex = 0;
 
@@ -1131,14 +1131,14 @@ if (projectsAccordion && accordionImagesGrid) {
     // All images from all categories
     const allProjectsImages = [
         // Towers only
-        { src: 'assets/Alshola Projcts/Towers/p1.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Towers/p2.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Towers/p3.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Towers/p4.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Towers/p5.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Towers/p6.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Towers/p7.jpg', title: 'Towers', subtitle: 'Architectural Lighting' },
-        { src: 'assets/Alshola Projcts/Towers/p8.jpg', title: 'Towers', subtitle: 'Architectural Lighting' }
+        { src: 'assets/Alshola Projcts/Towers/p1.webp', title: 'Towers', subtitle: 'Architectural Lighting' },
+        { src: 'assets/Alshola Projcts/Towers/p2.webp', title: 'Towers', subtitle: 'Architectural Lighting' },
+        { src: 'assets/Alshola Projcts/Towers/p3.webp', title: 'Towers', subtitle: 'Architectural Lighting' },
+        { src: 'assets/Alshola Projcts/Towers/p4.webp', title: 'Towers', subtitle: 'Architectural Lighting' },
+        { src: 'assets/Alshola Projcts/Towers/p5.webp', title: 'Towers', subtitle: 'Architectural Lighting' },
+        { src: 'assets/Alshola Projcts/Towers/p6.webp', title: 'Towers', subtitle: 'Architectural Lighting' },
+        { src: 'assets/Alshola Projcts/Towers/p7.webp', title: 'Towers', subtitle: 'Architectural Lighting' },
+        { src: 'assets/Alshola Projcts/Towers/p8.webp', title: 'Towers', subtitle: 'Architectural Lighting' }
     ];
 
     let currentImageIndex = 0;
