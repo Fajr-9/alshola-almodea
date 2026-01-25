@@ -2046,3 +2046,94 @@ body.dark-theme .spotlight-thumbnail-gallery img {
         opacity: 1 !important;
     }
 }
+
+/* ============================================
+   CRITICAL MOBILE FIX - Remove ALL transparency issues
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* COMPLETELY DISABLE backdrop-filter on mobile */
+    *,
+    *::before,
+    *::after {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+    
+    /* Solid backgrounds for all elements */
+    body {
+        background-color: #ffffff !important;
+    }
+    
+    .spotlight-sidebar {
+        background-color: #ffffff !important;
+    }
+    
+    .spotlight-product-card {
+        background-color: #ffffff !important;
+    }
+    
+    .spotlight-content,
+    .spotlight-main,
+    .spotlight-grid {
+        background-color: #ffffff !important;
+    }
+    
+    /* Hide modals by default */
+    .spotlight-modal,
+    .modal-overlay,
+    .datasheet-modal {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+    
+    /* Only show when active */
+    .spotlight-modal.active,
+    .datasheet-modal.active {
+        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+    
+    /* Fix hero overlay */
+    .spot-hero-overlay {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.6) 100%) !important;
+    }
+    
+    /* Ensure hero text is visible */
+    .spot-hero-content {
+        z-index: 10 !important;
+    }
+    
+    .spot-hero-title,
+    .spot-hero-subtitle,
+    .spot-hero-cta {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Disable transitions that cause flicker */
+    .spotlight-product-card,
+    .spot-hero-image {
+        transition: none !important;
+    }
+    
+    /* Remove any animation delays */
+    .spot-hero-title,
+    .spot-hero-subtitle,
+    .spot-hero-cta {
+        animation: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    *,
+    *::before,
+    *::after {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+}

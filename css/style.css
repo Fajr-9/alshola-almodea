@@ -3944,3 +3944,93 @@ ul {
     }
 }
 
+
+/* ============================================
+   CRITICAL MOBILE FIX - Remove ALL transparency issues
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* COMPLETELY DISABLE backdrop-filter on mobile */
+    *,
+    *::before,
+    *::after {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+    
+    /* Ensure body has solid background */
+    html, body {
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+    
+    /* Make ALL sections fully opaque */
+    section,
+    .container,
+    main,
+    article,
+    div {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Hide ALL modals and overlays by default */
+    .modal-overlay,
+    .product-modal,
+    .lightbox-modal,
+    .datasheet-modal {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+    
+    /* Only show modals when active */
+    .product-modal.active,
+    .lightbox-modal.active,
+    .datasheet-modal.active {
+        display: flex !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+    
+    /* Solid backgrounds for all interactive elements */
+    .header.scrolled {
+        background-color: #ffffff !important;
+    }
+    
+    .nav-list {
+        background-color: #ffffff !important;
+    }
+    
+    /* Remove any white overlay effect */
+    .hero-overlay {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%) !important;
+    }
+    
+    /* Ensure all card backgrounds are solid */
+    .product-card,
+    .service-card,
+    .feature-card,
+    .project-card,
+    .spotlight-product-card {
+        background-color: #ffffff !important;
+    }
+    
+    /* Disable complex transitions that cause flicker */
+    .hero-slide,
+    .hero-image {
+        transition: none !important;
+    }
+}
+
+/* Also fix for very small screens */
+@media (max-width: 480px) {
+    *,
+    *::before,
+    *::after {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+}
