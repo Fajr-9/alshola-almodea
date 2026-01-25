@@ -2403,9 +2403,26 @@ ul {
     }
     
     .header.scrolled {
-        /* Use simpler backdrop-filter on mobile for better performance */
+        /* Use solid background on mobile for better performance and visibility */
+        background-color: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(8px) !important;
         -webkit-backdrop-filter: blur(8px) !important;
+    }
+    
+    /* Ensure no overlay covers the page content on mobile */
+    body {
+        background-color: #ffffff !important;
+    }
+    
+    /* Fix any potential overlay issues */
+    .nav-list:not(.active) {
+        visibility: hidden;
+        pointer-events: none;
+    }
+    
+    .nav-list.active {
+        visibility: visible;
+        pointer-events: auto;
     }
     
     /* Reduce transition duration on mobile for snappier feel */
@@ -3556,11 +3573,15 @@ ul {
     bottom: 0;
     background: rgba(0, 0, 0, 0.95);
     z-index: 10000;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     padding: 40px;
     opacity: 1;
+}
+
+.lightbox-modal.active {
+    display: flex;
 }
 
 .lightbox-content {
