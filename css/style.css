@@ -491,7 +491,18 @@ ul {
 /* Darker overlay on mobile for better text visibility */
 @media (max-width: 768px) {
     .hero-overlay {
-        background: linear-gradient(135deg, rgba(47, 47, 47, 0.85) 0%, rgba(47, 47, 47, 0.65) 100%);
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.55) 100%);
+    }
+    
+    .hero-content {
+        z-index: 10 !important;
+    }
+    
+    .hero-title,
+    .hero-subtitle {
+        color: #ffffff !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 }
 
@@ -2404,7 +2415,7 @@ ul {
     
     .header.scrolled {
         /* Use solid background on mobile for better performance and visibility */
-        background-color: rgba(255, 255, 255, 0.95) !important;
+        background-color: rgba(255, 255, 255, 0.98) !important;
         backdrop-filter: blur(8px) !important;
         -webkit-backdrop-filter: blur(8px) !important;
     }
@@ -2412,17 +2423,37 @@ ul {
     /* Ensure no overlay covers the page content on mobile */
     body {
         background-color: #ffffff !important;
+        -webkit-overflow-scrolling: touch;
     }
     
     /* Fix any potential overlay issues */
     .nav-list:not(.active) {
         visibility: hidden;
         pointer-events: none;
+        opacity: 0;
     }
     
     .nav-list.active {
         visibility: visible;
         pointer-events: auto;
+        opacity: 1;
+    }
+    
+    /* Disable backdrop-filter on sections for performance */
+    section {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+    
+    /* Ensure all sections are visible */
+    .services,
+    .featured-products,
+    .projects,
+    .why-choose,
+    .contact-cta {
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
     
     /* Reduce transition duration on mobile for snappier feel */

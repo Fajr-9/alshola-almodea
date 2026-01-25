@@ -2007,3 +2007,42 @@ body.dark-theme .spotlight-thumbnail-gallery img {
         background: rgba(178, 42, 31, 0.9);
     }
 }
+
+/* ============================================
+   Mobile Fixes - Remove white overlay issues
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Disable backdrop-filter on mobile for performance */
+    .spotlight-sidebar,
+    .spotlight-product-card {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        background-color: #ffffff !important;
+    }
+    
+    /* Ensure hero content is visible */
+    .spot-hero-content {
+        z-index: 10 !important;
+    }
+    
+    .spot-hero-title,
+    .spot-hero-subtitle {
+        color: #ffffff !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Make sure overlay is visible but not too bright */
+    .spot-hero-overlay {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.7) 100%) !important;
+    }
+    
+    /* Ensure sections are fully opaque */
+    .spotlight-content,
+    .spotlight-main,
+    .spotlight-grid {
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+}
