@@ -435,6 +435,7 @@ function setupProductModal() {
         const modalContent = modal.querySelector('.spotlight-modal-content');
         
         document.body.classList.remove('modal-open');
+        modal.classList.remove('active');
         
         if (typeof gsap !== 'undefined') {
             if (modalContent) {
@@ -611,6 +612,7 @@ function setupProductModal() {
                 
                 // Show modal with slide-in animation
                 document.body.classList.add('modal-open');
+                modal.classList.add('active');
                 modal.style.display = 'flex';
                 modal.style.visibility = 'visible';
                 modal.style.opacity = '1';
@@ -656,6 +658,7 @@ function setupProductModal() {
                 if (viewPdfEl) viewPdfEl.href = dataSheetPath;
                 if (downloadPdfEl) downloadPdfEl.href = dataSheetPath;
                 
+                modal.classList.add('active');
                 modal.style.display = 'flex';
                 gsap.fromTo(modal, 
                     { opacity: 0 },
@@ -665,10 +668,20 @@ function setupProductModal() {
         };
         
         // Add both click and touch event listeners for mobile support
-        button.addEventListener('click', handleOpen);
+        // Add click event listener (works for both desktop and mobile)
+        let isProcessing = false;
+        const safeOpen = (e) => {
+            if (isProcessing) return;
+            isProcessing = true;
+            handleOpen(e);
+            setTimeout(() => { isProcessing = false; }, 500);
+        };
+        
+        button.addEventListener('click', safeOpen);
         button.addEventListener('touchend', (e) => {
             e.preventDefault();
-            handleOpen(e);
+            e.stopPropagation();
+            safeOpen(e);
         }, { passive: false });
     });
     
@@ -693,6 +706,7 @@ function setupProductModal() {
                 pdfEl.target = '_blank';
             }
             
+            modal.classList.add('active');
             modal.style.display = 'flex';
             gsap.fromTo(modal, 
                 { opacity: 0 },

@@ -211,6 +211,7 @@ function setupSpotlightModal() {
         const modalOverlay = modal.querySelector('.modal-overlay');
         
         document.body.classList.remove('modal-open');
+        modal.classList.remove('active');
         
         if (typeof gsap !== 'undefined') {
             gsap.to(modalContent, {
@@ -373,6 +374,7 @@ function setupSpotlightModal() {
 
                 // Show modal with slide-in animation
                 document.body.classList.add('modal-open');
+                modal.classList.add('active');
                 modal.style.display = 'flex';
                 modal.style.visibility = 'visible';
                 modal.style.opacity = '1';
@@ -402,11 +404,20 @@ function setupSpotlightModal() {
                 }
             };
             
-            // Add both click and touch event listeners for mobile support
-            button.addEventListener('click', handleOpen);
+            // Add click event listener (works for both desktop and mobile)
+            let isProcessing = false;
+            const safeOpen = (e) => {
+                if (isProcessing) return;
+                isProcessing = true;
+                handleOpen(e);
+                setTimeout(() => { isProcessing = false; }, 500);
+            };
+            
+            button.addEventListener('click', safeOpen);
             button.addEventListener('touchend', (e) => {
                 e.preventDefault();
-                handleOpen(e);
+                e.stopPropagation();
+                safeOpen(e);
             }, { passive: false });
         }
     });
