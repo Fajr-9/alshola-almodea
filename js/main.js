@@ -173,12 +173,25 @@ heroSlides.forEach((slide, index) => {
     // Filter out null elements
     const elements = [title, subtitle, button].filter(el => el !== null);
     
+    // Ensure elements are visible by default
+    elements.forEach(el => {
+        el.style.opacity = '1';
+        el.style.visibility = 'visible';
+    });
+    
     if (index === 0 && elements.length > 0) {
-        // Animate first slide on load
-        gsap.from(elements, {
-            ...heroAnimSettings,
-            opacity: 0
-        });
+        // Animate first slide on load - use fromTo for explicit end state
+        gsap.fromTo(elements, 
+            { opacity: 0, y: heroAnimSettings.y },
+            { 
+                opacity: 1, 
+                y: 0, 
+                duration: heroAnimSettings.duration, 
+                stagger: heroAnimSettings.stagger, 
+                delay: heroAnimSettings.delay, 
+                ease: heroAnimSettings.ease 
+            }
+        );
     }
 });
 
@@ -203,10 +216,17 @@ function showSlide(index) {
     
     if (elements.length > 0) {
         const slideAnimSettings = isMobile() ? { y: 15, duration: 0.4, stagger: 0.1, ease: 'power1.out' } : { y: 30, duration: 0.8, stagger: 0.15, ease: 'power3.out' };
-        gsap.from(elements, {
-            ...slideAnimSettings,
-            opacity: 0
-        });
+        // Use fromTo for explicit end state
+        gsap.fromTo(elements, 
+            { opacity: 0, y: slideAnimSettings.y },
+            { 
+                opacity: 1, 
+                y: 0, 
+                duration: slideAnimSettings.duration, 
+                stagger: slideAnimSettings.stagger, 
+                ease: slideAnimSettings.ease 
+            }
+        );
     }
 }
 
