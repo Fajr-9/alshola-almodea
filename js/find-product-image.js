@@ -17,7 +17,7 @@ async function initializeImageCache() {
     
     // Note: In a real environment, you would fetch this from the server
     // For now, we'll use a fallback approach that checks images on-demand
-    console.log('Image cache initialized (will check on-demand)');
+    // console.log('Image cache initialized (will check on-demand)');
 }
 
 // Extract numeric part and prefix from product name
@@ -206,7 +206,7 @@ async function autoUpdateProductImages() {
             // Update image
             card.setAttribute('data-product-img', foundImg);
             imgElement.src = `assets/Products Img/${foundImg}`;
-            console.log(`Updated image for ${productName}: ${currentImg} -> ${foundImg}`);
+            // console.log(`Updated image for ${productName}: ${currentImg} -> ${foundImg}`);
         }
         
         // Find matching data sheet

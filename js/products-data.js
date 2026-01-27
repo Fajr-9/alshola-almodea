@@ -434,40 +434,70 @@ function setupProductModal() {
     function closeModal() {
         const modalContent = modal.querySelector('.spotlight-modal-content');
         
-        if (modalContent) {
-            // New modal style (side panel)
-            gsap.to(modalContent, {
-                x: '100%',
-                opacity: 0,
-                duration: 0.4,
-                ease: 'power3.in'
-            });
-            
-            gsap.to(overlay, {
-                opacity: 0,
-                duration: 0.3,
-                onComplete: () => {
-                    modal.style.display = 'none';
-                }
-            });
+        document.body.classList.remove('modal-open');
+        
+        if (typeof gsap !== 'undefined') {
+            if (modalContent) {
+                // New modal style (side panel)
+                gsap.to(modalContent, {
+                    x: '100%',
+                    opacity: 0,
+                    duration: 0.4,
+                    ease: 'power3.in'
+                });
+                
+                gsap.to(overlay, {
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        modal.style.display = 'none';
+                        modal.style.visibility = 'hidden';
+                    }
+                });
+            } else {
+                // Old modal style (centered)
+                gsap.to(modal, {
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        modal.style.display = 'none';
+                        modal.style.visibility = 'hidden';
+                    }
+                });
+            }
         } else {
-            // Old modal style (centered)
-            gsap.to(modal, {
-                opacity: 0,
-                duration: 0.3,
-                onComplete: () => {
-                    modal.style.display = 'none';
-                }
-            });
+            // Fallback without GSAP
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            if (modalContent) {
+                modalContent.style.transform = 'translateX(100%)';
+                modalContent.style.opacity = '0';
+            }
+            if (overlay) {
+                overlay.style.opacity = '0';
+            }
         }
     }
     
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (overlay) overlay.addEventListener('click', closeModal);
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+        closeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            closeModal();
+        }, { passive: false });
+    }
+    if (overlay) {
+        overlay.addEventListener('click', closeModal);
+        overlay.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            closeModal();
+        }, { passive: false });
+    }
     
     // Open modal from new button style
     openButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
+        // Handler function for both click and touch
+        const handleOpen = (e) => {
             e.preventDefault();
             e.stopPropagation();
             
@@ -580,18 +610,33 @@ function setupProductModal() {
                 }
                 
                 // Show modal with slide-in animation
+                document.body.classList.add('modal-open');
                 modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
                 const modalContent = modal.querySelector('.spotlight-modal-content');
                 
-                gsap.fromTo(overlay,
-                    { opacity: 0 },
-                    { opacity: 1, duration: 0.4 }
-                );
+                // Ensure modal is visible immediately as fallback
+                if (overlay) {
+                    overlay.style.opacity = '1';
+                }
+                if (modalContent) {
+                    modalContent.style.opacity = '1';
+                    modalContent.style.transform = 'translateX(0)';
+                }
                 
-                gsap.fromTo(modalContent,
-                    { x: '100%', opacity: 0 },
-                    { x: '0%', opacity: 1, duration: 0.5, ease: 'power3.out' }
-                );
+                // Add GSAP animation if available
+                if (typeof gsap !== 'undefined') {
+                    gsap.fromTo(overlay,
+                        { opacity: 0 },
+                        { opacity: 1, duration: 0.4 }
+                    );
+                    
+                    gsap.fromTo(modalContent,
+                        { x: '100%', opacity: 0 },
+                        { x: '0%', opacity: 1, duration: 0.5, ease: 'power3.out' }
+                    );
+                }
             } else {
                 // Old modal structure (fallback)
                 const nameEl = document.getElementById('modalProductName');
@@ -617,7 +662,14 @@ function setupProductModal() {
                     { opacity: 1, duration: 0.3 }
                 );
             }
-        });
+        };
+        
+        // Add both click and touch event listeners for mobile support
+        button.addEventListener('click', handleOpen);
+        button.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleOpen(e);
+        }, { passive: false });
     });
     
     // Open modal from old button style (backward compatibility)
@@ -669,31 +721,33 @@ function openDataSheetModal(dataSheetPath, productName) {
         return;
     }
     
-    // Clear previous image and handlers
-    modalImage.src = '';
-    modalImage.onload = null;
-    modalImage.onerror = null;
-    
     // Close function
     function closeModal() {
         modal.classList.remove('active');
-        // Clear image after closing
-        setTimeout(() => {
-            modalImage.src = '';
-            modalImage.onload = null;
-            modalImage.onerror = null;
-        }, 300);
+        modal.style.display = 'none';
     }
     
-    // Set up close handlers
+    // Set up close handlers with touch support
     if (closeBtn) {
         closeBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeModal();
+        };
+        closeBtn.ontouchend = (e) => {
+            e.preventDefault();
             e.stopPropagation();
             closeModal();
         };
     }
     if (overlay) {
         overlay.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeModal();
+        };
+        overlay.ontouchend = (e) => {
+            e.preventDefault();
             e.stopPropagation();
             closeModal();
         };
@@ -708,18 +762,16 @@ function openDataSheetModal(dataSheetPath, productName) {
     };
     document.addEventListener('keydown', escHandler);
     
-    // Load image
-    modalImage.onload = () => {
-        modal.classList.add('active');
-    };
-    
-    modalImage.onerror = () => {
-        console.error('Failed to load data sheet:', dataSheetPath);
-        modalImage.alt = 'Data Sheet not found';
-        modal.classList.add('active');
-    };
+    // Show modal immediately
+    modal.style.display = 'flex';
+    modal.classList.add('active');
     
     // Set image source
     modalImage.src = dataSheetPath;
     modalImage.alt = `Data Sheet - ${productName}`;
+    
+    modalImage.onerror = () => {
+        console.error('Failed to load data sheet:', dataSheetPath);
+        modalImage.alt = 'Data Sheet not found';
+    };
 }

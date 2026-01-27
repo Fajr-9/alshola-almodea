@@ -54,19 +54,19 @@ function generateSpotlightProducts() {
     const spotLightProducts = productsData?.indoor?.['spot-light'] || [];
     
     if (spotLightProducts.length === 0) {
-        console.warn('No spot-light products found');
+        // console.warn('No spot-light products found');
         grid.innerHTML = '<p style="color: #fff; text-align: center; grid-column: 1 / -1; padding: 40px;">No products available</p>';
         return;
     }
 
-    console.log(`Generating ${spotLightProducts.length} spotlight products`);
+    // console.log(`Generating ${spotLightProducts.length} spotlight products`);
 
     let html = '';
     let productCount = 0;
     
     spotLightProducts.forEach((product) => {
         if (!product || !product.name) {
-            console.warn('Invalid product found:', product);
+            // console.warn('Invalid product found:', product);
             return;
         }
         
@@ -102,7 +102,7 @@ function generateSpotlightProducts() {
         return;
     }
 
-    console.log(`Successfully generated ${productCount} product cards`);
+    // console.log(`Successfully generated ${productCount} product cards`);
     grid.innerHTML = html;
 
     // Ensure products are visible immediately
@@ -198,7 +198,7 @@ function setupSort() {
 
 // Setup spotlight modal
 function setupSpotlightModal() {
-    const modal = document.getElementById('spotlightModal');
+    const modal = document.getElementById('productModal');
     const closeBtn = modal?.querySelector('.spotlight-modal-close');
     const overlay = modal?.querySelector('.modal-overlay');
     const productCards = document.querySelectorAll('.spotlight-product-card');
@@ -208,31 +208,61 @@ function setupSpotlightModal() {
     // Close modal with slide-out animation
     function closeModal() {
         const modalContent = modal.querySelector('.spotlight-modal-content');
+        const modalOverlay = modal.querySelector('.modal-overlay');
         
-        gsap.to(modalContent, {
-            x: '100%',
-            opacity: 0,
-            duration: 0.4,
-            ease: 'power3.in'
-        });
+        document.body.classList.remove('modal-open');
         
-        gsap.to(modal.querySelector('.modal-overlay'), {
-            opacity: 0,
-            duration: 0.3,
-            onComplete: () => {
-                modal.style.display = 'none';
+        if (typeof gsap !== 'undefined') {
+            gsap.to(modalContent, {
+                x: '100%',
+                opacity: 0,
+                duration: 0.4,
+                ease: 'power3.in'
+            });
+            
+            gsap.to(modalOverlay, {
+                opacity: 0,
+                duration: 0.3,
+                onComplete: () => {
+                    modal.style.display = 'none';
+                    modal.style.visibility = 'hidden';
+                }
+            });
+        } else {
+            // Fallback without GSAP
+            modal.style.display = 'none';
+            modal.style.visibility = 'hidden';
+            if (modalContent) {
+                modalContent.style.transform = 'translateX(100%)';
+                modalContent.style.opacity = '0';
             }
-        });
+            if (modalOverlay) {
+                modalOverlay.style.opacity = '0';
+            }
+        }
     }
 
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (overlay) overlay.addEventListener('click', closeModal);
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeModal);
+        closeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            closeModal();
+        }, { passive: false });
+    }
+    if (overlay) {
+        overlay.addEventListener('click', closeModal);
+        overlay.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            closeModal();
+        }, { passive: false });
+    }
 
     // Open modal on product card click
     productCards.forEach(card => {
         const button = card.querySelector('.open-spotlight-modal');
         if (button) {
-            button.addEventListener('click', (e) => {
+            // Handler function for both click and touch
+            const handleOpen = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 
@@ -342,19 +372,42 @@ function setupSpotlightModal() {
                 }
 
                 // Show modal with slide-in animation
+                document.body.classList.add('modal-open');
                 modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
                 const modalContent = modal.querySelector('.spotlight-modal-content');
+                const modalOverlay = modal.querySelector('.modal-overlay');
                 
-                gsap.fromTo(modal.querySelector('.modal-overlay'),
-                    { opacity: 0 },
-                    { opacity: 1, duration: 0.4 }
-                );
+                // Ensure modal is visible immediately as fallback
+                if (modalOverlay) {
+                    modalOverlay.style.opacity = '1';
+                }
+                if (modalContent) {
+                    modalContent.style.opacity = '1';
+                    modalContent.style.transform = 'translateX(0)';
+                }
                 
-                gsap.fromTo(modalContent,
-                    { x: '100%', opacity: 0 },
-                    { x: '0%', opacity: 1, duration: 0.5, ease: 'power3.out' }
-                );
-            });
+                // Add GSAP animation if available
+                if (typeof gsap !== 'undefined') {
+                    gsap.fromTo(modalOverlay,
+                        { opacity: 0 },
+                        { opacity: 1, duration: 0.4 }
+                    );
+                    
+                    gsap.fromTo(modalContent,
+                        { x: '100%', opacity: 0 },
+                        { x: '0%', opacity: 1, duration: 0.5, ease: 'power3.out' }
+                    );
+                }
+            };
+            
+            // Add both click and touch event listeners for mobile support
+            button.addEventListener('click', handleOpen);
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleOpen(e);
+            }, { passive: false });
         }
     });
 
@@ -373,7 +426,7 @@ function waitForProductsData(callback, maxAttempts = 100) {
         attempts++;
         if (typeof productsData !== 'undefined' && productsData?.indoor?.['spot-light']) {
             clearInterval(checkInterval);
-            console.log('productsData loaded successfully');
+            // console.log('productsData loaded successfully');
             callback();
         } else if (attempts >= maxAttempts) {
             clearInterval(checkInterval);
@@ -385,7 +438,7 @@ function waitForProductsData(callback, maxAttempts = 100) {
         } else {
             // Log progress every 10 attempts
             if (attempts % 10 === 0) {
-                console.log(`Waiting for productsData... (attempt ${attempts}/${maxAttempts})`);
+                // console.log(`Waiting for productsData... (attempt ${attempts}/${maxAttempts})`);
             }
         }
     }, 100);
@@ -462,7 +515,7 @@ function initializeAnimations() {
 
 // Main initialization function
 function initializeSpotlightPage() {
-    console.log('Initializing spotlight page...');
+    // console.log('Initializing spotlight page...');
     
     // Show loading message
     const grid = document.getElementById('spotlightProductsGrid');
@@ -471,7 +524,7 @@ function initializeSpotlightPage() {
     }
     
     waitForProductsData(() => {
-        console.log('productsData is ready, generating products...');
+        // console.log('productsData is ready, generating products...');
         generateSpotlightProducts();
         
         // Initialize animations after products are generated
@@ -484,21 +537,21 @@ function initializeSpotlightPage() {
 // Initialize on page load
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM Content Loaded');
+        // console.log('DOM Content Loaded');
         initializeSpotlightPage();
     });
 } else {
-    console.log('DOM already loaded');
+    // console.log('DOM already loaded');
     initializeSpotlightPage();
 }
 
 // Re-initialize when page becomes visible (when returning from another page)
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
-        console.log('Page became visible, checking products...');
+        // console.log('Page became visible, checking products...');
         const grid = document.getElementById('spotlightProductsGrid');
         if (grid && (grid.children.length === 0 || grid.textContent.includes('Loading') || grid.textContent.includes('Error'))) {
-            console.log('Re-initializing products...');
+            // console.log('Re-initializing products...');
             initializeSpotlightPage();
         }
     }
@@ -506,7 +559,7 @@ document.addEventListener('visibilitychange', () => {
 
 // Also re-initialize on page focus (for browser back/forward)
 window.addEventListener('pageshow', (event) => {
-    console.log('Page show event', event.persisted);
+    // console.log('Page show event', event.persisted);
     if (event.persisted) {
         initializeSpotlightPage();
     } else {
@@ -522,7 +575,7 @@ window.addEventListener('pageshow', (event) => {
 setTimeout(() => {
     const grid = document.getElementById('spotlightProductsGrid');
     if (grid && (grid.children.length === 0 || grid.textContent.includes('Loading'))) {
-        console.log('Fallback: Re-initializing after delay...');
+        // console.log('Fallback: Re-initializing after delay...');
         initializeSpotlightPage();
     }
 }, 2000);
@@ -539,31 +592,33 @@ function openDataSheetModal(dataSheetPath, productName) {
         return;
     }
     
-    // Clear previous image and handlers
-    modalImage.src = '';
-    modalImage.onload = null;
-    modalImage.onerror = null;
-    
     // Close function
     function closeModal() {
         modal.classList.remove('active');
-        // Clear image after closing
-        setTimeout(() => {
-            modalImage.src = '';
-            modalImage.onload = null;
-            modalImage.onerror = null;
-        }, 300);
+        modal.style.display = 'none';
     }
     
-    // Set up close handlers
+    // Set up close handlers with touch support
     if (closeBtn) {
         closeBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeModal();
+        };
+        closeBtn.ontouchend = (e) => {
+            e.preventDefault();
             e.stopPropagation();
             closeModal();
         };
     }
     if (overlay) {
         overlay.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeModal();
+        };
+        overlay.ontouchend = (e) => {
+            e.preventDefault();
             e.stopPropagation();
             closeModal();
         };
@@ -578,18 +633,16 @@ function openDataSheetModal(dataSheetPath, productName) {
     };
     document.addEventListener('keydown', escHandler);
     
-    // Load image
-    modalImage.onload = () => {
-        modal.classList.add('active');
-    };
-    
-    modalImage.onerror = () => {
-        console.error('Failed to load data sheet:', dataSheetPath);
-        modalImage.alt = 'Data Sheet not found';
-        modal.classList.add('active');
-    };
+    // Show modal immediately
+    modal.style.display = 'flex';
+    modal.classList.add('active');
     
     // Set image source
     modalImage.src = dataSheetPath;
     modalImage.alt = `Data Sheet - ${productName}`;
+    
+    modalImage.onerror = () => {
+        console.error('Failed to load data sheet:', dataSheetPath);
+        modalImage.alt = 'Data Sheet not found';
+    };
 }

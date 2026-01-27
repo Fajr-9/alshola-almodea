@@ -25,3 +25,6 @@ products-*.txt
 *~
 # Videos - too large for GitHub
 assets/Alshola Projcts/Excerpts/
+
+# Backup files
+css/style.backup.css

@@ -458,8 +458,8 @@ function showProjectsGallery(projectId) {
     
     // Log only in development
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        console.log('Loading gallery for project:', project.title);
-        console.log('Number of images:', project.images.length);
+        // console.log('Loading gallery for project:', project.title);
+        // console.log('Number of images:', project.images.length);
     }
     
     // Check if mobile for optimized loading
