@@ -170,9 +170,12 @@ heroSlides.forEach((slide, index) => {
     const subtitle = slide.querySelector('.hero-subtitle');
     const button = slide.querySelector('.btn');
     
-    if (index === 0) {
+    // Filter out null elements
+    const elements = [title, subtitle, button].filter(el => el !== null);
+    
+    if (index === 0 && elements.length > 0) {
         // Animate first slide on load
-        gsap.from([title, subtitle, button], {
+        gsap.from(elements, {
             ...heroAnimSettings,
             opacity: 0
         });
@@ -195,11 +198,16 @@ function showSlide(index) {
     const subtitle = activeSlide.querySelector('.hero-subtitle');
     const button = activeSlide.querySelector('.btn');
     
-    const slideAnimSettings = isMobile() ? { y: 15, duration: 0.4, stagger: 0.1, ease: 'power1.out' } : { y: 30, duration: 0.8, stagger: 0.15, ease: 'power3.out' };
-    gsap.from([title, subtitle, button], {
-        ...slideAnimSettings,
-        opacity: 0
-    });
+    // Filter out null elements
+    const elements = [title, subtitle, button].filter(el => el !== null);
+    
+    if (elements.length > 0) {
+        const slideAnimSettings = isMobile() ? { y: 15, duration: 0.4, stagger: 0.1, ease: 'power1.out' } : { y: 30, duration: 0.8, stagger: 0.15, ease: 'power3.out' };
+        gsap.from(elements, {
+            ...slideAnimSettings,
+            opacity: 0
+        });
+    }
 }
 
 function nextSlide() {
