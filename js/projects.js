@@ -152,20 +152,6 @@ const projectsData = [
             'assets/Alshola Projcts/Mosque/P4.webp',
             'assets/Alshola Projcts/Mosque/P5.webp'
         ]
-    },
-    {
-        id: 'excerpts',
-        title: 'Excerpts',
-        subtitle: 'Project Highlights',
-        image: 'assets/Alshola Projcts/Excerpts/v1.mp4',
-        images: [
-            'assets/Alshola Projcts/Excerpts/v1.mp4',
-            'assets/Alshola Projcts/Excerpts/v2.mp4',
-            'assets/Alshola Projcts/Excerpts/v3.mp4',
-            'assets/Alshola Projcts/Excerpts/v4.mp4',
-            'assets/Alshola Projcts/Excerpts/v5.mp4'
-        ],
-        isVideo: true
     }
 ];
 
