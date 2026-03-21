@@ -1,0 +1,93 @@
+/* ============================================
+   أيقونات حديثة موحدة - تعمل على كل الشاشات
+   ============================================ */
+
+/* كل أيقونات SVG (ما عدا لوجو النص) */
+.header svg:not(.logo-text-svg),
+.footer svg:not(.logo-text-svg),
+.feature-icon svg,
+.service-icon svg,
+.social-link svg,
+.mobile-social-link svg,
+[class*="btn"] svg,
+.lightbox-close svg,
+.lightbox-prev svg,
+.lightbox-next svg,
+.gallery-carousel-btn svg,
+.back-to-categories-btn svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* حجم موحد للأيقونات */
+.social-link svg,
+.mobile-social-link svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .social-link svg,
+    .mobile-social-link svg {
+        width: 1.35rem;
+        height: 1.35rem;
+    }
+}
+
+.feature-icon svg,
+.service-icon svg,
+.about-pro-value-icon svg {
+    width: 2rem;
+    height: 2rem;
+}
+
+@media (max-width: 768px) {
+    .feature-icon svg,
+    .service-icon svg,
+    .about-pro-value-icon svg {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .feature-icon svg,
+    .service-icon svg,
+    .about-pro-value-icon svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+
+/* أيقونات الأزرار والتنقل */
+.back-to-categories-btn svg,
+.gallery-carousel-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+@media (max-width: 600px) {
+    .back-to-categories-btn svg,
+    .gallery-carousel-btn svg {
+        width: 1.15rem;
+        height: 1.15rem;
+    }
+}
+
+.lightbox-close svg,
+.lightbox-prev svg,
+.lightbox-next svg {
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+@media (max-width: 480px) {
+    .lightbox-close svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+}

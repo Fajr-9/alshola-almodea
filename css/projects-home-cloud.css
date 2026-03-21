@@ -1,0 +1,100 @@
+/*
+ * Homepage — Our Projects accordion: same cloud silhouette as About (#homeProjectsCloudClip).
+ * Load after css/style.css. Section header + CTA unchanged; counter stays bottom-center on accordion.
+ */
+
+.projects-accordion-container {
+  max-width: 760px;
+}
+
+.projects-accordion {
+  position: relative;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
+  background: transparent;
+}
+
+.accordion-images-grid {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+
+.accordion-image-slot {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  aspect-ratio: 400 / 250;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: 0;
+  border-radius: 0;
+  overflow: hidden;
+  clip-path: url(#homeProjectsCloudClip);
+  -webkit-clip-path: url(#homeProjectsCloudClip);
+  box-shadow: none;
+  background: linear-gradient(165deg, #faf8f5 0%, #f3ede6 45%, #ebe4db 100%);
+  filter: drop-shadow(14px 28px 40px rgba(47, 47, 47, 0.12))
+    drop-shadow(0 6px 20px rgba(178, 42, 31, 0.08));
+  display: block;
+}
+
+.accordion-image-slot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+  display: block;
+  opacity: 1;
+  transition: opacity 0.8s ease, transform 0.5s ease;
+  will-change: opacity;
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.accordion-overlay {
+  z-index: 3;
+}
+
+@media (max-width: 768px) {
+  .projects-accordion-container {
+    max-width: 100%;
+  }
+
+  .accordion-images-grid {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .accordion-image-slot {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .accordion-images-grid {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .accordion-image-slot {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding: 0;
+  }
+}

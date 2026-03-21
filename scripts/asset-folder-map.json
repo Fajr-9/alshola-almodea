@@ -1,0 +1,70 @@
+{
+  "$schema": "Documentation only: how productsData `type` keys map to disk folders under assets.",
+  "productsImgRoot": "assets/Products Img",
+  "dataSheetsRoot": "assets/DATA-SHEETS",
+  "newDataSheetsSubfolder": "New Data-Sheets",
+  "byCategoryType": {
+    "indoor": {
+      "spot-light": {
+        "exampleImageDir": "New Img/Spot-light-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/Spot-light-DataSheets"
+      },
+      "down-light": {
+        "exampleImageDir": "New Img/Down-Light-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/Down-light-Datasheets"
+      },
+      "lamps-tubes": {
+        "exampleImageDir": "New Img/Lamp&Tubes-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/Lamp&Tubes-DataSheets"
+      },
+      "strip-light": {
+        "exampleImageDir": "New Img/Strip-light-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/Strip-light-DataSheets"
+      },
+      "mirror-light": {
+        "exampleImageDir": "New Img/Mirror-Lights-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/Mirror-light-DataSheets"
+      },
+      "track-light": {
+        "exampleImageDir": "New Img/truck Light-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/truck Light-Datasheets"
+      },
+      "chandelier-pendant": {
+        "exampleImageDir": "New Img/CHANDELIER & PENDANT-Pic",
+        "exampleDataSheetDir": "assets/DATA-SHEETS root or New Data-Sheets (varies)"
+      }
+    },
+    "outdoor": {
+      "industrial-light": {
+        "exampleImageDir": "New Img/Industrial Light-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/Industrial Light-Datasheets"
+      },
+      "external-light": {
+        "exampleImageDir": "New Img/External LIGHT-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/External-light-DataSheets"
+      },
+      "pole-bollard-light": {
+        "exampleImageDir": "New Img/POLE & BOLLARD LIGHT-Pic",
+        "exampleDataSheetDir": "often assets/DATA-SHEETS root PNGs"
+      },
+      "up-light": {
+        "exampleImageDir": "New Img/UP-LIGHT-Pic",
+        "exampleDataSheetDir": "often assets/DATA-SHEETS root PNGs"
+      },
+      "ceiling-light": {
+        "exampleImageDir": "New Img/Ceiling light-Pic",
+        "exampleDataSheetDir": "New Data-Sheets/Ceiling light-Datasheets"
+      },
+      "flood-light": {
+        "exampleImageDir": "New Img/Flood-Light-Pic",
+        "exampleDataSheetDir": "often assets/DATA-SHEETS root PNGs"
+      }
+    }
+  },
+  "matchingRules": [
+    "Filenames are matched to product `name` by exact stem, or stem starting with NAME + comma/space/dash/underscore + suffix.",
+    "Optional file prefixes stripped for match: FD-, DL-, SL-, BL-, PL-, HB-.",
+    "Gallery extras: only files in the same directory as productsData `img` are grouped per SKU.",
+    "Datasheet auto-map: any file under assets/DATA-SHEETS whose stem matches a product name; manual `mappings` in getDataSheetPath wins."
+  ]
+}

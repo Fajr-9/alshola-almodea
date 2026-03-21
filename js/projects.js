@@ -175,10 +175,21 @@ const projectsData = [
 
 const projectsGrid = document.getElementById('projectsGrid');
 const projectsGallery = document.getElementById('projectsGallery');
-const galleryGrid = document.getElementById('galleryGrid');
 const galleryTitle = document.getElementById('galleryTitle');
 const backButton = document.getElementById('backButton');
 const projectsCategoriesSection = document.querySelector('.projects-categories-section');
+
+/* Carousel DOM (Comfi.Inn-style: central framed image + layered sides) */
+const galleryCarouselWrapper = document.getElementById('galleryCarouselWrapper');
+const galleryCarouselPrev = document.getElementById('galleryCarouselPrev');
+const galleryCarouselNext = document.getElementById('galleryCarouselNext');
+const galleryCarouselCenter = document.getElementById('galleryCarouselCenter');
+const galleryCarouselLeft = document.getElementById('galleryCarouselLeft');
+const galleryCarouselRight = document.getElementById('galleryCarouselRight');
+const galleryCarouselCaption = document.getElementById('galleryCarouselCaption');
+
+let currentCarouselProject = null;
+let currentCarouselIndex = 0;
 
 // ============================================
 // Initialize Projects Grid
@@ -376,73 +387,119 @@ function createProjectCard(project, index) {
 }
 
 // ============================================
-// Clear Gallery Function
+// Clear Gallery (Carousel) Function
 // ============================================
 
 function clearGallery() {
-    if (!galleryGrid) return;
-    
     try {
-        // Disconnect any existing IntersectionObserver
-        if (window.galleryImageObserver) {
-            window.galleryImageObserver.disconnect();
-            window.galleryImageObserver = null;
-        }
-        
-        // Remove all event listeners and clear images
-        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-        galleryItems.forEach(item => {
-            const img = item.querySelector('img');
-            if (img) {
-                // Cancel any pending image loads
-                img.src = '';
-                img.onload = null;
-                img.onerror = null;
-                // Clear dataset attributes
-                img.removeAttribute('data-src');
-                img.removeAttribute('data-simple-encoded');
-                img.removeAttribute('data-original-path');
-            }
-        });
-        
-        // Remove all child elements
-        while (galleryGrid.firstChild) {
-            galleryGrid.removeChild(galleryGrid.firstChild);
-        }
-        
-        // Clear all styles and reset
-        galleryGrid.innerHTML = '';
-        galleryGrid.style.display = 'none';
-        galleryGrid.style.opacity = '0';
-        galleryGrid.style.visibility = 'hidden';
-        
-        // Force reflow
-        void galleryGrid.offsetHeight;
-        
-        // Clear any pending timeouts or intervals
         if (window.galleryClearTimeout) {
             clearTimeout(window.galleryClearTimeout);
             window.galleryClearTimeout = null;
         }
-        
-        // Clear any preload images
-        if (window.preloadImages) {
-            window.preloadImages.forEach(img => {
-                if (img) {
-                    img.onload = null;
-                    img.onerror = null;
-                    img.src = '';
-                }
-            });
-            window.preloadImages = [];
-        }
+        currentCarouselProject = null;
+        currentCarouselIndex = 0;
+        if (galleryCarouselCenter) galleryCarouselCenter.innerHTML = '';
+        if (galleryCarouselLeft) galleryCarouselLeft.innerHTML = '';
+        if (galleryCarouselRight) galleryCarouselRight.innerHTML = '';
+        if (galleryCarouselCaption) galleryCarouselCaption.textContent = '';
     } catch (error) {
         console.error('Error clearing gallery:', error);
-        // Fallback: just clear innerHTML
-        if (galleryGrid) {
-            galleryGrid.innerHTML = '';
-        }
     }
+}
+
+// Encode path for src (spaces and special chars)
+function encodeMediaPath(path) {
+    return path.split('/').map(part => encodeURIComponent(part)).join('/');
+}
+
+// Create img or video element for carousel
+function createCarouselMedia(path, isVideo, opts) {
+    opts = opts || {};
+    const encoded = encodeMediaPath(path);
+    if (isVideo) {
+        const video = document.createElement('video');
+        video.src = encoded;
+        video.controls = !!opts.controls;
+        video.muted = !!opts.muted;
+        video.loop = !!opts.loop;
+        video.playsInline = true;
+        video.preload = opts.preload || 'metadata';
+        video.setAttribute('playsinline', '');
+        if (opts.className) video.className = opts.className;
+        return video;
+    }
+    const img = document.createElement('img');
+    img.src = encoded;
+    img.alt = opts.alt || '';
+    img.loading = opts.loading || 'eager';
+    if (opts.className) img.className = opts.className;
+    img.onerror = function() {
+        this.src = encodeURI(path);
+    };
+    return img;
+}
+
+// Render central framed image/video and caption
+function renderCarousel(project, index) {
+    if (!project || !project.images.length || !galleryCarouselCenter) return;
+    const paths = project.images;
+    const len = paths.length;
+    const i = ((index % len) + len) % len;
+    const isVideo = project.isVideo || /\.(mp4|webm|mov)$/i.test(paths[i]);
+
+    galleryCarouselCenter.innerHTML = '';
+    const frame = document.createElement('div');
+    frame.className = 'gallery-carousel-frame';
+    const media = createCarouselMedia(paths[i], isVideo, {
+        controls: isVideo,
+        muted: false,
+        loop: isVideo,
+        preload: 'auto',
+        className: 'gallery-carousel-center-media'
+    });
+    frame.appendChild(media);
+    frame.addEventListener('click', () => openLightbox(project.images, i, project.title));
+    galleryCarouselCenter.appendChild(frame);
+
+    if (galleryCarouselLeft) {
+        galleryCarouselLeft.innerHTML = '';
+        const prevIndices = [i - 1, i - 2].filter(j => j >= 0);
+        prevIndices.forEach((idx) => {
+            const isV = project.isVideo || /\.(mp4|webm|mov)$/i.test(paths[idx]);
+            const sideFrame = document.createElement('div');
+            sideFrame.className = 'gallery-carousel-side-frame gallery-carousel-side-frame-left';
+            const sideMedia = createCarouselMedia(paths[idx], isV, { className: 'gallery-carousel-side-media', loading: 'lazy' });
+            if (isV && sideMedia.tagName === 'VIDEO') sideMedia.muted = true;
+            sideFrame.appendChild(sideMedia);
+            sideFrame.addEventListener('click', () => goCarouselIndex(project, idx));
+            galleryCarouselLeft.appendChild(sideFrame);
+        });
+    }
+
+    if (galleryCarouselRight) {
+        galleryCarouselRight.innerHTML = '';
+        const nextIndices = [i + 1, i + 2].filter(j => j < len);
+        nextIndices.forEach((idx) => {
+            const isV = project.isVideo || /\.(mp4|webm|mov)$/i.test(paths[idx]);
+            const sideFrame = document.createElement('div');
+            sideFrame.className = 'gallery-carousel-side-frame gallery-carousel-side-frame-right';
+            const sideMedia = createCarouselMedia(paths[idx], isV, { className: 'gallery-carousel-side-media', loading: 'lazy' });
+            if (isV && sideMedia.tagName === 'VIDEO') sideMedia.muted = true;
+            sideFrame.appendChild(sideMedia);
+            sideFrame.addEventListener('click', () => goCarouselIndex(project, idx));
+            galleryCarouselRight.appendChild(sideFrame);
+        });
+    }
+
+    if (galleryCarouselCaption) {
+        galleryCarouselCaption.textContent = (i + 1) + ' / ' + len;
+    }
+}
+
+function goCarouselIndex(project, index) {
+    if (!project) return;
+    currentCarouselIndex = index;
+    renderCarousel(project, index);
 }
 
 // ============================================
@@ -451,486 +508,55 @@ function clearGallery() {
 
 function showProjectsGallery(projectId) {
     const project = projectsData.find(p => p.id === projectId);
-    if (!project || !galleryGrid || !galleryTitle || !projectsGallery || !projectsCategoriesSection) {
+    if (!project || !galleryTitle || !projectsGallery || !projectsCategoriesSection) {
         console.error('Missing elements or project not found');
         return;
     }
-    
-    // Log only in development
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        // console.log('Loading gallery for project:', project.title);
-        // console.log('Number of images:', project.images.length);
+    if (!galleryCarouselWrapper || !galleryCarouselCenter) {
+        console.error('Carousel elements not found');
+        return;
     }
-    
-    // Check if mobile for optimized loading
-    const isMobile = window.innerWidth <= 768;
-    
-    // Clear gallery completely first
+
     clearGallery();
-    
-    // Initialize preload images array
-    if (!window.preloadImages) {
-        window.preloadImages = [];
+    currentCarouselProject = project;
+    currentCarouselIndex = 0;
+
+    galleryTitle.textContent = project.title;
+    galleryTitle.style.display = 'block';
+    if (backButton) backButton.style.display = 'inline-flex';
+    if (galleryCarouselWrapper) {
+        galleryCarouselWrapper.style.display = 'flex';
+        galleryCarouselWrapper.style.opacity = '1';
+        galleryCarouselWrapper.style.visibility = 'visible';
     }
-    
-    // Wait a bit to ensure cleanup is complete
-    setTimeout(() => {
-        try {
-            // Update title and show it
-            galleryTitle.textContent = project.title;
-            galleryTitle.style.display = 'block';
-            
-            // Show back button
-            if (backButton) {
-                backButton.style.display = 'inline-flex';
-            }
-            
-            // Reset gallery grid
-            galleryGrid.style.display = '';
-            galleryGrid.style.opacity = '1';
-            galleryGrid.style.visibility = 'visible';
-            
-            // Create gallery items with proper image loading
-            // On mobile, load first 8 images eagerly, rest lazily
-            // On desktop, load all images but use lazy loading for better performance
-            const batchSize = isMobile ? 8 : 12; // Load more on desktop
-            const imagesToLoad = project.images; // Load all images, just optimize loading strategy
-        
-    imagesToLoad.forEach((imagePath, index) => {
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
-        galleryItem.setAttribute('data-image-index', index);
-            galleryItem.setAttribute('data-project-id', projectId);
-        
-        // Check if this is a video file
-        const isVideo = project.isVideo || imagePath.toLowerCase().endsWith('.mp4') || 
-                       imagePath.toLowerCase().endsWith('.webm') || 
-                       imagePath.toLowerCase().endsWith('.mov');
-        
-        if (isVideo) {
-            // Create video element with lazy loading
-            const video = document.createElement('video');
-            video.controls = true;
-            video.preload = (isMobile && index >= batchSize) ? 'none' : 'metadata';
-            video.loading = (isMobile && index >= batchSize) ? 'lazy' : 'eager';
-            video.style.width = '100%';
-            video.style.height = 'auto';
-            video.style.display = 'block';
-            video.style.opacity = '1';
-            video.style.visibility = 'visible';
-            
-            // Encode video path
-            const pathParts = imagePath.split('/');
-            const encodedParts = pathParts.map(part => encodeURIComponent(part));
-            const encodedVideoPath = encodedParts.join('/');
-            const simpleEncoded = encodeURI(imagePath);
-            
-            // Use lazy loading for videos beyond first batch
-            if (index >= batchSize) {
-                video.dataset.src = encodedVideoPath;
-                video.dataset.simpleEncoded = simpleEncoded;
-                video.dataset.originalPath = imagePath;
-                // Set poster placeholder
-                video.poster = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f5f5f5\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EVideo%3C/text%3E%3C/svg%3E';
-            } else {
-                video.src = encodedVideoPath;
-            }
-            
-            // Add source element for better browser compatibility
-            const source = document.createElement('source');
-            source.src = encodedVideoPath;
-            source.type = 'video/mp4';
-            video.appendChild(source);
-            
-            galleryItem.appendChild(video);
-        } else {
-            // Create image with proper loading
-            const img = document.createElement('img');
-            img.alt = `${project.title} ${index + 1}`;
-            // Use lazy loading for all images - improved performance
-            img.loading = (index >= batchSize) ? 'lazy' : 'eager';
-            
-            // Set styles to ensure visibility
-            img.style.width = '100%';
-            img.style.height = 'auto';
-            img.style.display = 'block';
-            img.style.opacity = '1';
-            img.style.visibility = 'visible';
-            img.style.transition = 'opacity 0.3s ease';
-            img.style.background = 'transparent';
-            
-            // Load image with proper URL encoding for server compatibility
-            // encodeURI encodes spaces (%20) and special chars (%26 for &) but keeps / and : intact
-            // This is necessary for paths with spaces like "Alshola Projcts" and "GYM & Showrooms"
-            // Split path and encode each segment properly to handle spaces and special characters
-            const pathParts = imagePath.split('/');
-            const encodedParts = pathParts.map(part => {
-                // Encode each part separately, but keep slashes
-                return encodeURIComponent(part);
-            });
-            const encodedImagePath = encodedParts.join('/');
-            
-            // Also try original encodeURI for fallback
-            const simpleEncoded = encodeURI(imagePath);
-            
-            // Use lazy loading for images beyond first batch
-            if (index >= batchSize) {
-                // Use IntersectionObserver for lazy loading
-                img.dataset.src = encodedImagePath;
-                img.dataset.simpleEncoded = simpleEncoded;
-                img.dataset.originalPath = imagePath;
-                // Set placeholder to maintain layout
-                img.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f5f5f5\' width=\'400\' height=\'300\'/%3E%3C/svg%3E';
-            } else {
-                // Try encoded path first (required for server with spaces in paths)
-                img.src = encodedImagePath;
-            }
-            
-            // Set initial styles
-            img.style.display = 'block';
-            img.style.visibility = 'visible';
-            
-            // For lazy loaded images, keep opacity low until loaded
-            if (index >= batchSize) {
-                img.style.opacity = '0.3';
-            } else {
-                img.style.opacity = '1';
-            }
-            
-            // Single onload handler
-            img.onload = function() {
-                this.style.opacity = '1';
-                this.style.visibility = 'visible';
-                this.style.display = 'block';
-                this.style.background = 'transparent';
-            };
-            
-            // Check if image is already loaded (cached)
-            if (img.complete && img.naturalWidth > 0) {
-                img.style.opacity = '1';
-                img.style.visibility = 'visible';
-                img.style.display = 'block';
-            }
-            
-            // Add error handling with retry mechanism
-            // Special handling for webp images which may need different encoding
-            let retryCount = 0;
-            const maxRetries = 3;
-            const isWebP = imagePath.toLowerCase().endsWith('.webp');
-            
-            img.onerror = function() {
-                retryCount++;
-                
-                // Retry strategies
-                if (retryCount === 1) {
-                    // Try 1: Simple encodeURI (less aggressive encoding)
-                    this.src = simpleEncoded;
-                    return;
-                }
-                
-                if (retryCount === 2) {
-                    // Try 2: Original path (may work on localhost)
-                    this.src = imagePath;
-                    return;
-                }
-                
-                if (retryCount === 3) {
-                    // Try 3: Replace spaces with %20 manually for problematic paths
-                    const manualEncoded = imagePath.replace(/ /g, '%20').replace(/&/g, '%26');
-                    this.src = manualEncoded;
-                    return;
-                }
-                
-                // If all attempts failed, show placeholder
-                this.onerror = null; // Prevent infinite loop
-                this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'300\'%3E%3Crect fill=\'%23f0f0f0\' width=\'400\' height=\'300\'/%3E%3Ctext fill=\'%23999\' font-family=\'Arial\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage not found%3C/text%3E%3C/svg%3E';
-                this.style.opacity = '1';
-                this.style.visibility = 'visible';
-                this.style.display = 'block';
-            };
-            
-            galleryItem.appendChild(img);
-        }
-        
-        // Ensure gallery item is visible
-        galleryItem.style.opacity = '1';
-        galleryItem.style.visibility = 'visible';
-        galleryItem.style.display = 'inline-block';
-        
-        // Add click handler to open lightbox
-        galleryItem.addEventListener('click', () => {
-            // Use all images for lightbox, not just loaded ones
-            openLightbox(project.images, index, project.title);
+
+    renderCarousel(project, 0);
+
+    if (galleryCarouselPrev && !galleryCarouselPrev._carouselBound) {
+        galleryCarouselPrev._carouselBound = true;
+        galleryCarouselPrev.addEventListener('click', () => {
+            if (!currentCarouselProject || !currentCarouselProject.images.length) return;
+            const len = currentCarouselProject.images.length;
+            currentCarouselIndex = (currentCarouselIndex - 1 + len) % len;
+            renderCarousel(currentCarouselProject, currentCarouselIndex);
         });
-        
-        galleryGrid.appendChild(galleryItem);
-    });
-    
-    // Setup IntersectionObserver for lazy loading (works on all devices)
-    if (typeof IntersectionObserver !== 'undefined') {
-        // Disconnect any existing observer
-        if (window.galleryImageObserver) {
-            window.galleryImageObserver.disconnect();
-        }
-        
-        window.galleryImageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const element = entry.target;
-                    
-                    // Handle video elements
-                    if (element.tagName === 'VIDEO' && element.dataset.src) {
-                        const encodedPath = element.dataset.src;
-                        const simpleEncoded = element.dataset.simpleEncoded;
-                        const originalPath = element.dataset.originalPath;
-                        
-                        element.src = encodedPath;
-                        element.load();
-                        
-                        element.addEventListener('loadeddata', function() {
-                            this.style.opacity = '1';
-                            this.removeAttribute('data-src');
-                            this.removeAttribute('data-simpleEncoded');
-                            this.removeAttribute('data-originalPath');
-                            observer.unobserve(this);
-                        });
-                        
-                        element.addEventListener('error', function() {
-                            if (this.src === encodedPath && simpleEncoded) {
-                                this.src = simpleEncoded;
-                                return;
-                            }
-                            if (this.src === simpleEncoded && originalPath) {
-                                this.src = originalPath;
-                                return;
-                            }
-                            this.style.opacity = '1';
-                            this.removeAttribute('data-src');
-                            this.removeAttribute('data-simpleEncoded');
-                            this.removeAttribute('data-originalPath');
-                            observer.unobserve(this);
-                        });
-                        return;
-                    }
-                    
-                    // Handle image elements
-                    const img = element;
-                    if (img.dataset.src) {
-                        // Load image with retry mechanism
-                        const encodedPath = img.dataset.src;
-                        const simpleEncoded = img.dataset.simpleEncoded;
-                        const originalPath = img.dataset.originalPath;
-                        
-                        // Set src and handle loading
-                        img.src = encodedPath;
-                        
-                        // Add onload handler to remove placeholder and fade in
-                        img.onload = function() {
-                            // Fade in smoothly
-                            this.style.transition = 'opacity 0.4s ease, background 0.4s ease';
-                            this.style.opacity = '1';
-                            this.style.background = 'transparent';
-                            // Remove placeholder attributes
-                            this.removeAttribute('data-src');
-                            this.removeAttribute('data-simple-encoded');
-                            this.removeAttribute('data-original-path');
-                            observer.unobserve(this);
-                        };
-                        
-                        // Add error handling with retry
-                        let retryCount = 0;
-                        img.onerror = function() {
-                            retryCount++;
-                            if (retryCount === 1 && this.src === encodedPath && simpleEncoded) {
-                                this.src = simpleEncoded;
-                                return;
-                            }
-                            if (retryCount === 2 && this.src === simpleEncoded && originalPath) {
-                                this.src = originalPath;
-                                return;
-                            }
-                            this.onerror = null; // Prevent infinite loop
-                            this.style.opacity = '1';
-                            this.style.background = '#f0f0f0';
-                            // Clean up even on error
-                            this.removeAttribute('data-src');
-                            this.removeAttribute('data-simple-encoded');
-                            this.removeAttribute('data-original-path');
-                            observer.unobserve(this);
-                        };
-                    }
-                }
-            });
-        }, {
-            rootMargin: isMobile ? '150px' : '200px', // Start loading before image is visible
-            threshold: 0.01
-        });
-        
-        // Observe all lazy-loaded images and videos after a short delay
-        setTimeout(() => {
-            try {
-                const lazyImages = galleryGrid.querySelectorAll('img[data-src], video[data-src]');
-                lazyImages.forEach(element => {
-                    try {
-                        window.galleryImageObserver.observe(element);
-                    } catch (err) {
-                        // If observation fails, load image immediately
-                        if (element.dataset.src) {
-                            element.src = element.dataset.src;
-                            element.removeAttribute('data-src');
-                        }
-                    }
-                });
-            } catch (err) {
-                console.error('Error setting up image observer:', err);
-            }
-        }, 100);
     }
-        
-        // Show gallery grid after all items are added
-        galleryGrid.style.display = '';
-        galleryGrid.style.opacity = '1';
-        galleryGrid.style.visibility = 'visible';
-        
-        // Force all images to be visible immediately
-        const allItems = galleryGrid.querySelectorAll('.gallery-item');
-        allItems.forEach((item) => {
-            item.style.opacity = '1';
-            item.style.visibility = 'visible';
-            item.style.display = 'inline-block';
-            
-            const img = item.querySelector('img');
-            if (img) {
-                // Only set opacity for images that are loaded (not lazy ones)
-                if (!img.dataset.src) {
-                    img.style.opacity = '1';
-                    img.style.visibility = 'visible';
-                }
-                img.style.display = 'block';
-            }
+    if (galleryCarouselNext && !galleryCarouselNext._carouselBound) {
+        galleryCarouselNext._carouselBound = true;
+        galleryCarouselNext.addEventListener('click', () => {
+            if (!currentCarouselProject || !currentCarouselProject.images.length) return;
+            const len = currentCarouselProject.images.length;
+            currentCarouselIndex = (currentCarouselIndex + 1) % len;
+            renderCarousel(currentCarouselProject, currentCarouselIndex);
         });
-        
-        // Force reflow to ensure layout
-        void galleryGrid.offsetHeight;
-        
-        } catch (error) {
-            console.error('Error creating gallery:', error);
-            // Show error message to user
-            if (galleryGrid) {
-                galleryGrid.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;"><p>Error loading gallery. Please try again.</p></div>';
-            }
-        }
-    
-    // Animate transition
-    if (typeof gsap !== 'undefined') {
-        gsap.to(projectsCategoriesSection, {
-            opacity: 0,
-            y: -30,
-            duration: 0.5,
-            ease: 'power2.in',
-            onComplete: () => {
-                projectsCategoriesSection.style.display = 'none';
-                projectsGallery.style.display = 'block';
-                projectsGallery.style.opacity = '1';
-                projectsGallery.style.visibility = 'visible';
-                
-                // Show gallery items immediately - no animation for better performance
-                const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-                if (galleryItems.length > 0) {
-                    // Ensure all items are visible immediately
-                    galleryItems.forEach((item, index) => {
-                        item.style.opacity = '1';
-                        item.style.visibility = 'visible';
-                        item.style.display = 'inline-block';
-                        
-                            const img = item.querySelector('img');
-                        if (img) {
-                            img.style.opacity = '1';
-                            img.style.visibility = 'visible';
-                            img.style.display = 'block';
-                        }
-                    });
-                }
-                
-                // Animate gallery in (but keep it visible)
-                gsap.from(projectsGallery, {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.3,
-                    ease: 'power2.out'
-                });
-                
-                // Force reflow to ensure masonry layout updates
-                window.galleryClearTimeout = setTimeout(() => {
-                    if (galleryGrid) {
-                        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-                        
-                        // Ensure all images are loaded and visible
-                        galleryItems.forEach((item, idx) => {
-                            const img = item.querySelector('img');
-                            if (img) {
-                                // Force visibility immediately
-                                item.style.opacity = '1';
-                                item.style.visibility = 'visible';
-                                item.style.display = 'inline-block';
-                                img.style.opacity = '1';
-                                img.style.visibility = 'visible';
-                                img.style.display = 'block';
-                                
-                                // If image not loaded yet, ensure it shows anyway
-                                if (!img.complete || img.naturalWidth === 0) {
-                                    // Force show after a delay
-                                    setTimeout(() => {
-                                        img.style.opacity = '1';
-                                        img.style.visibility = 'visible';
-                                        img.style.display = 'block';
-                                    }, 200);
-                                }
-                            }
-                        });
-                        
-                        // Force reflow
-                        void galleryGrid.offsetHeight;
-                        
-                        // Additional check after a delay
-                        setTimeout(() => {
-                            galleryItems.forEach((item) => {
-                                const img = item.querySelector('img');
-                                if (img) {
-                                    img.style.opacity = '1';
-                                    img.style.visibility = 'visible';
-                                    img.style.display = 'block';
-                                }
-                            });
-                            void galleryGrid.offsetHeight;
-                        }, 300);
-                    }
-                }, 100);
-                
-                // Scroll to top
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-                
-                // Make header white when gallery is shown (no hero section)
-                const header = document.getElementById('header');
-                if (header) {
-                    header.classList.add('scrolled');
-                    header.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-                    header.style.backdropFilter = 'blur(10px)';
-                    header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-                }
-            }
-        });
-    } else {
-        // Fallback without GSAP
+    }
+
+    function doShowGallerySection() {
         projectsCategoriesSection.style.display = 'none';
         projectsGallery.style.display = 'block';
-            projectsGallery.style.opacity = '1';
-            projectsGallery.style.visibility = 'visible';
-        
-        // Make header white when gallery is shown (no hero section)
+        projectsGallery.style.opacity = '1';
+        projectsGallery.style.visibility = 'visible';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         const header = document.getElementById('header');
         if (header) {
             header.classList.add('scrolled');
@@ -938,75 +564,22 @@ function showProjectsGallery(projectId) {
             header.style.backdropFilter = 'blur(10px)';
             header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
         }
-        
-        // Ensure all gallery items are visible
-        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-        galleryItems.forEach(item => {
-            item.style.opacity = '1';
-            item.style.visibility = 'visible';
-                item.style.display = 'inline-block';
-                
-                const img = item.querySelector('img');
-                if (img) {
-                    img.style.opacity = '1';
-                    img.style.visibility = 'visible';
-                    img.style.display = 'block';
-                }
-            });
-            
-        // Force reflow to ensure masonry layout updates
-        window.galleryClearTimeout = setTimeout(() => {
-            if (galleryGrid) {
-                const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-                
-                // Ensure all images are loaded and visible
-                galleryItems.forEach((item, idx) => {
-                    const img = item.querySelector('img');
-                    if (img) {
-                        // Force visibility immediately
-                        item.style.opacity = '1';
-                        item.style.visibility = 'visible';
-                        item.style.display = 'inline-block';
-                        img.style.opacity = '1';
-                        img.style.visibility = 'visible';
-                        img.style.display = 'block';
-                        
-                        // If image not loaded yet, ensure it shows anyway
-                        if (!img.complete || img.naturalWidth === 0) {
-                            // Force show after a delay
-                            setTimeout(() => {
-                                img.style.opacity = '1';
-                                img.style.visibility = 'visible';
-                                img.style.display = 'block';
-                            }, 200);
-                        }
-                    }
-                });
-                
-                // Force reflow
-                void galleryGrid.offsetHeight;
-                
-                // Additional check after a delay
-                setTimeout(() => {
-                    galleryItems.forEach((item) => {
-                        const img = item.querySelector('img');
-                        if (img) {
-                            img.style.opacity = '1';
-                            img.style.visibility = 'visible';
-                            img.style.display = 'block';
-                        }
-                    });
-                    void galleryGrid.offsetHeight;
-                }, 300);
-            }
-        }, 100);
-        
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
     }
-    }, 50); // Small delay to ensure cleanup is complete
+
+    if (typeof gsap !== 'undefined') {
+        gsap.to(projectsCategoriesSection, {
+            opacity: 0,
+            y: -30,
+            duration: 0.5,
+            ease: 'power2.in',
+            onComplete: () => {
+                doShowGallerySection();
+                gsap.from(projectsGallery, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+            }
+        });
+    } else {
+        doShowGallerySection();
+    }
 }
 
 // ============================================
@@ -1243,21 +816,20 @@ function openLightbox(images, index, title) {
     setTimeout(() => {
         loadImage();
     
-    // Animate in
+    // Animate in (smoother, longer)
     if (typeof gsap !== 'undefined') {
             gsap.to(lightboxModal, {
                 opacity: 1,
-            duration: 0.3,
-            ease: 'power2.out'
-        });
-        
+                duration: 0.5,
+                ease: 'power3.out'
+            });
             gsap.to(lightboxImage, {
                 scale: 1,
                 opacity: 1,
-            duration: 0.4,
-            ease: 'power3.out',
-            delay: 0.1
-        });
+                duration: 0.55,
+                ease: 'power4.out',
+                delay: 0.08
+            });
         } else {
             // Fallback without GSAP
             lightboxModal.style.opacity = '1';
@@ -1280,8 +852,8 @@ function closeLightbox() {
     if (typeof gsap !== 'undefined') {
         gsap.to(lightboxModal, {
             opacity: 0,
-            duration: 0.3,
-            ease: 'power2.in',
+            duration: 0.45,
+            ease: 'power3.in',
             onComplete: () => {
                 lightboxModal.style.display = 'none';
                 document.body.style.overflow = '';
@@ -1381,20 +953,20 @@ function updateLightboxImage() {
     if (typeof gsap !== 'undefined') {
         gsap.to(lightboxImage, {
             opacity: 0,
-            scale: 0.9,
-            duration: 0.2,
-            ease: 'power2.in',
+            scale: 0.92,
+            duration: 0.28,
+            ease: 'power3.in',
             onComplete: () => {
                 // Clear previous image before loading new one
                 lightboxImage.src = '';
                 // Load new image
                 loadNewImage();
-                // Animate in
+                // Animate in (smooth)
                 gsap.to(lightboxImage, {
                     opacity: 1,
                     scale: 1,
-                    duration: 0.3,
-                    ease: 'power2.out'
+                    duration: 0.4,
+                    ease: 'power4.out'
                 });
             }
         });

@@ -14,25 +14,43 @@ let productPageConfig = {
     productCount: 0 // Number of products
 };
 
-// Product descriptions - can be extended per category
+// Fallback descriptions when a product has no `description` in productsData
 const productDescriptions = {
-    // Spot Light descriptions (already in spot-light.js, keeping for reference)
-    'LL-3012': 'A range of recessed spot lights for low voltage LED light source offering a variety of decorative and architectural spot lights ideal for commercial offices, shopping complex, corridors they may be used on normally inflammable surfaces such as fabrics wall paper and wood. Die cast aluminium body with polyester powder coated LED lamp reflector. Adjustable fixing clips and suitable for ceiling clips remote type sheet steel or polycarbonate control gear box.',
-    // Add more descriptions as needed
+    'LL-3012': 'A range of recessed spot lights for low voltage LED light source offering a variety of decorative and architectural spot lights ideal for commercial offices, shopping complex, corridors they may be used on normally inflammable surfaces such as fabrics wall paper and wood. Die cast aluminium body with polyester powder coated LED lamp reflector. Adjustable fixing clips and suitable for ceiling clips remote type sheet steel or polycarbonate control gear box.'
 };
+
+function productNameNumericKey(name) {
+    const parts = String(name).match(/\d+/g);
+    if (!parts || parts.length === 0) return [0];
+    return parts.map((s) => parseInt(s, 10));
+}
+
+function compareProductNameStrings(nameA, nameB) {
+    const ka = productNameNumericKey(nameA);
+    const kb = productNameNumericKey(nameB);
+    const len = Math.max(ka.length, kb.length);
+    for (let i = 0; i < len; i++) {
+        const va = ka[i] ?? 0;
+        const vb = kb[i] ?? 0;
+        if (va !== vb) return va - vb;
+    }
+    return String(nameA).localeCompare(String(nameB));
+}
+
+function compareProductsByNumericName(a, b) {
+    return compareProductNameStrings(a?.name ?? '', b?.name ?? '');
+}
 
 // Initialize product page
 function initializeProductPage(config) {
     productPageConfig = { ...productPageConfig, ...config };
-    // console.log('Initializing product page:', productPageConfig);
-    
+
     const grid = document.getElementById(productPageConfig.gridId);
     if (grid) {
         grid.innerHTML = '<p style="color: #fff; text-align: center; grid-column: 1 / -1; padding: 40px; font-size: 16px;">Loading products...</p>';
     }
     
     waitForProductsData(() => {
-        // console.log('productsData is ready, generating products...');
         generateProducts();
         
         setTimeout(() => {
@@ -62,22 +80,18 @@ function generateProducts() {
         return;
     }
 
-    const products = categoryData[productPageConfig.type] || [];
+    const products = [...(categoryData[productPageConfig.type] || [])].sort(compareProductsByNumericName);
     
     if (products.length === 0) {
-        // console.warn(`No ${productPageConfig.type} products found`);
         grid.innerHTML = '<p style="color: #fff; text-align: center; grid-column: 1 / -1; padding: 40px;">No products available</p>';
         return;
     }
-
-    // console.log(`Generating ${products.length} products for ${productPageConfig.type}`);
 
     let html = '';
     let productCount = 0;
     
     products.forEach((product) => {
         if (!product || !product.name) {
-            // console.warn('Invalid product found:', product);
             return;
         }
         
@@ -85,19 +99,34 @@ function generateProducts() {
         const imgPath = `assets/Products Img/${product.img}`;
         const dataSheetPath = typeof getDataSheetPath === 'function' ? getDataSheetPath(product.name) : `assets/DATA-SHEETS/${product.name}.png`;
         const description = product.description || productDescriptions[product.name] || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
-        const thumbnails = product.thumbnails || [];
+        const gallery = typeof buildCardGalleryData === 'function'
+            ? buildCardGalleryData(productPageConfig.category, productPageConfig.type, product)
+            : { leadThumbnails: product.leadThumbnails || [], thumbnails: product.thumbnails || [] };
+        const thumbnails = gallery.thumbnails;
+        const leadThumbnails = gallery.leadThumbnails;
         
         // Get product title from mapping (for modal only)
         const productTitle = (typeof getProductTitle === 'function') ? getProductTitle(product.name) : null;
         
+        const leadB64Attr =
+            leadThumbnails.length > 0 && typeof encodeGalleryPathsForDataAttr === 'function'
+                ? ` data-lead-thumbnails-b64="${encodeGalleryPathsForDataAttr(leadThumbnails)}"`
+                : '';
+        const thumbB64Attr =
+            thumbnails.length > 0 && typeof encodeGalleryPathsForDataAttr === 'function'
+                ? ` data-thumbnails-b64="${encodeGalleryPathsForDataAttr(thumbnails)}"`
+                : '';
         html += `
             <div class="spotlight-product-card" 
+                 data-category="${productPageConfig.category}"
+                 data-type="${productPageConfig.type}"
                  data-product-name="${product.name}" 
                  data-product-title="${productTitle ? productTitle.replace(/"/g, '&quot;') : ''}"
                  data-product-datasheet="${dataSheetPath}" 
                  data-product-img="${product.img}"
                  data-product-desc="${description.replace(/"/g, '&quot;')}"
-                 ${thumbnails.length > 0 ? `data-thumbnails='${JSON.stringify(thumbnails)}'` : ''}>
+                 ${leadB64Attr}
+                 ${thumbB64Attr}>
                 <div class="product-image-wrapper">
                     <img src="${imgPath}" alt="${product.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/200x200?text=${product.name}'">
                 </div>
@@ -115,7 +144,6 @@ function generateProducts() {
         return;
     }
 
-    // console.log(`Successfully generated ${productCount} product cards`);
     grid.innerHTML = html;
 
     // Ensure products are visible immediately
@@ -135,6 +163,10 @@ function generateProducts() {
     // Setup filters and sort
     setupFilters();
     setupSort();
+
+    if (typeof setupProductGridSearch === 'function') {
+        setupProductGridSearch(productPageConfig.gridId);
+    }
 }
 
 // Update product count
@@ -142,6 +174,10 @@ function updateProductCount(count) {
     const countElement = document.getElementById('productCount');
     if (countElement) {
         countElement.textContent = count;
+    }
+    const grid = document.getElementById(productPageConfig.gridId);
+    if (grid) {
+        grid.dataset.totalProductCount = String(count);
     }
     productPageConfig.productCount = count;
 }
@@ -196,6 +232,8 @@ function setupSort() {
                 const nameB = b.getAttribute('data-product-name');
                 
                 switch(sortValue) {
+                    case 'number-asc':
+                        return compareProductNameStrings(nameA, nameB);
                     case 'name-asc':
                         return nameA.localeCompare(nameB);
                     case 'name-desc':
@@ -203,7 +241,7 @@ function setupSort() {
                     case 'newest':
                         return 0;
                     default:
-                        return 0;
+                        return compareProductNameStrings(nameA, nameB);
                 }
             });
             
@@ -285,16 +323,12 @@ function setupProductModal() {
                 const productDataSheet = card.getAttribute('data-product-datasheet') || (typeof getDataSheetPath === 'function' ? getDataSheetPath(productName) : `assets/DATA-SHEETS/${productName}.png`);
                 const productImg = card.getAttribute('data-product-img');
                 const productDesc = card.getAttribute('data-product-desc');
-                const thumbnailsAttr = card.getAttribute('data-thumbnails');
-                let thumbnails = [];
-
-                if (thumbnailsAttr) {
-                    try {
-                        thumbnails = JSON.parse(thumbnailsAttr);
-                    } catch (e) {
-                        // console.warn('Error parsing thumbnails:', e);
-                    }
-                }
+                const mergedGallery =
+                    typeof mergeGalleryFromProductCard === 'function'
+                        ? mergeGalleryFromProductCard(card, productName, productImg)
+                        : { leadThumbnails: [], thumbnails: [] };
+                let leadThumbnails = mergedGallery.leadThumbnails;
+                let thumbnails = mergedGallery.thumbnails;
 
                 // Update modal content
                 const titleElement = document.getElementById('spotlightModalTitle');
@@ -316,7 +350,10 @@ function setupProductModal() {
                     descElement.innerHTML = descText;
                 }
                 if (imgElement) {
-                    imgElement.src = `assets/Products Img/${productImg}`;
+                    imgElement.src =
+                        typeof productAssetImgUrl === 'function'
+                            ? productAssetImgUrl(productImg)
+                            : `assets/Products Img/${productImg}`;
                     // Force mobile size on mobile devices
                     if (window.innerWidth <= 480) {
                         imgElement.style.width = '120px';
@@ -343,85 +380,58 @@ function setupProductModal() {
                 if (thumbnailGallery) {
                     thumbnailGallery.innerHTML = '';
 
-                    // Add base image as first thumbnail
-                    const baseThumbnail = document.createElement('img');
-                    baseThumbnail.src = `assets/Products Img/${productImg}`;
-                    baseThumbnail.alt = `${productName} - Main Image`;
-                    baseThumbnail.loading = 'lazy';
-                    baseThumbnail.className = 'active';
-                    baseThumbnail.addEventListener('click', () => {
-                        if (imgElement) imgElement.src = `assets/Products Img/${productImg}`;
-                        thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
-                        baseThumbnail.classList.add('active');
-                    });
-                    baseThumbnail.addEventListener('error', () => {
-                        baseThumbnail.style.display = 'none';
-                    });
-                    thumbnailGallery.appendChild(baseThumbnail);
+                    const seenPaths = new Set();
+                    const toImgSrc = (rel) =>
+                        typeof productAssetImgUrl === 'function'
+                            ? productAssetImgUrl(rel)
+                            : `assets/Products Img/${rel}`;
+                    const addGalleryThumb = (relPath, isActive) => {
+                        if (!relPath || seenPaths.has(relPath)) return;
+                        seenPaths.add(relPath);
+                        const thumbnail = document.createElement('img');
+                        thumbnail.src = toImgSrc(relPath);
+                        thumbnail.alt = `${productName} - ${isActive ? 'Main' : 'Image'}`;
+                        thumbnail.loading = 'eager';
+                        thumbnail.decoding = 'async';
+                        if (isActive) thumbnail.classList.add('active');
+                        thumbnail.addEventListener('click', () => {
+                            if (imgElement) imgElement.src = toImgSrc(relPath);
+                            thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
+                            thumbnail.classList.add('active');
+                        });
+                        thumbnail.addEventListener('error', () => {
+                            thumbnail.style.display = 'none';
+                        });
+                        thumbnailGallery.appendChild(thumbnail);
+                    };
 
-                    // Add thumbnails from data if available
-                    if (thumbnails.length > 0) {
-                        thumbnails.forEach((thumb, index) => {
-                            if (thumb === productImg) return; // Skip if same as base
-                            
-                            const thumbnail = document.createElement('img');
-                            thumbnail.src = `assets/Products Img/${thumb}`;
-                            thumbnail.alt = `${productName} - Image ${index + 2}`;
-                            thumbnail.loading = 'lazy';
-                            thumbnail.addEventListener('click', () => {
-                                if (imgElement) imgElement.src = `assets/Products Img/${thumb}`;
-                                thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
-                                thumbnail.classList.add('active');
-                            });
-                            thumbnail.addEventListener('error', () => {
-                                thumbnail.style.display = 'none';
-                            });
-                            thumbnailGallery.appendChild(thumbnail);
+                    const hasExplicitGallery = leadThumbnails.length > 0 || thumbnails.length > 0;
+
+                    if (hasExplicitGallery) {
+                        leadThumbnails.forEach((thumb) => addGalleryThumb(thumb, false));
+                        addGalleryThumb(productImg, true);
+                        thumbnails.forEach((thumb) => {
+                            if (thumb === productImg) return;
+                            addGalleryThumb(thumb, false);
                         });
                     } else {
-                        // Fallback: Try to find additional images
-                        const imgBase = productImg.replace(/\.(png|jpg|jpeg|webp)$/i, '');
-                        const baseName = productName.replace(/[^a-zA-Z0-9-]/g, '');
+                        addGalleryThumb(productImg, true);
+                    }
 
-                        for (let i = 1; i <= 10; i++) {
-                            const variations = [
-                                `${imgBase},${i}.png`,
-                                `${imgBase},${i}.jpg`,
-                                `${imgBase},${i}.webp`,
-                                `${imgBase} ${i}.png`,
-                                `${imgBase} ${i}.jpg`,
-                                `${imgBase} ${i}.webp`,
-                                `${baseName},${i}.png`,
-                                `${baseName},${i}.jpg`,
-                                `${baseName},${i}.webp`,
-                                `${baseName} ${i}.png`,
-                                `${baseName} ${i}.jpg`,
-                                `${baseName} ${i}.webp`,
-                            ];
-
-                            variations.forEach(variation => {
-                                const img = new Image();
-                                img.onload = function() {
-                                    const existing = thumbnailGallery.querySelector(`img[src="assets/Products Img/${variation}"]`);
-                                    if (existing) return;
-                                    
-                                    const thumbnail = document.createElement('img');
-                                    thumbnail.src = `assets/Products Img/${variation}`;
-                                    thumbnail.alt = `${productName} - Image ${i}`;
-                                    thumbnail.loading = 'lazy';
-                                    thumbnail.addEventListener('click', () => {
-                                        if (imgElement) imgElement.src = `assets/Products Img/${variation}`;
-                                        thumbnailGallery.querySelectorAll('img').forEach(t => t.classList.remove('active'));
-                                        thumbnail.classList.add('active');
-                                    });
-                                    thumbnail.addEventListener('error', () => {
-                                        thumbnail.style.display = 'none';
-                                    });
-                                    thumbnailGallery.appendChild(thumbnail);
-                                };
-                                img.src = `assets/Products Img/${variation}`;
-                            });
-                        }
+                    for (let i = 1; i <= 10; i++) {
+                        const variations =
+                            typeof buildGalleryProbePaths === 'function'
+                                ? buildGalleryProbePaths(productImg, productName, i)
+                                : [];
+                        variations.forEach((variation) => {
+                            if (!variation || variation === productImg || seenPaths.has(variation)) return;
+                            const probe = new Image();
+                            probe.onload = function () {
+                                if (seenPaths.has(variation)) return;
+                                addGalleryThumb(variation, false);
+                            };
+                            probe.src = toImgSrc(variation);
+                        });
                     }
                 }
 
@@ -494,7 +504,6 @@ function waitForProductsData(callback, maxAttempts = 100) {
         
         if (typeof productsData !== 'undefined' && typeData) {
             clearInterval(checkInterval);
-            // console.log('productsData loaded successfully');
             callback();
         } else if (attempts >= maxAttempts) {
             clearInterval(checkInterval);
@@ -502,10 +511,6 @@ function waitForProductsData(callback, maxAttempts = 100) {
             const grid = document.getElementById(productPageConfig.gridId);
             if (grid) {
                 grid.innerHTML = '<p style="color: #fff; text-align: center; grid-column: 1 / -1; padding: 40px; font-size: 18px;">Error loading products. Please refresh the page.</p>';
-            }
-        } else {
-            if (attempts % 10 === 0) {
-                // console.log(`Waiting for productsData... (attempt ${attempts}/${maxAttempts})`);
             }
         }
     }, 100);
@@ -642,6 +647,15 @@ function openDataSheetModal(dataSheetPath, productName) {
     function closeModal() {
         modal.classList.remove('active');
         modal.style.display = 'none';
+        const pdfEl = document.getElementById('datasheetModalPdf');
+        if (pdfEl) {
+            pdfEl.removeAttribute('src');
+            pdfEl.style.display = 'none';
+        }
+        if (modalImage) {
+            modalImage.style.display = 'block';
+            modalImage.removeAttribute('src');
+        }
     }
     
     // Set up close handlers with touch support
@@ -682,15 +696,38 @@ function openDataSheetModal(dataSheetPath, productName) {
     // Show modal immediately
     modal.style.display = 'flex';
     modal.classList.add('active');
-    
-    // Set image source
-    modalImage.src = dataSheetPath;
-    modalImage.alt = `Data Sheet - ${productName}`;
-    
-    modalImage.onerror = () => {
-        console.error('Failed to load data sheet:', dataSheetPath);
-        modalImage.alt = 'Data Sheet not found';
-    };
+
+    const modalBody = modalImage.parentElement;
+    let modalPdf = document.getElementById('datasheetModalPdf');
+    if (!modalPdf && modalBody) {
+        modalPdf = document.createElement('iframe');
+        modalPdf.id = 'datasheetModalPdf';
+        modalPdf.className = 'datasheet-iframe';
+        modalPdf.title = 'Data Sheet';
+        modalBody.appendChild(modalPdf);
+    }
+
+    const srcEnc = encodeURI(dataSheetPath).replace(/#/g, '%23');
+    const isPdf = /\.pdf($|\?)/i.test(dataSheetPath);
+
+    if (isPdf && modalPdf) {
+        modalImage.style.display = 'none';
+        modalImage.removeAttribute('src');
+        modalPdf.style.display = 'block';
+        modalPdf.src = srcEnc;
+    } else {
+        if (modalPdf) {
+            modalPdf.style.display = 'none';
+            modalPdf.removeAttribute('src');
+        }
+        modalImage.style.display = 'block';
+        modalImage.src = srcEnc;
+        modalImage.alt = `Data Sheet - ${productName}`;
+        modalImage.onerror = () => {
+            console.error('Failed to load data sheet:', dataSheetPath);
+            modalImage.alt = 'Data Sheet not found';
+        };
+    }
 }
 
 // Auto-initialize when DOM is ready

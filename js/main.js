@@ -333,42 +333,77 @@ if (serviceCards.length > 0) {
 }
 
 // ============================================
-// About Preview Animation
+// About Preview
 // ============================================
+// Blob is fixed; only images inside SVG cross-fade. Text blocks stagger in on scroll.
 
 const aboutText = document.querySelector('.about-text');
-const aboutImage = document.querySelector('.about-image');
-const aboutProjectsSlider = document.getElementById('aboutProjectsSlider');
-const aboutSliderImage = document.getElementById('aboutSliderImage');
+const aboutAnimEls = aboutText ? aboutText.querySelectorAll('.about-animate-in') : [];
+const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-if (aboutText && aboutImage) {
-    const aboutAnimSettings = isMobile() ? { x: 0, duration: 0.4, ease: 'power1.out' } : { x: -50, duration: 1, ease: 'power3.out' };
-    gsap.from(aboutText, {
-        scrollTrigger: {
-            trigger: aboutText,
-            start: isMobile() ? 'top 90%' : 'top 80%',
-            toggleActions: isMobile() ? 'play none none none' : 'play reverse play reverse',
-            once: isMobile()
-        },
-        ...aboutAnimSettings,
-        opacity: 0
-    });
-    
-    const aboutImageSettings = isMobile() ? { x: 0, duration: 0.4, ease: 'power1.out' } : { x: 50, duration: 1, ease: 'power3.out' };
-    gsap.from(aboutImage, {
-        scrollTrigger: {
-            trigger: aboutImage,
-            start: isMobile() ? 'top 90%' : 'top 80%',
-            toggleActions: isMobile() ? 'play none none none' : 'play reverse play reverse',
-            once: isMobile()
-        },
-        ...aboutImageSettings,
-        opacity: 0
-    });
+if (aboutText && aboutAnimEls.length) {
+    if (prefersReducedMotion) {
+        aboutAnimEls.forEach((el) => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+        });
+    } else if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        const xOffset = isMobile() ? 0 : 28;
+        const duration = isMobile() ? 0.45 : 0.75;
+        gsap.set(aboutAnimEls, { opacity: 0, x: xOffset });
+        gsap.to(aboutAnimEls, {
+            scrollTrigger: {
+                trigger: aboutText,
+                start: isMobile() ? 'top 92%' : 'top 82%',
+                toggleActions: isMobile() ? 'play none none none' : 'play none none none',
+                once: true
+            },
+            opacity: 1,
+            x: 0,
+            duration,
+            stagger: 0.09,
+            ease: 'power3.out'
+        });
+    } else {
+        aboutAnimEls.forEach((el) => {
+            el.style.opacity = '1';
+        });
+    }
 }
 
-// Home About slider using selected project images
-if (aboutProjectsSlider && aboutSliderImage) {
+// About cloud: image rotation (fade + flash). Cloud is one SVG; mask applied inside SVG.
+(function () {
+    const wrapper = document.getElementById('aboutCloudWrapper');
+    const imgCurrent = wrapper && wrapper.querySelector('.about-cloud-img-current');
+    const imgNext = wrapper && wrapper.querySelector('.about-cloud-img-next');
+    const flashEl = document.getElementById('aboutCloudFlash');
+
+    if (!wrapper || !imgCurrent || !imgNext || !flashEl) return;
+
+    var isSvgImage = imgCurrent.nodeName && imgCurrent.nodeName.toLowerCase() === 'image';
+    /** Oversized rect + slice = cover inside clip; fixed for every slide (matches index.html). */
+    function applyAboutCloudImageViewport(el) {
+        if (!el || !isSvgImage) return;
+        el.setAttribute('x', '-28');
+        el.setAttribute('y', '-18');
+        el.setAttribute('width', '456');
+        el.setAttribute('height', '286');
+        el.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    }
+    function setImageSrc(el, url) {
+        if (isSvgImage) {
+            el.setAttribute('href', url);
+            applyAboutCloudImageViewport(el);
+        } else {
+            el.src = url;
+        }
+    }
+    applyAboutCloudImageViewport(imgCurrent);
+    applyAboutCloudImageViewport(imgNext);
+
     const aboutSliderImages = [
         'assets/Alshola Projcts/Towers/p1.webp',
         'assets/Alshola Projcts/Towers/p2.webp',
@@ -379,38 +414,48 @@ if (aboutProjectsSlider && aboutSliderImage) {
         'assets/Alshola Projcts/Towers/p7.webp',
         'assets/Alshola Projcts/Towers/p8.webp'
     ];
-    let aboutSliderIndex = 0;
+    const total = aboutSliderImages.length;
+    let index = 0;
+
+    function triggerFlash() {
+        flashEl.classList.add('is-flashing');
+        setTimeout(function () {
+            flashEl.classList.remove('is-flashing');
+        }, 120);
+    }
 
     function rotateAboutImage() {
-        aboutSliderIndex = (aboutSliderIndex + 1) % aboutSliderImages.length;
-        const nextSrc = aboutSliderImages[aboutSliderIndex];
+        index = (index + 1) % total;
+        const nextSrc = aboutSliderImages[index];
+        const nextNextSrc = aboutSliderImages[(index + 1) % total];
+
+        setImageSrc(imgNext, nextSrc);
+        if (!isSvgImage) imgNext.alt = 'Premium lighting installation by AL SHOLA ALMODEA';
 
         if (typeof gsap !== 'undefined') {
-            gsap.to(aboutSliderImage, {
-                opacity: 0,
-                duration: 0.7,
-                ease: 'power1.inOut',
-                onComplete: () => {
-                    aboutSliderImage.src = nextSrc;
-                    gsap.to(aboutSliderImage, {
-                        opacity: 1,
-                        duration: 0.7,
-                        ease: 'power1.inOut'
-                    });
-                }
-            });
+            gsap.to(imgCurrent, { opacity: 0, duration: 0.45, ease: 'power1.inOut', onComplete: swapAndFlash });
         } else {
-            aboutSliderImage.style.transition = 'opacity 0.7s ease';
-            aboutSliderImage.style.opacity = '0';
-            setTimeout(() => {
-                aboutSliderImage.src = nextSrc;
-                aboutSliderImage.style.opacity = '1';
-            }, 700);
+            imgCurrent.style.opacity = '0';
+            setTimeout(swapAndFlash, 450);
+        }
+
+        function swapAndFlash() {
+            triggerFlash();
+            setImageSrc(imgCurrent, nextSrc);
+            if (!isSvgImage) imgCurrent.alt = 'Premium lighting installation by AL SHOLA ALMODEA';
+            if (typeof gsap !== 'undefined') {
+                gsap.to(imgCurrent, { opacity: 1, duration: 0.5, ease: 'power1.inOut' });
+            } else {
+                imgCurrent.style.opacity = '1';
+            }
+            setImageSrc(imgNext, nextNextSrc);
         }
     }
 
-    setInterval(rotateAboutImage, 4000);
-}
+    if (!prefersReducedMotion) {
+        setInterval(rotateAboutImage, 4000);
+    }
+})();
 
 // ============================================
 // Featured Products Animation
@@ -695,13 +740,48 @@ let filterButtons = document.querySelectorAll('.filter-btn');
 let productItems = document.querySelectorAll('.product-card[data-category]');
 let dropdownItems = document.querySelectorAll('.dropdown-item');
 
+function animateProductItemsVisibility(filter) {
+    productItems = document.querySelectorAll('.product-card[data-category], .spotlight-product-card[data-category]');
+    if (productItems.length === 0) return;
+    const showAll = filter === 'all';
+    productItems.forEach(item => {
+        const cat = item.getAttribute('data-category');
+        const show = showAll || cat === filter;
+        if (typeof gsap !== 'undefined') {
+            if (show) {
+                gsap.to(item, {
+                    opacity: 1,
+                    scale: 1,
+                    display: 'flex',
+                    visibility: 'visible',
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            } else {
+                gsap.to(item, {
+                    opacity: 0,
+                    scale: 0.8,
+                    duration: 0.3,
+                    ease: 'power2.out',
+                    onComplete: () => {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+        } else {
+            item.style.display = show ? 'flex' : 'none';
+            item.style.opacity = show ? '1' : '0';
+            item.style.visibility = show ? 'visible' : 'hidden';
+        }
+    });
+}
+
 // Function to initialize products filter
 function initializeProductsFilter() {
     filterButtons = document.querySelectorAll('.filter-btn');
     productItems = document.querySelectorAll('.product-card[data-category], .spotlight-product-card[data-category]');
     dropdownItems = document.querySelectorAll('.dropdown-item');
 
-    // Show all products by default on page load
     if (productItems.length > 0) {
         productItems.forEach(item => {
             item.style.display = 'flex';
@@ -711,46 +791,43 @@ function initializeProductsFilter() {
     }
 }
 
-// Initialize after products are loaded
 setTimeout(initializeProductsFilter, 500);
 
-// Main category filter (All, Indoor, Outdoor)
+// Main category filter (All, Indoor, Outdoor) — binds once per button via data-filter-bound
 function setupFilterButtons() {
-    if (filterButtons.length > 0) {
-        filterButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                // Don't prevent default for dropdown buttons, let hover work
-                const filter = button.getAttribute('data-filter');
-                
-                if (filter === 'all') {
-                    // Update active button
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    
-                    // Reset all dropdown items
-                    dropdownItems.forEach(item => item.classList.remove('active'));
-                    
-                    // Show all products
-                    productItems = document.querySelectorAll('.product-card[data-category], .spotlight-product-card[data-category]');
-                    if (productItems.length > 0) {
-                        productItems.forEach(item => {
-                            gsap.to(item, {
-                                opacity: 1,
-                                scale: 1,
-                                display: 'flex',
-                                visibility: 'visible',
-                                duration: 0.3,
-                                ease: 'power2.out'
-                            });
-                        });
-                    }
-                }
-            });
+    const buttons = document.querySelectorAll('.filter-btn:not([data-filter-bound])');
+    if (buttons.length === 0) return;
+    buttons.forEach(button => {
+        button.dataset.filterBound = 'true';
+        button.addEventListener('click', () => {
+            const filter = button.getAttribute('data-filter');
+            if (!filter || (filter !== 'all' && filter !== 'indoor' && filter !== 'outdoor')) return;
+
+            filterButtons = document.querySelectorAll('.filter-btn');
+            dropdownItems = document.querySelectorAll('.dropdown-item');
+
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            if (filter === 'all') {
+                dropdownItems.forEach(item => item.classList.remove('active'));
+            }
+
+            animateProductItemsVisibility(filter);
         });
-    }
+    });
 }
 
 setupFilterButtons();
+
+function applyCategoryFilterFromUrl() {
+    const categoryParam = new URLSearchParams(window.location.search).get('category');
+    if (!categoryParam || !/^(all|indoor|outdoor)$/.test(categoryParam)) return;
+    const categoryButton = document.querySelector(`.filter-btn[data-filter="${categoryParam}"]`);
+    if (categoryButton) {
+        categoryButton.click();
+    }
+}
 
 // Dropdown item click (Type filter)
 function setupDropdownItems() {
@@ -823,17 +900,6 @@ function setupDropdownItems() {
 }
 
 setupDropdownItems();
-    
-// Check URL parameter for category filter
-const urlParams = new URLSearchParams(window.location.search);
-const categoryParam = urlParams.get('category');
-
-if (categoryParam) {
-    const categoryButton = document.querySelector(`[data-filter="${categoryParam}"]`);
-    if (categoryButton) {
-        categoryButton.click();
-    }
-}
 
 // ============================================
 // Mobile Menu Toggle
