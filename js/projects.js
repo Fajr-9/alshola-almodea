@@ -177,6 +177,23 @@ const galleryCarouselCaption = document.getElementById('galleryCarouselCaption')
 let currentCarouselProject = null;
 let currentCarouselIndex = 0;
 
+// Force safe initial state (categories visible, gallery hidden)
+if (projectsCategoriesSection) {
+    projectsCategoriesSection.style.display = 'block';
+    projectsCategoriesSection.style.opacity = '1';
+    projectsCategoriesSection.style.visibility = 'visible';
+}
+if (projectsGallery) {
+    projectsGallery.style.display = 'none';
+    projectsGallery.style.opacity = '0';
+    projectsGallery.style.visibility = 'hidden';
+}
+if (galleryCarouselWrapper) {
+    galleryCarouselWrapper.style.display = 'none';
+    galleryCarouselWrapper.style.opacity = '0';
+    galleryCarouselWrapper.style.visibility = 'hidden';
+}
+
 // ============================================
 // Initialize Projects Grid
 // ============================================
@@ -349,8 +366,8 @@ function createProjectCard(project, index) {
             </div>
         </div>
     `;
-    
-    // Add click handler with error handling
+
+    // Open gallery when clicking a category card
     card.addEventListener('click', (e) => {
         try {
             e.preventDefault();
@@ -358,7 +375,6 @@ function createProjectCard(project, index) {
             showProjectsGallery(project.id);
         } catch (error) {
             console.error('Error opening gallery:', error);
-            // Fallback: try again after a short delay
             setTimeout(() => {
                 try {
                     showProjectsGallery(project.id);
@@ -388,6 +404,12 @@ function clearGallery() {
         if (galleryCarouselLeft) galleryCarouselLeft.innerHTML = '';
         if (galleryCarouselRight) galleryCarouselRight.innerHTML = '';
         if (galleryCarouselCaption) galleryCarouselCaption.textContent = '';
+        // Ensure carousel UI is fully hidden when not in a project
+        if (galleryCarouselWrapper) {
+            galleryCarouselWrapper.style.display = 'none';
+            galleryCarouselWrapper.style.opacity = '0';
+            galleryCarouselWrapper.style.visibility = 'hidden';
+        }
     } catch (error) {
         console.error('Error clearing gallery:', error);
     }
@@ -538,6 +560,7 @@ function showProjectsGallery(projectId) {
     }
 
     function doShowGallerySection() {
+        document.body.classList.add('is-gallery-open');
         projectsCategoriesSection.style.display = 'none';
         projectsGallery.style.display = 'block';
         projectsGallery.style.opacity = '1';
@@ -576,6 +599,7 @@ if (backButton) {
     backButton.addEventListener('click', () => {
         // Clear gallery completely when going back
         clearGallery();
+        document.body.classList.remove('is-gallery-open');
         
         if (typeof gsap !== 'undefined') {
             gsap.to(projectsGallery, {
@@ -587,6 +611,13 @@ if (backButton) {
                     projectsGallery.style.display = 'none';
                     projectsGallery.style.opacity = '0';
                     projectsGallery.style.visibility = 'hidden';
+
+                    // Hide carousel wrapper so arrows never appear on categories view
+                    if (galleryCarouselWrapper) {
+                        galleryCarouselWrapper.style.display = 'none';
+                        galleryCarouselWrapper.style.opacity = '0';
+                        galleryCarouselWrapper.style.visibility = 'hidden';
+                    }
                     
                     // Hide back button and gallery title
                     if (backButton) {
@@ -656,6 +687,14 @@ if (backButton) {
             projectsGallery.style.display = 'none';
             projectsGallery.style.opacity = '0';
             projectsGallery.style.visibility = 'hidden';
+            document.body.classList.remove('is-gallery-open');
+
+            // Hide carousel wrapper so arrows never appear on categories view
+            if (galleryCarouselWrapper) {
+                galleryCarouselWrapper.style.display = 'none';
+                galleryCarouselWrapper.style.opacity = '0';
+                galleryCarouselWrapper.style.visibility = 'hidden';
+            }
             
             // Hide back button and gallery title
             if (backButton) {
@@ -1014,7 +1053,27 @@ function initProjects() {
     }
     
     try {
+        document.body.classList.remove('is-gallery-open');
         initializeProjectsGrid();
+
+        // Always keep categories view clean on load (no leftover gallery space)
+        if (!currentCarouselProject) {
+            if (projectsCategoriesSection) {
+                projectsCategoriesSection.style.display = 'block';
+                projectsCategoriesSection.style.opacity = '1';
+                projectsCategoriesSection.style.visibility = 'visible';
+            }
+            if (projectsGallery) {
+                projectsGallery.style.display = 'none';
+                projectsGallery.style.opacity = '0';
+                projectsGallery.style.visibility = 'hidden';
+            }
+            if (galleryCarouselWrapper) {
+                galleryCarouselWrapper.style.display = 'none';
+                galleryCarouselWrapper.style.opacity = '0';
+                galleryCarouselWrapper.style.visibility = 'hidden';
+            }
+        }
         
         // Refresh ScrollTrigger if available
         if (typeof ScrollTrigger !== 'undefined') {

@@ -25,6 +25,7 @@
 .about-preview-inner {
   display: grid;
   grid-template-columns: 70fr 30fr;
+  column-gap: 0;
   align-items: center;
   min-height: clamp(520px, 58vw, 720px);
   position: relative;
@@ -91,14 +92,14 @@
   align-items: center;
   justify-content: flex-start;
   /* Nudge text column toward the cloud (desktop/tablet); reset on mobile */
-  margin-left: clamp(-12px, -1.5vw, -4px);
+  margin-left: clamp(-192px, -15vw, -68px);
 }
 
 .about-text-container {
   width: 100%;
   max-width: 100%;
   /* Minimal left padding — sit closer to the cloud column */
-  padding-left: clamp(0px, 0.5vw, 8px);
+  padding-left: 0;
   padding-right: clamp(8px, 1.75vw, 16px);
 }
 
@@ -264,7 +265,7 @@
   }
 
   .about-text-zone {
-    margin-left: clamp(-10px, -1.2vw, -3px);
+    margin-left: clamp(-160px, -13vw, -60px);
   }
 
   .about-text-container {

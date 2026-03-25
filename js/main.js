@@ -164,7 +164,10 @@ let currentSlide = 0;
 let slideInterval;
 
 // Initialize hero animations
-const heroAnimSettings = isMobile() ? { y: 20, duration: 0.4, stagger: 0.1, delay: 0.2, ease: 'power1.out' } : { y: 50, duration: 1, stagger: 0.2, delay: 0.5, ease: 'power3.out' };
+// Speed up initial "rise" so hero content settles faster on load.
+const heroAnimSettings = isMobile()
+    ? { y: 20, duration: 0.4, stagger: 0.1, delay: 0.2, ease: 'power1.out' }
+    : { y: 50, duration: 0.6, stagger: 0.15, delay: 0.15, ease: 'power3.out' };
 heroSlides.forEach((slide, index) => {
     const title = slide.querySelector('.hero-title');
     const subtitle = slide.querySelector('.hero-subtitle');
@@ -215,7 +218,9 @@ function showSlide(index) {
     const elements = [title, subtitle, button].filter(el => el !== null);
     
     if (elements.length > 0) {
-        const slideAnimSettings = isMobile() ? { y: 15, duration: 0.4, stagger: 0.1, ease: 'power1.out' } : { y: 30, duration: 0.8, stagger: 0.15, ease: 'power3.out' };
+        const slideAnimSettings = isMobile()
+            ? { y: 15, duration: 0.4, stagger: 0.1, ease: 'power1.out' }
+            : { y: 30, duration: 0.5, stagger: 0.12, ease: 'power3.out' };
         // Use fromTo for explicit end state
         gsap.fromTo(elements, 
             { opacity: 0, y: slideAnimSettings.y },

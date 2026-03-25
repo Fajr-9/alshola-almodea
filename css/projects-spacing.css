@@ -1,0 +1,37 @@
+/* Reduce extra whitespace under project category cards */
+.projects-categories-section {
+  padding-bottom: 30px !important;
+}
+
+/* Projects page: when gallery is hidden, it must not reserve space */
+.projects-page .projects-gallery-section {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Projects page: allow gallery to show when opened */
+.projects-page.is-gallery-open .projects-gallery-section {
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Projects page: keep footer directly after categories grid */
+.projects-page .projects-categories-section {
+  padding-bottom: 30px !important;
+  margin-bottom: 30px !important;
+}
+
+.projects-page .projects-grid {
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .projects-page .projects-categories-section {
+    padding-bottom: 30px !important;
+  }
+}
