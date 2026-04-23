@@ -97,7 +97,12 @@ function generateProducts() {
         
         productCount++;
         const imgPath = `assets/Products Img/${product.img}`;
-        const dataSheetPath = typeof getDataSheetPath === 'function' ? getDataSheetPath(product.name) : `assets/DATA-SHEETS/${product.name}.png`;
+        const dataSheetPath =
+            typeof resolveProductDataSheetPath === 'function'
+                ? resolveProductDataSheetPath(product)
+                : (typeof getDataSheetPath === 'function'
+                    ? getDataSheetPath(product.name)
+                    : `assets/DATA-SHEETS/${product.name}.png`);
         const description = product.description || productDescriptions[product.name] || `Premium ${productPageConfig.pageTitle.toLowerCase()} solution designed for modern lighting applications.`;
         const gallery = typeof buildCardGalleryData === 'function'
             ? buildCardGalleryData(productPageConfig.category, productPageConfig.type, product)

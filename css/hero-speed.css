@@ -6,3 +6,19 @@
 .hero-image {
   transition: transform 4s ease-out !important;
 }
+
+/* Catalog packshots: same white studio field as WebP product images */
+.spotlight-product-card .product-image-wrapper {
+  background-color: #ffffff;
+}
+.spotlight-product-card .product-image-wrapper img {
+  object-fit: contain;
+}
+.spotlight-modal-image-section,
+.spotlight-modal-image-section .spotlight-main-image {
+  background-color: #ffffff;
+}
+.spotlight-thumbnail-gallery img {
+  background-color: #ffffff;
+  object-fit: contain;
+}

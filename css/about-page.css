@@ -219,6 +219,48 @@ body.about-page {
     letter-spacing: 0.03em;
 }
 
+/* Company profile PDF */
+.about-company-pdf {
+    background: #fff;
+    border-top: 1px solid #eee;
+}
+
+.about-company-pdf-title {
+    margin-bottom: 0.75rem;
+}
+
+.about-company-pdf-lead {
+    max-width: 40rem;
+    margin: 0 0 1.25rem;
+    color: #555;
+    line-height: 1.65;
+    font-size: 1rem;
+}
+
+.about-company-pdf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.about-company-pdf-frame {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 8px 32px rgba(47, 47, 47, 0.08);
+    background: #ececec;
+    min-height: min(75vh, 820px);
+}
+
+.about-company-pdf-frame iframe {
+    display: block;
+    width: 100%;
+    height: min(75vh, 820px);
+    border: 0;
+}
+
 .about-pro-cta {
     padding: clamp(3rem, 6vw, 4.5rem) 0;
     text-align: center;
@@ -257,6 +299,12 @@ body.about-page {
 }
 
 @media (max-width: 900px) {
+    .about-company-pdf-frame,
+    .about-company-pdf-frame iframe {
+        min-height: 55vh;
+        height: 55vh;
+    }
+
     .about-pro-split {
         grid-template-columns: 1fr;
     }
