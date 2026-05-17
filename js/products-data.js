@@ -92,309 +92,319 @@ const dataSheetAutoMap = {
 };
 // </auto-data-sheet-map>
 
-// Function to get data sheet path based on product name
-function getDataSheetPath(productName) {
-    // Special mappings for products with different naming conventions
-    const mappings = {
-        // ======================
-        // New structured data-sheets
-        // ======================
+// <verified-data-sheet-paths>
+const verifiedDataSheetPaths = new Set([
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL -2230.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL -2240.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL -816-3.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-0711-3.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-1015.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-1016.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-1022.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-1023.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-160.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-3372.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-4001-R-12-15-18W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-4101-R-18-20-24W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Ceiling light-Datasheets/LL-4102-R.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/DL-LL-308.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-2030-IP44.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-2030-IP65.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-2040.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-3024.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-4001-S-9-18-24W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-4002-RD-8-12-18-24W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-4003.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-4101-R-18-20-24W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-4101-S-24W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-4201-40W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Down-light-Datasheets/LL-4302-12-18-25-40W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/ LL-4585-1.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-1621.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4489.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4503.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4506.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4507.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4510.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4512.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4581-R.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4582-R.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4582-S.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4583.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4584.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-4585-2.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-544.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-5488.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-555.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-663.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-690.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-693.png',
+    'assets/DATA-SHEETS/New Data-Sheets/External-light-DataSheets/LL-696.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4006.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4110.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4401.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4402.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4407-4.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4407.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4408.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4410.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4414.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4415.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4416.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Flood-light-Datasheets/LL-4420.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Industrial Light-Datasheets/LL-212.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Industrial Light-Datasheets/LL-222.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Industrial Light-Datasheets/LL-240.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Industrial Light-Datasheets/LL-8002.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Industrial Light-Datasheets/LL-8003.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Lamp&Tubes-DataSheets/E14.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Lamp&Tubes-DataSheets/E27 lamp.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Lamp&Tubes-DataSheets/GU10 lamp.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Lamp&Tubes-DataSheets/led Tube.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Mirror-light-DataSheets/LL-4612.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Mirror-light-DataSheets/LL-S303.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4025.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4400.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4403.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4404.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4405-2.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4405.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4406.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4407.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4408-P.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4408.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4412.png',
+    'assets/DATA-SHEETS/New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4419.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-2003.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3003.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3009.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3012-R.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3013-R.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3016.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3017.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3017CH.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3018.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3021-R.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3022-R-12W-BK.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3023-R-12W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3027.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3028.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3031-S-7W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3032.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3033-R.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3033-S.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3034.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3036.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3044.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-3061-R-12W.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Spot-light-DataSheets/LL-5010.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-5013.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-5015.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-6002.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-6005.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-6010.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-6012-RGB.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-6012.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Strip-light-DataSheets/LL-6014.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-0007.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-0719.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-0720.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-0723.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-0724.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-0725.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-0731.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-2133.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-9011.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-9012.png',
+    'assets/DATA-SHEETS/New Data-Sheets/Up-Light-Datasheets/LL-9013.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-0102 - D.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-0102 - S.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-0102.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-5001.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-5210.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-5211.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-5310.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-5311.png',
+    'assets/DATA-SHEETS/New Data-Sheets/truck Light-Datasheets/LL-5410.png',
+]);
+// </verified-data-sheet-paths>
 
-        // Spot light data sheets (New Data-Sheets/Spot-light-DataSheets)
-        'LL-2003': 'New Data-Sheets/Spot-light-DataSheets/LL-2003.png',
-        'LL-3003': 'New Data-Sheets/Spot-light-DataSheets/LL-3003.png',
-        'LL-3009': 'New Data-Sheets/Spot-light-DataSheets/LL-3009.png',
-        'LL-3012': 'New Data-Sheets/Spot-light-DataSheets/LL-3012-R.png',
-        'LL-3013': 'New Data-Sheets/Spot-light-DataSheets/LL-3013-R.png',
-        'LL-3016': 'New Data-Sheets/Spot-light-DataSheets/LL-3016.png',
-        'LL-3017': 'New Data-Sheets/Spot-light-DataSheets/LL-3017.png',
-        'LL-3017CH': 'New Data-Sheets/Spot-light-DataSheets/LL-3017CH.png',
-        'LL-3018': 'New Data-Sheets/Spot-light-DataSheets/LL-3018.png',
-        'LL-3021': 'New Data-Sheets/Spot-light-DataSheets/LL-3021-R.png',
-        'LL-3022-BK': 'New Data-Sheets/Spot-light-DataSheets/LL-3022-R-12W-BK.png',
-        'LL-3023': 'New Data-Sheets/Spot-light-DataSheets/LL-3023-R-12W.png',
-        'LL-3027': 'New Data-Sheets/Spot-light-DataSheets/LL-3027.png',
-        'LL-3028': 'New Data-Sheets/Spot-light-DataSheets/LL-3028.png',
-        'LL-3031': 'New Data-Sheets/Spot-light-DataSheets/LL-3031-S-7W.png',
-        'LL-3032': 'New Data-Sheets/Spot-light-DataSheets/LL-3032.png',
-        'LL-3032-S': 'New Data-Sheets/Spot-light-DataSheets/LL-3032.png',
-        'LL-3032-R': 'New Data-Sheets/Spot-light-DataSheets/LL-3032.png',
-        'LL-3033': 'New Data-Sheets/Spot-light-DataSheets/LL-3033-R.png',
-        'LL-3034': 'New Data-Sheets/Spot-light-DataSheets/LL-3034.png',
-        'LL-3036': 'New Data-Sheets/Spot-light-DataSheets/LL-3036.png',
-        'LL-3043': 'New Data-Sheets/Spot-light-DataSheets/LL-3043.png',
-        'LL-3044': 'New Data-Sheets/Spot-light-DataSheets/LL-3044.png',
-        'LL-3061': 'New Data-Sheets/Spot-light-DataSheets/LL-3061-R-12W.png',
-        'LL-3081': 'New Data-Sheets/Down-light-Datasheets/DL-LL-308.png',
-        'LL-5010': 'New Data-Sheets/Spot-light-DataSheets/LL-5010.png',
+// Alias SKUs or alternate codes → datasheet file on disk (must exist under assets/DATA-SHEETS)
+const dataSheetProductPathOverrides = {
+    'LL-0102-S': 'New Data-Sheets/truck Light-Datasheets/LL-0102 - S.png',
+    'LL-0102-D': 'New Data-Sheets/truck Light-Datasheets/LL-0102 - D.png',
+    'LL-3081': 'New Data-Sheets/Down-light-Datasheets/DL-LL-308.png',
+    'BL-LL-4407': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4407.png',
+    'BL-LL-4408': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4408-P.png',
+};
 
-        // Down light data sheets (New Data-Sheets/Down-light-Datasheets)
-        'LL-2000': 'New Data-Sheets/Down-light-Datasheets/LL-2030-IP44.png',
-        'LL-2030': 'New Data-Sheets/Down-light-Datasheets/LL-2030-IP44.png',
-        'LL-2040': 'New Data-Sheets/Down-light-Datasheets/LL-2040.png',
-        'LL-3024': 'New Data-Sheets/Down-light-Datasheets/LL-3024.png',
-        'LL-4001-R': 'New Data-Sheets/Ceiling light-Datasheets/LL-4001-R-12-15-18W.png',
-        'LL-4001-S': 'New Data-Sheets/Down-light-Datasheets/LL-4001-S-9-18-24W.png',
-        'LL-4002-R': 'New Data-Sheets/Down-light-Datasheets/LL-4002-RD-8-12-18-24W.png',
-        'LL-4003-WH': 'New Data-Sheets/Down-light-Datasheets/LL-4003.png',
-        'LL-4101-R': 'New Data-Sheets/Down-light-Datasheets/LL-4101-R-18-20-24W.png',
-        'LL-4101-S': 'New Data-Sheets/Down-light-Datasheets/LL-4101-S-24W.png',
-        'LL-4201-R': 'New Data-Sheets/Down-light-Datasheets/LL-4201-40W.png',
-        'LL-4302': 'New Data-Sheets/Down-light-Datasheets/LL-4302-12-18-25-40W.png',
-        'LL-2020': 'New Data-Sheets/Down-light-Datasheets/LL-2030-IP65.png',
+const DATA_SHEET_STEM_PREFIXES = ['FD-', 'DL-', 'SL-', 'BL-', 'PL-', 'HB-'];
 
-        // Strip light & aluminium profile (New Data-Sheets/Strip-light-DataSheets)
-        'LL-5013': 'New Data-Sheets/Strip-light-DataSheets/LL-5013.png',
-        'LL-5015': 'New Data-Sheets/Strip-light-DataSheets/LL-5015.png',
-        'LL-6002': 'New Data-Sheets/Strip-light-DataSheets/LL-6002.png',
-        'LL-6005': 'New Data-Sheets/Strip-light-DataSheets/LL-6005.png',
-        'LL-6010': 'New Data-Sheets/Strip-light-DataSheets/LL-6010.png',
-        'LL-6012': 'New Data-Sheets/Strip-light-DataSheets/LL-6012.png',
-        'LL-6012-RGB': 'New Data-Sheets/Strip-light-DataSheets/LL-6012-RGB.png',
-        'LL-6014': 'New Data-Sheets/Strip-light-DataSheets/LL-6014.png',
-        'LL-6020': 'New Data-Sheets/Strip-light-DataSheets/LL-6020.png',
-
-        // Mirror light (New Data-Sheets/Mirror-light-DataSheets)
-        'LL-S304': 'New Data-Sheets/Mirror-light-DataSheets/LL-S304.png',
-        'LL-4612': 'New Data-Sheets/Mirror-light-DataSheets/LL-4612.png',
-        'LL-5512': 'New Data-Sheets/Mirror-light-DataSheets/LL-5512.png',
-        'LL-S303': 'New Data-Sheets/Mirror-light-DataSheets/LL-S303.png',
-
-        // Track light / truck light (New Data-Sheets/truck Light-Datasheets)
-        'LL-5210': 'New Data-Sheets/truck Light-Datasheets/LL-5210.png',
-        'LL-5211': 'New Data-Sheets/truck Light-Datasheets/LL-5211.png',
-        'LL-5310': 'New Data-Sheets/truck Light-Datasheets/LL-5310.png',
-        'LL-5311': 'New Data-Sheets/truck Light-Datasheets/LL-5311.png',
-        'LL-5410': 'New Data-Sheets/truck Light-Datasheets/LL-5410.png',
-        'LL-0102-S': 'New Data-Sheets/truck Light-Datasheets/LL-0102 - S.png',
-        'LL-0102-D': 'New Data-Sheets/truck Light-Datasheets/LL-0102 - D.png',
-        'LL-0102': 'New Data-Sheets/truck Light-Datasheets/LL-0102.png',
-        'LL-5001': 'New Data-Sheets/truck Light-Datasheets/LL-5001.png',
-
-        // Chandelier & pendant (existing PDFs likely unchanged, keep default handling)
-        // Industrial light (New Data-Sheets/Industrial Light-Datasheets)
-        'LL-212': 'New Data-Sheets/Industrial Light-Datasheets/LL-212.png',
-        'LL-222': 'New Data-Sheets/Industrial Light-Datasheets/LL-222.png',
-        'LL-240': 'New Data-Sheets/Industrial Light-Datasheets/LL-240.png',
-        'LL-8002': 'New Data-Sheets/Industrial Light-Datasheets/LL-8002.png',
-        'LL-8003': 'New Data-Sheets/Industrial Light-Datasheets/LL-8003.png',
-
-        // External light (New Data-Sheets/External-light-DataSheets)
-        'LL-544': 'New Data-Sheets/External-light-DataSheets/LL-544.png',
-        'LL-555': 'New Data-Sheets/External-light-DataSheets/LL-555.png',
-        'LL-663': 'New Data-Sheets/External-light-DataSheets/LL-663.png',
-        'LL-690': 'New Data-Sheets/External-light-DataSheets/LL-690.png',
-        'LL-693': 'New Data-Sheets/External-light-DataSheets/LL-693.png',
-        'LL-696': 'New Data-Sheets/External-light-DataSheets/LL-696.png',
-        'LL-1621': 'New Data-Sheets/External-light-DataSheets/LL-1621.png',
-        'LL-4489': 'New Data-Sheets/External-light-DataSheets/LL-4489.png',
-        'LL-4503': 'New Data-Sheets/External-light-DataSheets/LL-4503.png',
-        'LL-4506': 'New Data-Sheets/External-light-DataSheets/LL-4506.png',
-        'LL-4507': 'New Data-Sheets/External-light-DataSheets/LL-4507.png',
-        'LL-4510': 'New Data-Sheets/External-light-DataSheets/LL-4510.png',
-        'LL-4512': 'New Data-Sheets/External-light-DataSheets/LL-4512.png',
-        'LL-4581-R': 'New Data-Sheets/External-light-DataSheets/LL-4581-R.png',
-        'LL-4582-R': 'New Data-Sheets/External-light-DataSheets/LL-4582-R.png',
-        'LL-4582-S': 'New Data-Sheets/External-light-DataSheets/LL-4582-S.png',
-        'LL-4583-1': 'New Data-Sheets/External-light-DataSheets/LL-4583.png',
-        'LL-4583-2': 'New Data-Sheets/External-light-DataSheets/LL-4583.png',
-        'LL-4584-1': 'New Data-Sheets/External-light-DataSheets/LL-4584.png',
-        'LL-4584-2': 'New Data-Sheets/External-light-DataSheets/LL-4584.png',
-        'LL-4585': 'New Data-Sheets/External-light-DataSheets/LL-4585-2.png',
-
-        // Ceiling light (New Data-Sheets/Ceiling light-Datasheets)
-        'LL-0711': 'New Data-Sheets/Ceiling light-Datasheets/LL-0711-3.png',
-        'LL-1014': 'New Data-Sheets/Ceiling light-Datasheets/LL-1014.png',
-        'LL-1015': 'New Data-Sheets/Ceiling light-Datasheets/LL-1015.png',
-        'LL-1016': 'New Data-Sheets/Ceiling light-Datasheets/LL-1016.png',
-        'LL-1017-S': 'New Data-Sheets/Ceiling light-Datasheets/LL-1023.png', // closest available
-        'LL-160.1': 'New Data-Sheets/Ceiling light-Datasheets/LL-160.png',
-        'LL-2230': 'New Data-Sheets/Ceiling light-Datasheets/LL -2230.png',
-        'LL-2240': 'New Data-Sheets/Ceiling light-Datasheets/LL -2240.png',
-        'LL-3372': 'New Data-Sheets/Ceiling light-Datasheets/LL-3372.png',
-        'LL-4001-R-OUT': 'New Data-Sheets/Ceiling light-Datasheets/LL-4001-R-12-15-18W.png',
-        'LL-4102-R': 'New Data-Sheets/Ceiling light-Datasheets/LL-4102-R.png',
-
-        // Lamps & Tubes (New Data-Sheets/Lamp&Tubes-DataSheets)
-        'T8': 'New Data-Sheets/Lamp&Tubes-DataSheets/led Tube.png',
-        'LL-MR16': 'New Data-Sheets/Lamp&Tubes-DataSheets/GU10 lamp.png', // closest GU/MR depiction
-        'LL-GU': 'New Data-Sheets/Lamp&Tubes-DataSheets/GU10 lamp.png',
-        'LL-E14': 'New Data-Sheets/Lamp&Tubes-DataSheets/E14.png',
-        'T5': 'assets/DATA-SHEETS/T5.png', // keep old path if exists
-        'LL-E27': 'New Data-Sheets/Lamp&Tubes-DataSheets/E27 lamp.png',
-
-        // Up light (New Data-Sheets/Up-Light-Datasheets)
-        'LL-0007': 'New Data-Sheets/Up-Light-Datasheets/LL-0007.png',
-        'LL-0719': 'New Data-Sheets/Up-Light-Datasheets/LL-0719.png',
-        'LL-0720': 'New Data-Sheets/Up-Light-Datasheets/LL-0720.png',
-        'LL-0722': 'New Data-Sheets/Up-Light-Datasheets/LL-0720.png', // no dedicated sheet; reuse closest
-        'LL-0723': 'New Data-Sheets/Up-Light-Datasheets/LL-0723.png',
-        'LL-0724': 'New Data-Sheets/Up-Light-Datasheets/LL-0724.png',
-        'LL-0725': 'New Data-Sheets/Up-Light-Datasheets/LL-0725.png',
-        'LL-0731': 'New Data-Sheets/Up-Light-Datasheets/LL-0731.png',
-        'LL-2133': 'New Data-Sheets/Up-Light-Datasheets/LL-2133.png',
-        'LL-9011': 'New Data-Sheets/Up-Light-Datasheets/LL-9011.png',
-        'LL-9012': 'New Data-Sheets/Up-Light-Datasheets/LL-9012.png',
-        'LL-9013': 'New Data-Sheets/Up-Light-Datasheets/LL-9013.png',
-
-        // Pole & Bollard (New Data-Sheets/POLE & BOLLARD-Datasheets)
-        'LL-4025': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4025.png',
-        'LL-4400': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4400.png',
-        'LL-4403': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4403.png',
-        'LL-4404': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4404.png',
-        'LL-4405': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4405.png',
-        'LL-4405-2': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4405-2.png',
-        'LL-4406': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4406.png',
-        'LL-4412': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4412.png',
-        'LL-4419': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4419.png',
-        'BL-LL-4407': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4407.png',
-        'BL-LL-4408': 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4408-P.png',
-
-        // Flood light (New Data-Sheets/Flood-light-Datasheets)
-        // Note: 'LL-4407' here maps to flood-light; pole-bollard uses the 'pdf' override per product entry.
-        'LL-4006': 'New Data-Sheets/Flood-light-Datasheets/LL-4006.png',
-        'LL-4110': 'New Data-Sheets/Flood-light-Datasheets/LL-4110.png',
-        'LL-4401': 'New Data-Sheets/Flood-light-Datasheets/LL-4401.png',
-        'LL-4402': 'New Data-Sheets/Flood-light-Datasheets/LL-4402.png',
-        'LL-4407': 'New Data-Sheets/Flood-light-Datasheets/LL-4407.png',
-        'LL-4407-4': 'New Data-Sheets/Flood-light-Datasheets/LL-4407-4.png',
-        'LL-4408': 'New Data-Sheets/Flood-light-Datasheets/LL-4408.png',
-        'LL-4410': 'New Data-Sheets/Flood-light-Datasheets/LL-4410.png',
-        'LL-4414': 'New Data-Sheets/Flood-light-Datasheets/LL-4414.png',
-        'LL-4415': 'New Data-Sheets/Flood-light-Datasheets/LL-4415.png',
-        'LL-4416': 'New Data-Sheets/Flood-light-Datasheets/LL-4416.png',
-        'LL-4420': 'New Data-Sheets/Flood-light-Datasheets/LL-4420.png',
-
-        // External light extra
-        'LL-5488': 'New Data-Sheets/External-light-DataSheets/LL-5488.png',
-        'LL-696': 'New Data-Sheets/External-light-DataSheets/LL-696.png',
-        'LL-4510': 'New Data-Sheets/External-light-DataSheets/LL-4510.png',
-
-        // LL-310 series (chandelier/pendant) – keep existing PNGs in root
-        'LL-310-1': 'assets/DATA-SHEETS/LL-310-1.png',
-        'LL-310-1-SQ': 'assets/DATA-SHEETS/LL-310-1.png',
-        'LL-310-2-R': 'assets/DATA-SHEETS/LL-310-2.png',
-        'LL-310-2-SQ': 'assets/DATA-SHEETS/LL-310-2-SQ.png',
-        'LL-310-3-R': 'assets/DATA-SHEETS/LL-310-3.png',
-        'LL-310-3-SQ': 'assets/DATA-SHEETS/LL-310-3-SQ.png',
-
-        // High bay lights legacy mapping (keep if root files still exist)
-        'LL-8001': 'New Data-Sheets/Industrial Light-Datasheets/LL-8002.png',
-        'LL-BT-22': 'assets/DATA-SHEETS/LL-BT-22.png',
-
-        // Special legacy case
-        'LL-692': 'assets/DATA-SHEETS/LL692.pdf',
-    };
-    
-    // Check special mappings first
-    if (mappings[productName]) {
-        const mapped = mappings[productName];
-        // Some entries in the map already contain full paths (starting with "assets/")
-        if (mapped.startsWith('assets/')) {
-            return mapped;
-        }
-        return `assets/DATA-SHEETS/${mapped}`;
+function dataSheetStemVariants(stem) {
+    const v = new Set([stem]);
+    for (const p of DATA_SHEET_STEM_PREFIXES) {
+        if (stem.startsWith(p)) v.add(stem.slice(p.length));
     }
-
-    if (dataSheetAutoMap[productName]) {
-        const mapped = dataSheetAutoMap[productName];
-        if (mapped.startsWith('assets/')) {
-            return mapped;
-        }
-        return `assets/DATA-SHEETS/${mapped}`;
-    }
-    
-    // Try exact match
-    const exactMatch = `assets/DATA-SHEETS/${productName}.png`;
-    
-    // Try variations (remove suffixes like -R, -S, -SQ, etc.)
-    const variations = [
-        productName,
-        productName.replace(/-R$/, ''),
-        productName.replace(/-S$/, ''),
-        productName.replace(/-SQ$/, ''),
-        productName.replace(/-1$/, ''),
-        productName.replace(/-2$/, ''),
-        productName.replace(/-3$/, ''),
-    ];
-    
-    // Return the most likely match (exact match first)
-    return exactMatch;
+    return [...v];
 }
 
-// Prefer an explicit `pdf` path on the product entry when it looks like a real
-// file path. This lets duplicate product codes (e.g. LL-4407 used in both
-// flood-light and pole-bollard) point at their own, category-specific sheet.
+/** True when the datasheet filename stem matches the product code (no substitute SKU). */
+function dataSheetFilenameMatchesProduct(stem, productName) {
+    return dataSheetStemVariants(stem).some((a) => {
+        if (a === productName) return true;
+        if (a.startsWith(productName + ',')) return true;
+        if (a.startsWith(productName + ' ')) return true;
+        if (a.startsWith(productName + '-')) return true;
+        if (a.startsWith(productName + '_')) return true;
+        return false;
+    });
+}
+
+function dataSheetPathStem(assetPath) {
+    if (!assetPath) return '';
+    const base = assetPath.split('/').pop() || '';
+    return base.replace(/\.(png|pdf|webp)$/i, '');
+}
+
+// Resolve datasheet from disk sync map only (no legacy substitute mappings).
+function getDataSheetPath(productName) {
+    if (!productName) return '';
+    const rel = dataSheetProductPathOverrides[productName] || dataSheetAutoMap[productName] || '';
+    if (!rel) return '';
+    return normalizeDataSheetAssetPath(rel);
+}
+
+function normalizeDataSheetAssetPath(rel) {
+    if (!rel || typeof rel !== 'string') return '';
+    const p = rel.trim();
+    if (!p) return '';
+    if (p.startsWith('assets/')) return p;
+    return `assets/DATA-SHEETS/${p}`;
+}
+
+function isVerifiedDataSheetPath(assetPath) {
+    return Boolean(
+        assetPath &&
+        typeof verifiedDataSheetPaths !== 'undefined' &&
+        verifiedDataSheetPaths.has(assetPath)
+    );
+}
+
+/** Accept path only if file exists and filename matches product code (or alias override). */
+function acceptDataSheetPath(assetPath, productName, isAliasOverride) {
+    if (!isVerifiedDataSheetPath(assetPath)) return false;
+    if (isAliasOverride) return true;
+    return dataSheetFilenameMatchesProduct(dataSheetPathStem(assetPath), productName);
+}
+
+// LL-4407: pole vs flood use per-entry `pdf`; otherwise disk map by SKU only — no substitutes.
 function resolveProductDataSheetPath(product) {
-    if (product && typeof product.pdf === 'string' && product.pdf.trim().length > 0) {
-        const p = product.pdf.trim();
-        if (p.startsWith('assets/')) {
-            return p;
-        }
-        if (p.includes('/')) {
-            return `assets/DATA-SHEETS/${p}`;
-        }
+    if (!product || !product.name) return '';
+
+    if (dataSheetProductPathOverrides[product.name]) {
+        const aliasPath = normalizeDataSheetAssetPath(dataSheetProductPathOverrides[product.name]);
+        if (acceptDataSheetPath(aliasPath, product.name, true)) return aliasPath;
     }
-    return getDataSheetPath(product && product.name);
+
+    if (typeof product.pdf === 'string' && product.pdf.trim().length > 0) {
+        const fromPdf = normalizeDataSheetAssetPath(product.pdf.trim());
+        if (acceptDataSheetPath(fromPdf, product.name, false)) return fromPdf;
+    }
+
+    const fromMap = getDataSheetPath(product.name);
+    if (acceptDataSheetPath(fromMap, product.name, false)) return fromMap;
+
+    return '';
+}
+
+function setDataSheetButtonState(buttonEl, dataSheetPath) {
+    if (!buttonEl) return;
+    const hasSheet = Boolean(dataSheetPath && String(dataSheetPath).trim());
+    buttonEl.style.display = '';
+    buttonEl.setAttribute('aria-hidden', 'false');
+    buttonEl.classList.toggle('datasheet-btn--unavailable', !hasSheet);
+    buttonEl.setAttribute('aria-disabled', hasSheet ? 'false' : 'true');
+}
+
+function readProductDataSheetFromEl(el, productName) {
+    if (!el) return '';
+    if (el.hasAttribute('data-product-datasheet')) {
+        return el.getAttribute('data-product-datasheet') || '';
+    }
+    return typeof getDataSheetPath === 'function' ? getDataSheetPath(productName) : '';
+}
+
+function bindDataSheetButton(buttonEl, dataSheetPath, productName) {
+    if (!buttonEl) return;
+    setDataSheetButtonState(buttonEl, dataSheetPath);
+    const open = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openDataSheetModal(dataSheetPath || '', productName);
+    };
+    buttonEl.onclick = open;
+    buttonEl.ontouchend = open;
+    buttonEl.removeAttribute('href');
+    buttonEl.removeAttribute('target');
 }
 
 // Products Data - Classified by Type (Based on luna-luce.eu)
 const productsData = {
     indoor: {
         'spot-light': [
-            { name: 'LL-3012', img: 'New Img/Spot-light-Pic/LL-3012 1.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3012-R.png' },
-            { name: 'LL-3013', img: 'New Img/Spot-light-Pic/LL-3013 1.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3013-R.png' },
-            { name: 'LL-3021', img: 'New Img/Spot-light-Pic/LL-3021-extracted.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3021-R.png' },
-            { name: 'LL-3022-BK', img: 'New Img/Spot-light-Pic/LL-3022-BK.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3022-R-12W-BK.png' },
-            { name: 'LL-3019', img: 'New Img/Spot-light-Pic/LL-3019.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3019.png' },
-            { name: 'LL-3032-S', img: 'New Img/Spot-light-Pic/LL-3032-S.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3032.png' },
-            { name: 'LL-3032-R', img: 'New Img/Spot-light-Pic/LL-3032 3.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3032.png' },
-            { name: 'LL-3031', img: 'New Img/Spot-light-Pic/LL-3031 2.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3031-S-7W.png' },
-            { name: 'LL-3043', img: 'New Img/Spot-light-Pic/LL-3043.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3043.png' },
-            { name: 'LL-3061', img: 'New Img/Spot-light-Pic/LL-3061,3.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3061-R-12W.png' },
-            { name: 'LL-3016', img: 'New Img/Spot-light-Pic/LL-3016.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3016.png' },
-            { name: 'LL-3017', img: 'New Img/Spot-light-Pic/LL-3017.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3017.png' },
-            { name: 'LL-3018', img: 'New Img/Spot-light-Pic/LL-3018.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3018.png' },
-            { name: 'LL-3003', img: 'New Img/Spot-light-Pic/SL-LL-3003.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3003.png' },
-            { name: 'LL-2003', img: 'New Img/Spot-light-Pic/SL-LL-2003.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-2003.png' },
-            { name: 'LL-3009', img: 'New Img/Spot-light-Pic/LL-3009.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3009.png' },
-            { name: 'LL-3033', img: 'New Img/Spot-light-Pic/LL-3033.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3033-R.png' },
-            { name: 'LL-5010', img: 'New Img/Spot-light-Pic/LL-5010.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-5010.png' },
-            { name: 'LL-3017CH', img: 'New Img/Spot-light-Pic/LL-3017CH.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3017CH.png' },
-            { name: 'LL-3027', img: 'New Img/Spot-light-Pic/LL-3027.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3027.png' },
-            { name: 'LL-3028', img: 'New Img/Spot-light-Pic/LL-3028.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3028.png' },
-            { name: 'LL-3034', img: 'New Img/Spot-light-Pic/LL-3034.webp', pdf: 'New Data-Sheets/Spot-light-DataSheets/LL-3034.png' },
+            { name: 'LL-3012', img: 'New Img/Spot-light-Pic/LL-3012 1.webp' },
+            { name: 'LL-3013', img: 'New Img/Spot-light-Pic/LL-3013 1.webp' },
+            { name: 'LL-3021', img: 'New Img/Spot-light-Pic/LL-3021-extracted.webp' },
+            { name: 'LL-3022-BK', img: 'New Img/Spot-light-Pic/LL-3022-BK.webp' },
+            { name: 'LL-3019', img: 'New Img/Spot-light-Pic/LL-3019.webp' },
+            { name: 'LL-3032-S', img: 'New Img/Spot-light-Pic/LL-3032-S.webp' },
+            { name: 'LL-3032-R', img: 'New Img/Spot-light-Pic/LL-3032 3.webp' },
+            { name: 'LL-3031', img: 'New Img/Spot-light-Pic/LL-3031 2.webp' },
+            { name: 'LL-3043', img: 'New Img/Spot-light-Pic/LL-3043.webp' },
+            { name: 'LL-3061', img: 'New Img/Spot-light-Pic/LL-3061,3.webp' },
+            { name: 'LL-3016', img: 'New Img/Spot-light-Pic/LL-3016.webp' },
+            { name: 'LL-3017', img: 'New Img/Spot-light-Pic/LL-3017.webp' },
+            { name: 'LL-3018', img: 'New Img/Spot-light-Pic/LL-3018.webp' },
+            { name: 'LL-3003', img: 'New Img/Spot-light-Pic/SL-LL-3003.webp' },
+            { name: 'LL-2003', img: 'New Img/Spot-light-Pic/SL-LL-2003.webp' },
+            { name: 'LL-3009', img: 'New Img/Spot-light-Pic/LL-3009.webp' },
+            { name: 'LL-3033', img: 'New Img/Spot-light-Pic/LL-3033.webp' },
+            { name: 'LL-5010', img: 'New Img/Spot-light-Pic/LL-5010.webp' },
+            { name: 'LL-3017CH', img: 'New Img/Spot-light-Pic/LL-3017CH.webp' },
+            { name: 'LL-3027', img: 'New Img/Spot-light-Pic/LL-3027.webp' },
+            { name: 'LL-3028', img: 'New Img/Spot-light-Pic/LL-3028.webp' },
+            { name: 'LL-3034', img: 'New Img/Spot-light-Pic/LL-3034.webp' },
         ],
         'down-light': [
-            { name: 'LL-4001-R', img: 'New Img/Down-Light-Pic/LL-4001-R-12-15-18W.webp', pdf: 'New Data-Sheets/Ceiling light-Datasheets/LL-4001-R-12-15-18W.png' },
-            { name: 'LL-4001-S', img: 'New Img/Down-Light-Pic/LL-4001-S-9-18-24W.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-4001-S-9-18-24W.png' },
-            { name: 'LL-4002-R', img: 'New Img/Down-Light-Pic/LL-4002-R-8-12-18-24W.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-4002-RD-8-12-18-24W.png' },
-            { name: 'LL-2000', img: 'New Img/Down-Light-Pic/LL-2030.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-2000.png' },
-            { name: 'LL-4201-R', img: 'New Img/Down-Light-Pic/LL-4201-R-40W.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-4201-40W.png' },
-            { name: 'LL-2020', img: 'New Img/Down-Light-Pic/LL-2020.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-2030-IP65.png' },
-            { name: 'LL-4302', img: 'New Img/Down-Light-Pic/LL-4302-12-18-25-40W.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-4302-12-18-25-40W.png' },
-            { name: 'LL-3024', img: 'New Img/Down-Light-Pic/LL-3024.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-3024.png' },
+            { name: 'LL-4001-R', img: 'New Img/Down-Light-Pic/LL-4001-R-12-15-18W.webp' },
+            { name: 'LL-4001-S', img: 'New Img/Down-Light-Pic/LL-4001-S-9-18-24W.webp' },
+            { name: 'LL-4002-R', img: 'New Img/Down-Light-Pic/LL-4002-R-8-12-18-24W.webp' },
+            { name: 'LL-2000', img: 'New Img/Down-Light-Pic/LL-2030.webp' },
+            { name: 'LL-4201-R', img: 'New Img/Down-Light-Pic/LL-4201-R-40W.webp' },
+            { name: 'LL-2020', img: 'New Img/Down-Light-Pic/LL-2020.webp' },
+            { name: 'LL-4302', img: 'New Img/Down-Light-Pic/LL-4302-12-18-25-40W.webp' },
+            { name: 'LL-3024', img: 'New Img/Down-Light-Pic/LL-3024.webp' },
             // LL-3081 uses DL-LL-308 assets (same product)
-            { name: 'LL-3081', img: 'New Img/Down-Light-Pic/DL-LL-308.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/DL-LL-308.png' },
-            { name: 'LL-4003-WH', img: 'New Img/Down-Light-Pic/LL-4003-WH.webp', pdf: 'New Data-Sheets/Down-light-Datasheets/LL-4003.png' },
+            { name: 'LL-3081', img: 'New Img/Down-Light-Pic/DL-LL-308.webp' },
+            { name: 'LL-4003-WH', img: 'New Img/Down-Light-Pic/LL-4003-WH.webp' },
         ],
         'lamps-tubes': [
-            { name: 'T8', img: 'New Img/Lamp&Tubes-Pic/T8.webp', pdf: 'New Data-Sheets/Lamp&Tubes-DataSheets/led Tube.png' },
-            { name: 'LL-MR16', img: 'New Img/Lamp&Tubes-Pic/LL-MR16.webp', pdf: 'New Data-Sheets/Lamp&Tubes-DataSheets/GU10 lamp.png' },
-            { name: 'LL-GU', img: 'New Img/Lamp&Tubes-Pic/LL-GU.webp', pdf: 'New Data-Sheets/Lamp&Tubes-DataSheets/GU10 lamp.png' },
-            { name: 'LL-E14', img: 'New Img/Lamp&Tubes-Pic/LL-E14.webp', pdf: 'New Data-Sheets/Lamp&Tubes-DataSheets/E14.png' },
-            { name: 'T5', img: 'New Img/Lamp&Tubes-Pic/T5.webp', pdf: 'assets/DATA-SHEETS/T5.png' },
-            { name: 'LL-E27', img: 'New Img/Lamp&Tubes-Pic/LL-E27.webp', pdf: 'New Data-Sheets/Lamp&Tubes-DataSheets/E27 lamp.png' },
+            { name: 'T8', img: 'New Img/Lamp&Tubes-Pic/T8.webp' },
+            { name: 'LL-MR16', img: 'New Img/Lamp&Tubes-Pic/LL-MR16.webp' },
+            { name: 'LL-GU', img: 'New Img/Lamp&Tubes-Pic/LL-GU.webp' },
+            { name: 'LL-E14', img: 'New Img/Lamp&Tubes-Pic/LL-E14.webp' },
+            { name: 'T5', img: 'New Img/Lamp&Tubes-Pic/T5.webp' },
+            { name: 'LL-E27', img: 'New Img/Lamp&Tubes-Pic/LL-E27.webp' },
         ],
         'strip-light': [
-            { name: 'LL-5013', img: 'New Img/Strip-light-Pic/LL-5015.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/LL-5013.png' },
-            { name: 'LL-6010', img: 'New Img/Strip-light-Pic/LL-6010.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/LL-6010.png' },
+            { name: 'LL-5013', img: 'New Img/Strip-light-Pic/LL-5015.webp' },
+            { name: 'LL-6010', img: 'New Img/Strip-light-Pic/LL-6010.webp' },
             // LL-6012-RGB: dedicated RGB main image
-            { name: 'LL-6012-RGB', img: 'New Img/Strip-light-Pic/LL-6012-RGB.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/LL-6012-RGB.png' },
-            { name: 'LL-6002', img: 'New Img/Strip-light-Pic/LL-6002.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/LL-6002.png' },
-            { name: 'LL-6014', img: 'New Img/Strip-light-Pic/LL-6014.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/LL-6014.png' },
-            { name: 'ALP-REC', img: 'New Img/Strip-light-Pic/ALP-REC.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/ALP-REC.png' },
-            { name: 'ALP-SUR', img: 'New Img/Strip-light-Pic/ALP-SUR.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/ALP-SUR.png' },
+            { name: 'LL-6012-RGB', img: 'New Img/Strip-light-Pic/LL-6012-RGB.webp' },
+            { name: 'LL-6002', img: 'New Img/Strip-light-Pic/LL-6002.webp' },
+            { name: 'LL-6014', img: 'New Img/Strip-light-Pic/LL-6014.webp' },
+            { name: 'ALP-REC', img: 'New Img/Strip-light-Pic/ALP-REC.webp' },
+            { name: 'ALP-SUR', img: 'New Img/Strip-light-Pic/ALP-SUR.webp' },
             // LL-6020: main = second thumbnail (LL-6020,1); first thumb = LL-6020.webp
             {
                 name: 'LL-6020',
@@ -406,69 +416,69 @@ const productsData = {
                     'New Img/Strip-light-Pic/LL-6020,3.webp',
                 ],
             },
-            { name: 'LL-6005', img: 'New Img/Strip-light-Pic/LL-6005.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/LL-6005.png' },
+            { name: 'LL-6005', img: 'New Img/Strip-light-Pic/LL-6005.webp' },
         ],
         'mirror-light': [
-            { name: 'LL-S304', img: 'New Img/Mirror-Lights-Pic/LL-S304.webp', pdf: 'New Data-Sheets/Mirror-light-DataSheets/LL-S304.png' },
-            { name: 'LL-4612', img: 'New Img/Mirror-Lights-Pic/LL-4612.webp', pdf: 'New Data-Sheets/Mirror-light-DataSheets/LL-4612.png' },
-            { name: 'LL-5512', img: 'New Img/Mirror-Lights-Pic/LL-5512.webp', pdf: 'New Data-Sheets/Mirror-light-DataSheets/LL-5512.png' },
-            { name: 'LL-S303', img: 'New Img/Mirror-Lights-Pic/LL-S303.webp', pdf: 'New Data-Sheets/Mirror-light-DataSheets/LL-S303.png' },
+            { name: 'LL-S304', img: 'New Img/Mirror-Lights-Pic/LL-S304.webp' },
+            { name: 'LL-4612', img: 'New Img/Mirror-Lights-Pic/LL-4612.webp' },
+            { name: 'LL-5512', img: 'New Img/Mirror-Lights-Pic/LL-5512.webp' },
+            { name: 'LL-S303', img: 'New Img/Mirror-Lights-Pic/LL-S303.webp' },
         ],
         'track-light': [
-            { name: 'LL-5210', img: 'New Img/truck Light-Pic/LL-5210.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-5210.png' },
-            { name: 'LL-5211', img: 'New Img/truck Light-Pic/LL-5211.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-5211.png' },
-            { name: 'LL-5310', img: 'New Img/truck Light-Pic/LL-5310.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-5310.png' },
-            { name: 'LL-5311', img: 'New Img/truck Light-Pic/LL-5311.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-5311.png' },
-            { name: 'LL-5410', img: 'New Img/truck Light-Pic/LL-5410.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-5410.png' },
-            { name: 'LL-0102-S', img: 'New Img/truck Light-Pic/LL-0102-S.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-0102 - S.png' },
-            { name: 'LL-0102', img: 'New Img/truck Light-Pic/LL-0102-D.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-0102.png' },
-            { name: 'LL-5001', img: 'New Img/truck Light-Pic/LL-5001.webp', pdf: 'New Data-Sheets/truck Light-Datasheets/LL-5001.png' },
+            { name: 'LL-5210', img: 'New Img/truck Light-Pic/LL-5210.webp' },
+            { name: 'LL-5211', img: 'New Img/truck Light-Pic/LL-5211.webp' },
+            { name: 'LL-5310', img: 'New Img/truck Light-Pic/LL-5310.webp' },
+            { name: 'LL-5311', img: 'New Img/truck Light-Pic/LL-5311.webp' },
+            { name: 'LL-5410', img: 'New Img/truck Light-Pic/LL-5410.webp' },
+            { name: 'LL-0102-S', img: 'New Img/truck Light-Pic/LL-0102-S.webp' },
+            { name: 'LL-0102', img: 'New Img/truck Light-Pic/LL-0102-D.webp' },
+            { name: 'LL-5001', img: 'New Img/truck Light-Pic/LL-5001.webp' },
         ],
         'chandelier-pendant': [
-            { name: 'LL-310-1-SQ', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-1-SQ.webp', pdf: 'LL-310-1.pdf' },
-            { name: 'LL-310-2-SQ', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-2-SQ.webp', pdf: 'LL-310-2-SQ.pdf' },
-            { name: 'LL-310-3-SQ', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-3-SQ.webp', pdf: 'LL-310-3-SQ.pdf' },
-            { name: 'LL-2022', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-2022.webp', pdf: 'LL-2022.pdf' },
-            { name: 'LL-310-1', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-1.webp', pdf: 'LL-310-1.pdf' },
-            { name: 'LL-310-2-R', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-2-R.webp', pdf: 'LL-310-2-R.pdf' },
-            { name: 'LL-310-3-R', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-3-R.webp', pdf: 'LL-310-3.pdf' },
-            { name: 'LL-313', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-313.webp', pdf: 'LL-313.pdf' },
-            { name: 'LL-4637', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4637.webp', pdf: 'LL-4637.pdf' },
-            { name: 'LL-4609', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4609.webp', pdf: 'PL-4609.pdf' },
-            { name: 'LL-4636', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4636.webp', pdf: 'LL-4636.pdf' },
-            { name: 'LL-5565', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-5565.webp', pdf: 'LL-5565.pdf' },
-            { name: 'LL-4586-3', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4586-3.webp', pdf: 'LL-PL-4586.pdf' },
-            { name: 'LL-4596-3', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4596-3.webp', pdf: 'LL-4596-3.pdf' },
-            { name: 'LL-4597-3', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4597-3.webp', pdf: 'LL-PL-4597.pdf' },
+            { name: 'LL-310-1-SQ', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-1-SQ.webp' },
+            { name: 'LL-310-2-SQ', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-2-SQ.webp' },
+            { name: 'LL-310-3-SQ', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-3-SQ.webp' },
+            { name: 'LL-2022', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-2022.webp' },
+            { name: 'LL-310-1', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-1.webp' },
+            { name: 'LL-310-2-R', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-2-R.webp' },
+            { name: 'LL-310-3-R', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-310-3-R.webp' },
+            { name: 'LL-313', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-313.webp' },
+            { name: 'LL-4637', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4637.webp' },
+            { name: 'LL-4609', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4609.webp' },
+            { name: 'LL-4636', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4636.webp' },
+            { name: 'LL-5565', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-5565.webp' },
+            { name: 'LL-4586-3', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4586-3.webp' },
+            { name: 'LL-4596-3', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4596-3.webp' },
+            { name: 'LL-4597-3', img: 'New Img/CHANDELIER & PENDANT-Pic/LL-4597-3.webp' },
         ],
     },
     outdoor: {
         'industrial-light': [
-            { name: 'LL-212', img: 'New Img/Industrial Light-Pic/LL-212.webp', pdf: 'New Data-Sheets/Industrial Light-Datasheets/LL-212.png' },
-            { name: 'LL-222', img: 'New Img/Industrial Light-Pic/LL-222.webp', pdf: 'New Data-Sheets/Industrial Light-Datasheets/LL-222.png' },
-            { name: 'LL-8001', img: 'New Img/Industrial Light-Pic/LL-8001.webp', pdf: 'New Data-Sheets/Industrial Light-Datasheets/LL-8002.png' },
-            { name: 'LL-8002', img: 'New Img/Industrial Light-Pic/LL-8002.webp', pdf: 'New Data-Sheets/Industrial Light-Datasheets/LL-8002.png' },
-            { name: 'LL-8003', img: 'New Img/Industrial Light-Pic/LL-8003.webp', pdf: 'New Data-Sheets/Industrial Light-Datasheets/LL-8003.png' },
-            { name: 'LL-BT-22', img: 'New Img/Industrial Light-Pic/LL-BT-22,2.webp', pdf: 'assets/DATA-SHEETS/LL-BT-22.png' },
+            { name: 'LL-212', img: 'New Img/Industrial Light-Pic/LL-212.webp' },
+            { name: 'LL-222', img: 'New Img/Industrial Light-Pic/LL-222.webp' },
+            { name: 'LL-8001', img: 'New Img/Industrial Light-Pic/LL-8001.webp' },
+            { name: 'LL-8002', img: 'New Img/Industrial Light-Pic/LL-8002.webp' },
+            { name: 'LL-8003', img: 'New Img/Industrial Light-Pic/LL-8003.webp' },
+            { name: 'LL-BT-22', img: 'New Img/Industrial Light-Pic/LL-BT-22.webp' },
         ],
         'external-light': [
-            { name: 'LL-4503', img: 'New Img/External LIGHT-Pic/LL-4503.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4503.png' },
-            { name: 'LL-4506', img: 'New Img/External LIGHT-Pic/LL-4506.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4506.png' },
-            { name: 'LL-4581-R', img: 'New Img/External LIGHT-Pic/LL-4581-R.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4581-R.png' },
-            { name: 'LL-4581-S', img: 'New Img/External LIGHT-Pic/LL-4581-S.webp', pdf: 'assets/DATA-SHEETS/LL-4581-S.png' },
-            { name: 'LL-4582-R', img: 'New Img/External LIGHT-Pic/LL-4582-R.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4582-R.png' },
-            { name: 'LL-544', img: 'New Img/External LIGHT-Pic/LL-544.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-544.png' },
-            { name: 'LL-663', img: 'New Img/External LIGHT-Pic/LL-663.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-663.png' },
-            { name: 'LL-690', img: 'New Img/External LIGHT-Pic/LL-690.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-690.png' },
-            { name: 'LL-692', img: 'New Img/External LIGHT-Pic/LL-692.webp', pdf: 'assets/DATA-SHEETS/LL692.pdf' },
-            { name: 'LL-1621', img: 'New Img/External LIGHT-Pic/LL-1621.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-1621.png' },
-            { name: 'LL-4582-S', img: 'New Img/External LIGHT-Pic/LL-4582-S.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4582-S.png' },
-            { name: 'LL-4583-1', img: 'New Img/External LIGHT-Pic/LL-4583-1.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4583.png' },
-            { name: 'LL-4583-2', img: 'New Img/External LIGHT-Pic/LL-4583-2.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4583.png' },
-            { name: 'LL-4584-1', img: 'New Img/External LIGHT-Pic/LL-4584-1,1.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4584.png' },
-            { name: 'LL-4584-2', img: 'New Img/External LIGHT-Pic/LL-4584-2.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4584.png' },
-            { name: 'LL-555', img: 'New Img/External LIGHT-Pic/LL-555.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-555.png' },
-            { name: 'LL-4507', img: 'New Img/External LIGHT-Pic/LL-4507.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4507.png' },
+            { name: 'LL-4503', img: 'New Img/External LIGHT-Pic/LL-4503.webp' },
+            { name: 'LL-4506', img: 'New Img/External LIGHT-Pic/LL-4506.webp' },
+            { name: 'LL-4581-R', img: 'New Img/External LIGHT-Pic/LL-4581-R.webp' },
+            { name: 'LL-4581-S', img: 'New Img/External LIGHT-Pic/LL-4581-S.webp' },
+            { name: 'LL-4582-R', img: 'New Img/External LIGHT-Pic/LL-4582-R.webp' },
+            { name: 'LL-544', img: 'New Img/External LIGHT-Pic/LL-544.webp' },
+            { name: 'LL-663', img: 'New Img/External LIGHT-Pic/LL-663.webp' },
+            { name: 'LL-690', img: 'New Img/External LIGHT-Pic/LL-690.webp' },
+            { name: 'LL-692', img: 'New Img/External LIGHT-Pic/LL-692.webp' },
+            { name: 'LL-1621', img: 'New Img/External LIGHT-Pic/LL-1621.webp' },
+            { name: 'LL-4582-S', img: 'New Img/External LIGHT-Pic/LL-4582-S.webp' },
+            { name: 'LL-4583-1', img: 'New Img/External LIGHT-Pic/LL-4583-1.webp' },
+            { name: 'LL-4583-2', img: 'New Img/External LIGHT-Pic/LL-4583-2.webp' },
+            { name: 'LL-4584-1', img: 'New Img/External LIGHT-Pic/LL-4584-1,1.webp' },
+            { name: 'LL-4584-2', img: 'New Img/External LIGHT-Pic/LL-4584-2.webp' },
+            { name: 'LL-555', img: 'New Img/External LIGHT-Pic/LL-555.webp' },
+            { name: 'LL-4507', img: 'New Img/External LIGHT-Pic/LL-4507.webp' },
             {
                 name: 'LL-4585',
                 img: 'New Img/External LIGHT-Pic/LL-4585,1.webp',
@@ -482,58 +492,58 @@ const productsData = {
                     'New Img/External LIGHT-Pic/LL-4585,4.webp',
                 ],
             },
-            { name: 'LL-4489', img: 'New Img/External LIGHT-Pic/LL-4489.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4489.png' },
-            { name: 'LL-693', img: 'New Img/External LIGHT-Pic/LL-693.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-693.png' },
-            { name: 'LL-4512', img: 'New Img/External LIGHT-Pic/LL-4512.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4512.png' },
-            { name: 'LL-4510', img: 'New Img/External LIGHT-Pic/LL-4510.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-4510.png' },
-            { name: 'LL-5488', img: 'New Img/External LIGHT-Pic/LL-5488.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-5488.png' },
-            { name: 'LL-696', img: 'New Img/External LIGHT-Pic/LL-696.webp', pdf: 'New Data-Sheets/External-light-DataSheets/LL-696.png' },
+            { name: 'LL-4489', img: 'New Img/External LIGHT-Pic/LL-4489.webp' },
+            { name: 'LL-693', img: 'New Img/External LIGHT-Pic/LL-693.webp' },
+            { name: 'LL-4512', img: 'New Img/External LIGHT-Pic/LL-4512.webp' },
+            { name: 'LL-4510', img: 'New Img/External LIGHT-Pic/LL-4510.webp' },
+            { name: 'LL-5488', img: 'New Img/External LIGHT-Pic/LL-5488.webp' },
+            { name: 'LL-696', img: 'New Img/External LIGHT-Pic/LL-696.webp' },
         ],
         'pole-bollard-light': [
             // Pole LL-4407 uses the pole-bollard data sheet (not the flood one).
             { name: 'LL-4407', img: 'New Img/POLE & BOLLARD LIGHT-Pic/BL-LL-4407.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4407.png' },
-            { name: 'BL-LL-4408', img: 'New Img/POLE & BOLLARD LIGHT-Pic/BL-LL-4408.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4408-P.png' },
-            { name: 'LL-4400', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4400.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4400.png' },
-            { name: 'LL-4403', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4403.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4403.png' },
-            { name: 'LL-4404', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4404.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4404.png' },
-            { name: 'LL-4405', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4405.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4405.png' },
-            { name: 'LL-4406', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4406.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4406.png' },
-            { name: 'LL-4405-2', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4405-2.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4405-2.png' },
-            { name: 'LL-4412', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4412.webp', pdf: 'New Data-Sheets/POLE & BOLLARD-Datasheets/LL-4412.png' },
+            { name: 'BL-LL-4408', img: 'New Img/POLE & BOLLARD LIGHT-Pic/BL-LL-4408.webp' },
+            { name: 'LL-4400', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4400.webp' },
+            { name: 'LL-4403', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4403.webp' },
+            { name: 'LL-4404', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4404.webp' },
+            { name: 'LL-4405', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4405.webp' },
+            { name: 'LL-4406', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4406.webp' },
+            { name: 'LL-4405-2', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4405-2.webp' },
+            { name: 'LL-4412', img: 'New Img/POLE & BOLLARD LIGHT-Pic/LL-4412.webp' },
         ],
         'up-light': [
-            { name: 'LL-0720', img: 'New Img/UP-LIGHT-Pic/LL-0720.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-0720.png' },
-            { name: 'LL-0722', img: 'New Img/UP-LIGHT-Pic/LL-0722.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-0720.png' },
-            { name: 'LL-0723', img: 'New Img/UP-LIGHT-Pic/LL-0723.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-0723.png' },
-            { name: 'LL-0724', img: 'New Img/UP-LIGHT-Pic/LL-0724.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-0724.png' },
-            { name: 'LL-2133', img: 'New Img/UP-LIGHT-Pic/LL-2133.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-2133.png' },
-            { name: 'LL-9011', img: 'New Img/UP-LIGHT-Pic/LL-9011.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-9011.png' },
-            { name: 'LL-9012', img: 'New Img/UP-LIGHT-Pic/LL-9012.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-9012.png' },
-            { name: 'LL-9013', img: 'New Img/UP-LIGHT-Pic/LL-9013.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-9013.png' },
-            { name: 'LL-0725', img: 'New Img/UP-LIGHT-Pic/LL-0725.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-0725.png' },
-            { name: 'LL-0007', img: 'New Img/UP-LIGHT-Pic/LL-0007.webp', pdf: 'New Data-Sheets/Up-Light-Datasheets/LL-0007.png' },
+            { name: 'LL-0720', img: 'New Img/UP-LIGHT-Pic/LL-0720.webp' },
+            { name: 'LL-0722', img: 'New Img/UP-LIGHT-Pic/LL-0722.webp' },
+            { name: 'LL-0723', img: 'New Img/UP-LIGHT-Pic/LL-0723.webp' },
+            { name: 'LL-0724', img: 'New Img/UP-LIGHT-Pic/LL-0724.webp' },
+            { name: 'LL-2133', img: 'New Img/UP-LIGHT-Pic/LL-2133.webp' },
+            { name: 'LL-9011', img: 'New Img/UP-LIGHT-Pic/LL-9011.webp' },
+            { name: 'LL-9012', img: 'New Img/UP-LIGHT-Pic/LL-9012.webp' },
+            { name: 'LL-9013', img: 'New Img/UP-LIGHT-Pic/LL-9013.webp' },
+            { name: 'LL-0725', img: 'New Img/UP-LIGHT-Pic/LL-0725.webp' },
+            { name: 'LL-0007', img: 'New Img/UP-LIGHT-Pic/LL-0007.webp' },
         ],
         'ceiling-light': [
-            { name: 'LL-1014', img: 'New Img/Ceiling light-Pic/LL-1014.webp', pdf: 'New Data-Sheets/Ceiling light-Datasheets/LL-1014.png' },
-            { name: 'LL-1015', img: 'New Img/Ceiling light-Pic/LL-1015.webp', pdf: 'New Data-Sheets/Ceiling light-Datasheets/LL-1015.png' },
-            { name: 'LL-1016', img: 'New Img/Ceiling light-Pic/LL-1016.webp', pdf: 'New Data-Sheets/Ceiling light-Datasheets/LL-1016.png' },
-            { name: 'LL-1017-S', img: 'New Img/Ceiling light-Pic/LL-1017-S.webp', pdf: 'New Data-Sheets/Ceiling light-Datasheets/LL-1023.png' },
-            { name: 'LL-160.1', img: 'New Img/Ceiling light-Pic/LL-160.1.png', pdf: 'New Data-Sheets/Ceiling light-Datasheets/LL-160.png' },
-            { name: 'LL-5013', img: 'New Img/Strip-light-Pic/LL-5013.webp', pdf: 'New Data-Sheets/Strip-light-DataSheets/LL-5013.png' },
+            { name: 'LL-1014', img: 'New Img/Ceiling light-Pic/LL-1014.webp' },
+            { name: 'LL-1015', img: 'New Img/Ceiling light-Pic/LL-1015.webp' },
+            { name: 'LL-1016', img: 'New Img/Ceiling light-Pic/LL-1016.webp' },
+            { name: 'LL-1017-S', img: 'New Img/Ceiling light-Pic/LL-1017-S.webp' },
+            { name: 'LL-160.1', img: 'New Img/Ceiling light-Pic/LL-160.1.png' },
+            { name: 'LL-5013', img: 'New Img/Strip-light-Pic/LL-5013.webp' },
         ],
         'flood-light': [
-            { name: 'LL-4006', img: 'New Img/Flood-Light-Pic/LL-4006.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4006.png' },
-            { name: 'LL-4110', img: 'New Img/Flood-Light-Pic/LL-4110.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4110.png' },
+            { name: 'LL-4006', img: 'New Img/Flood-Light-Pic/LL-4006.webp' },
+            { name: 'LL-4110', img: 'New Img/Flood-Light-Pic/LL-4110.webp' },
             { name: 'LL-4407', img: 'New Img/Flood-Light-Pic/LL-4407.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4407.png' },
-            { name: 'LL-4407-4', img: 'New Img/Flood-Light-Pic/LL-4407-4.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4407-4.png' },
-            { name: 'LL-4408', img: 'New Img/Flood-Light-Pic/FD-LL-4408.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4408.png' },
-            { name: 'LL-4402', img: 'New Img/Flood-Light-Pic/FD-LL-4402.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4402.png' },
-            { name: 'LL-4401', img: 'New Img/Flood-Light-Pic/FD-LL-4401.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4401.png' },
-            { name: 'LL-4410', img: 'New Img/Flood-Light-Pic/LL-4410.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4410.png' },
-            { name: 'LL-4414', img: 'New Img/Flood-Light-Pic/LL-4414.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4414.png' },
-            { name: 'LL-4415', img: 'New Img/Flood-Light-Pic/LL-4415.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4415.png' },
-            { name: 'LL-4416', img: 'New Img/Flood-Light-Pic/LL-4416.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4416.png' },
-            { name: 'LL-4420', img: 'New Img/Flood-Light-Pic/LL-4420.webp', pdf: 'New Data-Sheets/Flood-light-Datasheets/LL-4420.png' },
+            { name: 'LL-4407-4', img: 'New Img/Flood-Light-Pic/LL-4407-4.webp' },
+            { name: 'LL-4408', img: 'New Img/Flood-Light-Pic/FD-LL-4408.webp' },
+            { name: 'LL-4402', img: 'New Img/Flood-Light-Pic/FD-LL-4402.webp' },
+            { name: 'LL-4401', img: 'New Img/Flood-Light-Pic/FD-LL-4401.webp' },
+            { name: 'LL-4410', img: 'New Img/Flood-Light-Pic/LL-4410.webp' },
+            { name: 'LL-4414', img: 'New Img/Flood-Light-Pic/LL-4414.webp' },
+            { name: 'LL-4415', img: 'New Img/Flood-Light-Pic/LL-4415.webp' },
+            { name: 'LL-4416', img: 'New Img/Flood-Light-Pic/LL-4416.webp' },
+            { name: 'LL-4420', img: 'New Img/Flood-Light-Pic/LL-4420.webp' },
         ],
     }
 };
@@ -591,7 +601,7 @@ const productGalleryExtras = {
     'outdoor/industrial-light/LL-212': ["New Img/Industrial Light-Pic/LL-212,1.webp","New Img/Industrial Light-Pic/LL-212,2.webp","New Img/Industrial Light-Pic/LL-212,3.webp"],
     'outdoor/industrial-light/LL-222': ["New Img/Industrial Light-Pic/LL-222,1-clean.webp","New Img/Industrial Light-Pic/LL-222,1.webp"],
     'outdoor/industrial-light/LL-8003': ["New Img/Industrial Light-Pic/LL-8003,1.webp"],
-    'outdoor/industrial-light/LL-BT-22': ["New Img/Industrial Light-Pic/LL-BT-22,1.webp","New Img/Industrial Light-Pic/LL-BT-22.webp"],
+    'outdoor/industrial-light/LL-BT-22': ["New Img/Industrial Light-Pic/LL-BT-22,1.webp","New Img/Industrial Light-Pic/LL-BT-22,2.webp"],
     'outdoor/external-light/LL-4503': ["New Img/External LIGHT-Pic/LL-4503,1.png","New Img/External LIGHT-Pic/LL-4503,2.png","New Img/External LIGHT-Pic/LL-4503.png"],
     'outdoor/external-light/LL-4506': ["New Img/External LIGHT-Pic/LL-4506,1.png","New Img/External LIGHT-Pic/LL-4506,1.webp","New Img/External LIGHT-Pic/LL-4506,2.png","New Img/External LIGHT-Pic/LL-4506,2.webp","New Img/External LIGHT-Pic/LL-4506,3.webp","New Img/External LIGHT-Pic/LL-4506,4.webp","New Img/External LIGHT-Pic/LL-4506.png"],
     'outdoor/external-light/LL-4581-R': ["New Img/External LIGHT-Pic/LL-4581-R,1.png","New Img/External LIGHT-Pic/LL-4581-R,1.webp","New Img/External LIGHT-Pic/LL-4581-R,2.png","New Img/External LIGHT-Pic/LL-4581-R,2.webp","New Img/External LIGHT-Pic/LL-4581-R,3.webp","New Img/External LIGHT-Pic/LL-4581-R,4.webp","New Img/External LIGHT-Pic/LL-4581-R.png"],
@@ -1225,7 +1235,7 @@ function setupProductModal() {
             if (!card) return;
             
             const productName = card.getAttribute('data-product-name');
-            const productDataSheet = card.getAttribute('data-product-datasheet') || getDataSheetPath(productName);
+            const productDataSheet = readProductDataSheetFromEl(card, productName);
             const productImg = card.getAttribute('data-product-img');
             const productDesc = card.getAttribute('data-product-desc') || 'Premium lighting solution designed for modern applications.';
             
@@ -1259,13 +1269,8 @@ function setupProductModal() {
                     imgEl.style.display = 'block';
                     imgEl.style.objectFit = 'contain';
                 }
-                // Update data sheet button to open modal
                 if (pdfEl) {
-                    pdfEl.onclick = (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openDataSheetModal(productDataSheet, productName);
-                    };
+                    bindDataSheetButton(pdfEl, productDataSheet, productName);
                 }
                 
                 // Setup thumbnail gallery
@@ -1372,7 +1377,7 @@ function setupProductModal() {
                 if (nameEl) nameEl.innerHTML = productTitle;
                 if (categoryEl) categoryEl.textContent = card.querySelector('.product-category')?.textContent || '';
                 if (mainImgEl) mainImgEl.src = `assets/Products Img/${productImg}`;
-                const dataSheetPath = card.getAttribute('data-product-datasheet') || getDataSheetPath(productName);
+                const dataSheetPath = readProductDataSheetFromEl(card, productName);
                 if (viewPdfEl) viewPdfEl.href = dataSheetPath;
                 if (downloadPdfEl) downloadPdfEl.href = dataSheetPath;
                 
@@ -1408,7 +1413,7 @@ function setupProductModal() {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const productName = btn.getAttribute('data-product-name');
-            const productDataSheet = btn.getAttribute('data-product-datasheet') || getDataSheetPath(productName);
+            const productDataSheet = readProductDataSheetFromEl(btn, productName);
             const productImg = btn.getAttribute('data-product-img');
             
             const nameEl = document.getElementById('modalProductName') || document.getElementById('spotlightModalTitle');
@@ -1420,8 +1425,7 @@ function setupProductModal() {
             if (nameEl) nameEl.innerHTML = productTitle || productName;
             if (mainImgEl) mainImgEl.src = `assets/Products Img/${productImg}`;
             if (pdfEl) {
-                pdfEl.href = productDataSheet;
-                pdfEl.target = '_blank';
+                bindDataSheetButton(pdfEl, productDataSheet, productName);
             }
             
             modal.classList.add('active');
@@ -1441,8 +1445,27 @@ function setupProductModal() {
     });
 }
 
+function ensureDatasheetModalEmptyEl(modalBody) {
+    if (!modalBody) return null;
+    let emptyEl = document.getElementById('datasheetModalEmpty');
+    if (!emptyEl) {
+        emptyEl = document.createElement('p');
+        emptyEl.id = 'datasheetModalEmpty';
+        emptyEl.className = 'datasheet-modal-empty';
+        emptyEl.setAttribute('role', 'status');
+        modalBody.appendChild(emptyEl);
+    }
+    return emptyEl;
+}
+
+function hideDatasheetModalEmpty() {
+    const emptyEl = document.getElementById('datasheetModalEmpty');
+    if (emptyEl) emptyEl.style.display = 'none';
+}
+
 // Open Data Sheet Modal
 function openDataSheetModal(dataSheetPath, productName) {
+    const hasSheet = Boolean(dataSheetPath && String(dataSheetPath).trim());
     const modal = document.getElementById('dataSheetModal');
     const modalImage = document.getElementById('datasheetModalImage');
     const closeBtn = modal?.querySelector('.datasheet-modal-close');
@@ -1462,6 +1485,7 @@ function openDataSheetModal(dataSheetPath, productName) {
             pdfEl.removeAttribute('src');
             pdfEl.style.display = 'none';
         }
+        hideDatasheetModalEmpty();
         modalImage.style.display = 'block';
         modalImage.removeAttribute('src');
     }
@@ -1507,6 +1531,25 @@ function openDataSheetModal(dataSheetPath, productName) {
 
     const modalBody = modalImage.parentElement;
     let modalPdf = document.getElementById('datasheetModalPdf');
+
+    if (!hasSheet) {
+        if (modalPdf) {
+            modalPdf.style.display = 'none';
+            modalPdf.removeAttribute('src');
+        }
+        modalImage.style.display = 'none';
+        modalImage.removeAttribute('src');
+        const emptyEl = ensureDatasheetModalEmptyEl(modalBody);
+        if (emptyEl) {
+            const label = productName ? ` (${productName})` : '';
+            emptyEl.textContent = `Data sheet is not available for this product${label} yet.`;
+            emptyEl.style.display = 'block';
+        }
+        return;
+    }
+
+    hideDatasheetModalEmpty();
+
     if (!modalPdf && modalBody) {
         modalPdf = document.createElement('iframe');
         modalPdf.id = 'datasheetModalPdf';

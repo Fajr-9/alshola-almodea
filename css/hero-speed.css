@@ -22,3 +22,46 @@
   background-color: #ffffff;
   object-fit: contain;
 }
+
+.datasheet-modal-empty {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+/* Static catalogue intro for crawlers (products.html) */
+.products-seo-intro {
+  max-width: 52rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--color-dark-gray);
+}
+.products-seo-intro h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+  color: var(--color-dark-gray);
+}
+.products-seo-intro p {
+  margin-bottom: 0.75rem;
+}
+.products-seo-intro a {
+  color: #B22A1F;
+  text-decoration: underline;
+}
+.products-seo-intro a:hover {
+  text-decoration: none;
+}
+
+#faq .feature-description a {
+  color: #B22A1F;
+  text-decoration: underline;
+}
+#faq .feature-description a:hover {
+  text-decoration: none;
+}

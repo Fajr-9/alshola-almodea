@@ -325,7 +325,10 @@ function setupProductModal() {
                 e.stopPropagation();
                 
                 const productName = card.getAttribute('data-product-name');
-                const productDataSheet = card.getAttribute('data-product-datasheet') || (typeof getDataSheetPath === 'function' ? getDataSheetPath(productName) : `assets/DATA-SHEETS/${productName}.png`);
+                const productDataSheet =
+                    typeof readProductDataSheetFromEl === 'function'
+                        ? readProductDataSheetFromEl(card, productName)
+                        : (card.getAttribute('data-product-datasheet') || '');
                 const productImg = card.getAttribute('data-product-img');
                 const productDesc = card.getAttribute('data-product-desc');
                 const mergedGallery =
@@ -370,14 +373,8 @@ function setupProductModal() {
                         imgElement.style.objectFit = 'contain';
                     }
                 }
-                if (pdfElement) {
-                    const openDataSheet = (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openDataSheetModal(productDataSheet, productName);
-                    };
-                    pdfElement.onclick = openDataSheet;
-                    pdfElement.ontouchend = openDataSheet;
+                if (pdfElement && typeof bindDataSheetButton === 'function') {
+                    bindDataSheetButton(pdfElement, productDataSheet, productName);
                 }
 
                 // Setup thumbnail gallery
@@ -634,105 +631,6 @@ function setupHeaderScroll() {
             isScrolling = false;
         }, 150);
     }, { passive: true });
-}
-
-// Open Data Sheet Modal
-function openDataSheetModal(dataSheetPath, productName) {
-    const modal = document.getElementById('dataSheetModal');
-    const modalImage = document.getElementById('datasheetModalImage');
-    const closeBtn = modal?.querySelector('.datasheet-modal-close');
-    const overlay = modal?.querySelector('.datasheet-modal-overlay');
-    
-    if (!modal || !modalImage) {
-        console.error('Data Sheet Modal not found');
-        return;
-    }
-    
-    // Close function
-    function closeModal() {
-        modal.classList.remove('active');
-        modal.style.display = 'none';
-        const pdfEl = document.getElementById('datasheetModalPdf');
-        if (pdfEl) {
-            pdfEl.removeAttribute('src');
-            pdfEl.style.display = 'none';
-        }
-        if (modalImage) {
-            modalImage.style.display = 'block';
-            modalImage.removeAttribute('src');
-        }
-    }
-    
-    // Set up close handlers with touch support
-    if (closeBtn) {
-        closeBtn.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeModal();
-        };
-        closeBtn.ontouchend = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeModal();
-        };
-    }
-    if (overlay) {
-        overlay.onclick = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeModal();
-        };
-        overlay.ontouchend = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeModal();
-        };
-    }
-    
-    // Close on ESC key
-    const escHandler = (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-            document.removeEventListener('keydown', escHandler);
-        }
-    };
-    document.addEventListener('keydown', escHandler);
-    
-    // Show modal immediately
-    modal.style.display = 'flex';
-    modal.classList.add('active');
-
-    const modalBody = modalImage.parentElement;
-    let modalPdf = document.getElementById('datasheetModalPdf');
-    if (!modalPdf && modalBody) {
-        modalPdf = document.createElement('iframe');
-        modalPdf.id = 'datasheetModalPdf';
-        modalPdf.className = 'datasheet-iframe';
-        modalPdf.title = 'Data Sheet';
-        modalBody.appendChild(modalPdf);
-    }
-
-    const srcEnc = encodeURI(dataSheetPath).replace(/#/g, '%23');
-    const isPdf = /\.pdf($|\?)/i.test(dataSheetPath);
-
-    if (isPdf && modalPdf) {
-        modalImage.style.display = 'none';
-        modalImage.removeAttribute('src');
-        modalPdf.style.display = 'block';
-        modalPdf.src = srcEnc;
-    } else {
-        if (modalPdf) {
-            modalPdf.style.display = 'none';
-            modalPdf.removeAttribute('src');
-        }
-        modalImage.style.display = 'block';
-        modalImage.src = srcEnc;
-        modalImage.alt = `Data Sheet - ${productName}`;
-        modalImage.onerror = () => {
-            console.error('Failed to load data sheet:', dataSheetPath);
-            modalImage.alt = 'Data Sheet not found';
-        };
-    }
 }
 
 // Auto-initialize when DOM is ready
