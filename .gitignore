@@ -18,6 +18,7 @@ products-*.txt
 *.log
 
 # Editor directories and files
+.cursor/
 .vscode/
 .idea/
 *.swp
